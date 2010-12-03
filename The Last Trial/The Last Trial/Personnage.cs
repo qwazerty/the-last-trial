@@ -25,6 +25,8 @@ namespace The_Last_Trial
         KeyboardState old_state;
         double tempsActuel;
         int collision_state;
+        bool diag = true;
+        int count = 0;
 
         // CONSTRUCTEUR
         public Personnage()
@@ -223,8 +225,8 @@ namespace The_Last_Trial
                 }
             }
 
-            /*// BOOST
-            if (newState.IsKeyDown(Keys.B))
+            // BOOST
+            /*if (newState.IsKeyDown(Keys.B))
             {
                 if (!oldState.IsKeyDown(Keys.B))
                 {
@@ -249,6 +251,40 @@ namespace The_Last_Trial
 
         public void F_UpdateImage(GameTime gameTime, double delai)
         {
+            //Affichage des diagonales
+            if (speed.X > 0 && speed.Y > 0 && diag)
+            {
+                img_state = 50;
+                diag = false;
+            }
+            else if (speed.X > 0 && speed.Y < 0 && diag)
+            {
+                img_state = 60;
+                diag = false;
+            }
+            else if (speed.X < 0 && speed.Y > 0 && diag)
+            {
+                img_state = 80;
+                diag = false;
+            }
+            else if (speed.X < 0 && speed.Y < 0 && diag)
+            {
+                img_state = 70;
+                diag = false;
+            }
+            else if (count > 60)
+            {
+                diag = true;
+                count = 0;
+            }
+            else
+            {
+                count++;
+            }
+
+            Console.WriteLine(diag);
+
+
             if (speed != Vector2.Zero)
             {
                 double temps = gameTime.TotalGameTime.TotalSeconds;
@@ -263,9 +299,8 @@ namespace The_Last_Trial
                     tempsActuel = temps;
                 }
             }
+
+
         }
-
-
-
     }
 }
