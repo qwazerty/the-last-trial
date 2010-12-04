@@ -15,18 +15,16 @@ namespace The_Last_Trial
 {
     public class Personnage : Objet
     {
-
+        // Nombre de collision sur la map
         const int taille = 3;
 
         // DECLARATION VARIABLES
         int img_state;
         Vector2 speed;
         bool[] collision = new bool[taille];
+        int collision_state;
         KeyboardState old_state;
         double tempsActuel;
-        int collision_state;
-        bool diag = true;
-        int count = 0;
 
         // CONSTRUCTEUR
         public Personnage()
@@ -64,31 +62,6 @@ namespace The_Last_Trial
         public void S_Deplacement(float time)
         {
             position += speed * time;
-        }
-
-        public void S_ImgState(int img)
-        {
-            img_state = img;
-        }
-
-        public void S_Speed(float x, float y)
-        {
-            speed = new Vector2(x, y);
-        }
-
-        public void S_SpeedX(float x)
-        {
-            speed.X = x;
-        }
-
-        public void S_SpeedY(float y)
-        {
-            speed.Y = y;
-        }
-
-        public void S_Collision(int col)
-        {
-            collision_state = col;
         }
 
         /**********************
@@ -162,7 +135,6 @@ namespace The_Last_Trial
             {
                 if (!old_state.IsKeyDown(droite))
                 {
-                    img_state = 20;
                     speed.X = 150.0f;
                 }
             }
@@ -179,7 +151,6 @@ namespace The_Last_Trial
             {
                 if (!old_state.IsKeyDown(gauche))
                 {
-                    img_state = 40;
                     speed.X = -150.0f;
                 }
             }
@@ -196,7 +167,6 @@ namespace The_Last_Trial
             {
                 if (!old_state.IsKeyDown(haut))
                 {
-                    img_state = 30;
                     speed.Y = -80.0f;
                 }
             }
@@ -213,7 +183,6 @@ namespace The_Last_Trial
             {
                 if (!old_state.IsKeyDown(bas))
                 {
-                    img_state = 10;
                     speed.Y = 80.0f;
                 }
             }
@@ -251,40 +220,59 @@ namespace The_Last_Trial
 
         public void F_UpdateImage(GameTime gameTime, double delai)
         {
-            //Affichage des diagonales
-            if (speed.X > 0 && speed.Y > 0 && diag)
-            {
-                img_state = 50;
-                diag = false;
-            }
-            else if (speed.X > 0 && speed.Y < 0 && diag)
-            {
-                img_state = 60;
-                diag = false;
-            }
-            else if (speed.X < 0 && speed.Y > 0 && diag)
-            {
-                img_state = 80;
-                diag = false;
-            }
-            else if (speed.X < 0 && speed.Y < 0 && diag)
-            {
-                img_state = 70;
-                diag = false;
-            }
-            else if (count > 60)
-            {
-                diag = true;
-                count = 0;
-            }
-            else
-            {
-                count++;
-            }
+            // Test si le personnage est en collision
+            bool in_collision = false;
 
-            Console.WriteLine(diag);
+            for (int i = 0; i < taille; i++)
+            { 
+                if (collision[i])
+                {
+                    in_collision = true;
+                }
+            }
+                
+                if (in_collision == false)
+                {
 
+                    // Affichage images direction normale
+                    if (speed.X > 0 && speed.Y == 0 && (img_state < 20 || img_state > 27))
+                    {
+                        img_state = 20;
+                    }
+                    else if (speed.X < 0 && speed.Y == 0 && (img_state < 40 || img_state > 47))
+                    {
+                        img_state = 40;
+                    }
+                    else if (speed.X == 0 && speed.Y > 0 && (img_state < 10 || img_state > 17))
+                    {
+                        img_state = 10;
+                    }
+                    else if (speed.X == 0 && speed.Y < 0 && (img_state < 30 || img_state > 37))
+                    {
+                        img_state = 30;
+                    }
 
+                    // Affichage images direction diagonales
+                    else if (speed.X > 0 && speed.Y > 0 && (img_state < 50 || img_state > 57))
+                    {
+                        img_state = 50;
+                    }
+                    else if (speed.X > 0 && speed.Y < 0 && (img_state < 60 || img_state > 67))
+                    {
+                        img_state = 60;
+                    }
+                    else if (speed.X < 0 && speed.Y > 0 && (img_state < 80 || img_state > 87))
+                    {
+                        img_state = 80;
+                    }
+                    else if (speed.X < 0 && speed.Y < 0 && (img_state < 70 || img_state > 77))
+                    {
+                        img_state = 70;
+                    }
+
+                }
+
+            // Update l'image de X0 à X7
             if (speed != Vector2.Zero)
             {
                 double temps = gameTime.TotalGameTime.TotalSeconds;

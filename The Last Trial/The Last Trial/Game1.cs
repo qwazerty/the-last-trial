@@ -50,6 +50,7 @@ namespace The_Last_Trial
             map1.S_Texture(Content.Load<Texture2D>("map/1"));
 
             map1.S_Position(new Vector2(0, 0));
+            monster.S_Position(new Vector2(500, 500));
         }
 
         protected override void UnloadContent()
