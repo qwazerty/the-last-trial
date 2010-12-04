@@ -25,7 +25,6 @@ namespace The_Last_Trial
         Personnage monster = new Personnage();
         Rectangle r_mur_haut = new Rectangle(0, 417, 979, 27);
         Rectangle r_mur_bas = new Rectangle(0, 734, 986, 128);
-
         Objet map1 = new Objet();
 
         public Game1()

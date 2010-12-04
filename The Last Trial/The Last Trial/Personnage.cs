@@ -106,12 +106,12 @@ namespace The_Last_Trial
             
             Rectangle persoRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
 
-            if (persoRectangle.Intersects(item) && collision[collision_state] == false)
+            if (persoRectangle.Intersects(item) && !collision[collision_state])
             {
                 collision[collision_state] = true;
                 speed = Vector2.Multiply(speed, -1.0f);
             }
-            else if (!(persoRectangle.Intersects(item)) && collision[collision_state] == true)
+            else if (!(persoRectangle.Intersects(item)) && collision[collision_state])
             {
                 speed = Vector2.Zero;
                 collision[collision_state] = false;
@@ -231,46 +231,46 @@ namespace The_Last_Trial
                 }
             }
                 
-                if (in_collision == false)
+            if (!in_collision)
+            {
+
+                // Affichage images direction normale
+                if (speed.X > 0 && speed.Y == 0 && (img_state < 20 || img_state > 27))
                 {
-
-                    // Affichage images direction normale
-                    if (speed.X > 0 && speed.Y == 0 && (img_state < 20 || img_state > 27))
-                    {
-                        img_state = 20;
-                    }
-                    else if (speed.X < 0 && speed.Y == 0 && (img_state < 40 || img_state > 47))
-                    {
-                        img_state = 40;
-                    }
-                    else if (speed.X == 0 && speed.Y > 0 && (img_state < 10 || img_state > 17))
-                    {
-                        img_state = 10;
-                    }
-                    else if (speed.X == 0 && speed.Y < 0 && (img_state < 30 || img_state > 37))
-                    {
-                        img_state = 30;
-                    }
-
-                    // Affichage images direction diagonales
-                    else if (speed.X > 0 && speed.Y > 0 && (img_state < 50 || img_state > 57))
-                    {
-                        img_state = 50;
-                    }
-                    else if (speed.X > 0 && speed.Y < 0 && (img_state < 60 || img_state > 67))
-                    {
-                        img_state = 60;
-                    }
-                    else if (speed.X < 0 && speed.Y > 0 && (img_state < 80 || img_state > 87))
-                    {
-                        img_state = 80;
-                    }
-                    else if (speed.X < 0 && speed.Y < 0 && (img_state < 70 || img_state > 77))
-                    {
-                        img_state = 70;
-                    }
-
+                    img_state = 20;
                 }
+                else if (speed.X < 0 && speed.Y == 0 && (img_state < 40 || img_state > 47))
+                {
+                    img_state = 40;
+                }
+                else if (speed.X == 0 && speed.Y > 0 && (img_state < 10 || img_state > 17))
+                {
+                    img_state = 10;
+                }
+                else if (speed.X == 0 && speed.Y < 0 && (img_state < 30 || img_state > 37))
+                {
+                    img_state = 30;
+                }
+
+                // Affichage images direction diagonales
+                else if (speed.X > 0 && speed.Y > 0 && (img_state < 50 || img_state > 57))
+                {
+                    img_state = 50;
+                }
+                else if (speed.X > 0 && speed.Y < 0 && (img_state < 60 || img_state > 67))
+                {
+                    img_state = 60;
+                }
+                else if (speed.X < 0 && speed.Y > 0 && (img_state < 80 || img_state > 87))
+                {
+                    img_state = 80;
+                }
+                else if (speed.X < 0 && speed.Y < 0 && (img_state < 70 || img_state > 77))
+                {
+                    img_state = 70;
+                }
+
+            }
 
             // Update l'image de X0 à X7
             if (speed != Vector2.Zero)
