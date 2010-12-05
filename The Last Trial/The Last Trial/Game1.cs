@@ -68,7 +68,7 @@ namespace The_Last_Trial
 
             // DEPLACEMENT
             perso1.F_Deplacer(
-                Keys.Down, Keys.Right,
+                Keys.Down, Keys.Right, 
                 Keys.Up, Keys.Left,
                 Keyboard.GetState());
             perso2.F_Deplacer(
