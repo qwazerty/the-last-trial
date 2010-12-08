@@ -26,7 +26,8 @@ namespace The_Last_Trial
         Rectangle r_mur_haut = new Rectangle(0, 417, 979, 27);
         Rectangle r_mur_bas = new Rectangle(0, 734, 986, 128);
         Objet map1 = new Objet();
-
+        Son backsound = new Son();
+       
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -47,7 +48,7 @@ namespace The_Last_Trial
             perso2.S_Texture(Content.Load<Texture2D>("perso/3/" + (perso2.G_ImgState())));
             monster.S_Texture(Content.Load<Texture2D>("mob/1/40"));
             map1.S_Texture(Content.Load<Texture2D>("map/1"));
-
+            backsound.Load(Content.Load<Song>("Music\\Kalimba"));
             map1.S_Position(new Vector2(0, 0));
             monster.S_Position(new Vector2(500, 500));
         }
@@ -110,6 +111,8 @@ namespace The_Last_Trial
             // UPDATE L'IMAGE DU PERSO
             perso1.S_Texture(Content.Load<Texture2D>("perso/1/" + perso1.G_ImgState()));
             perso2.S_Texture(Content.Load<Texture2D>("perso/3/" + perso2.G_ImgState()));
+
+            backsound.UpdateSon();
 
             base.Update(gameTime);
         }
