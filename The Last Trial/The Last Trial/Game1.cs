@@ -22,10 +22,11 @@ namespace The_Last_Trial
         // Declaration Objets
         Personnage perso1 = new Personnage();
         Personnage perso2 = new Personnage();
-        Personnage monster = new Personnage();
-        Rectangle r_mur_haut = new Rectangle(0, 417, 979, 27);
-        Rectangle r_mur_bas = new Rectangle(0, 734, 986, 128);
+        Monstre monster = new Monstre(new Vector2(500.0f, 500.0f));
+        Rectangle r_mur_haut = new Rectangle(0, 260, 979, 27);
+        Rectangle r_mur_bas = new Rectangle(0, 800, 986, 128);
         Objet map1 = new Objet();
+        Objet map_first = new Objet();
         Son backsound = new Son();
        
         public Game1()
@@ -48,8 +49,12 @@ namespace The_Last_Trial
             perso2.S_Texture(Content.Load<Texture2D>("perso/3/" + (perso2.G_ImgState())));
             monster.S_Texture(Content.Load<Texture2D>("mob/1/40"));
             map1.S_Texture(Content.Load<Texture2D>("map/1"));
-            backsound.Load(Content.Load<Song>("Music\\Kalimba"));
+            map_first.S_Texture(Content.Load<Texture2D>("map/2"));
+
+            backsound.Load(Content.Load<Song>("music/Kalimba"));
+
             map1.S_Position(new Vector2(0, 0));
+            map_first.S_Position(new Vector2(0, 737));
             monster.S_Position(new Vector2(500, 500));
         }
 
@@ -76,10 +81,7 @@ namespace The_Last_Trial
                 Keys.S, Keys.D,
                 Keys.W, Keys.A,
                 Keyboard.GetState());
-            monster.F_Deplacer(
-                Keys.NumPad2, Keys.NumPad6,
-                Keys.NumPad8, Keys.NumPad4,
-                Keyboard.GetState());
+            monster.F_Deplacer(gameTime);
 
             // MODIFIE LES SPRITES
             perso1.F_UpdateImage(gameTime, 0.1);
@@ -93,7 +95,7 @@ namespace The_Last_Trial
             // TEST DE COLISIONS ECRAN
             perso1.F_CollisionEcran(graphics);
             perso2.F_CollisionEcran(graphics);
-            monster.F_CollisionEcran(graphics);
+            //monster.F_CollisionEcran(graphics);
 
             // COLISIONS PERSO - OBJETS
             Rectangle monster_rect = new Rectangle((int)monster.G_Position().X + (monster.G_Texture().Width) / 2,
@@ -127,6 +129,7 @@ namespace The_Last_Trial
             spriteBatch.Draw(monster.G_Texture(), monster.G_Position(), Color.White);
             spriteBatch.Draw(perso1.G_Texture(), perso1.G_Position(), Color.White);
             spriteBatch.Draw(perso2.G_Texture(), perso2.G_Position(), Color.White);
+            spriteBatch.Draw(map_first.G_Texture(), map_first.G_Position(), Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);

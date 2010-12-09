@@ -29,7 +29,8 @@ namespace The_Last_Trial
             // MUSIQUE DE FOND
             if (!songstart)
             {
-                MediaPlayer.Play(back_sound);
+                //MediaPlayer.Play(back_sound);
+                // BUG COMPILATION
                 songstart = true;
             }
         }
