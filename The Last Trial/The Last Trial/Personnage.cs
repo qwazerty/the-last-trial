@@ -55,6 +55,12 @@ namespace The_Last_Trial
             return speed;
         }
 
+        public Rectangle G_Rectangle()
+        {
+            Rectangle persoRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
+            return persoRectangle;
+        }
+
         /*****************
          * METHODE : SET *
          *****************/
@@ -127,7 +133,7 @@ namespace The_Last_Trial
 
         public void F_Deplacer(
             Keys bas, Keys droite, 
-            Keys haut, Keys gauche, 
+            Keys haut, Keys gauche,
             KeyboardState new_state)
         {
             // DROITE
@@ -218,6 +224,16 @@ namespace The_Last_Trial
             old_state = new_state;
         }
 
+        public bool F_Attaque(Keys attaque, KeyboardState new_state)
+        {
+            if (new_state.IsKeyDown(attaque))
+            {
+                    return true;
+            }
+            old_state = new_state;
+            return false;
+        }
+
         public void F_UpdateImage(GameTime gameTime, double delai)
         {
             // Test si le personnage est en collision
@@ -230,10 +246,28 @@ namespace The_Last_Trial
                     in_collision = true;
                 }
             }
+
+            //if (in_collision)
+            //{
+            //    if (new_state.IsKeyDown(Keys.S))
+            //    {
+            //        if (!old_state.IsKeyDown(Keys.S))
+            //        {
+            //            speed.Y = 80.0f;
+            //        }
+            //    }
+            //    else if (old_state.IsKeyDown(Keys.S))
+            //    {
+            //        if (speed.Y > 0)
+            //        {
+            //            speed.Y = 0.0f;
+            //        }
+            //    }
+            //}
                 
             if (!in_collision)
             {
-
+                
                 // Affichage images direction normale
                 if (speed.X > 0 && speed.Y == 0 && (img_state < 20 || img_state > 27))
                 {

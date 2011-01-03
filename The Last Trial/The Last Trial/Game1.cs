@@ -51,7 +51,7 @@ namespace The_Last_Trial
             map1.S_Texture(Content.Load<Texture2D>("map/1"));
             map_first.S_Texture(Content.Load<Texture2D>("map/2"));
 
-            // backsound.Load(Content.Load<Song>("music/Kalimba"));
+            backsound.Load(Content.Load<Song>("music/Kalimba"));
 
             map1.S_Position(new Vector2(0, 0));
             map_first.S_Position(new Vector2(0, 737));
@@ -82,6 +82,7 @@ namespace The_Last_Trial
                 Keys.W, Keys.A,
                 Keyboard.GetState());
             monster.F_Deplacer(gameTime);
+            monster.F_Collision_Joueur(perso1.G_Rectangle());
 
             // MODIFIE LES SPRITES
             perso1.F_UpdateImage(gameTime, 0.1);
@@ -100,6 +101,21 @@ namespace The_Last_Trial
             // COLISIONS PERSO - OBJETS
             Rectangle monster_rect = new Rectangle((int)monster.G_Position().X + (monster.G_Texture().Width) / 2,
                 (int)monster.G_Position().Y, 5, monster.G_Texture().Height);
+
+            if ((monster.F_Collision_Objets(perso1.G_Rectangle())))
+            {
+                if (perso1.F_Attaque(Keys.Space, Keyboard.GetState()))
+                {
+                    if (!monster.F_IsAlive(0))
+                    {
+                        monster.S_Texture(Content.Load<Texture2D>("mob/1/3"));
+                    }
+                    else if (!monster.F_IsAlive(10))
+                    {
+                        monster.S_Texture(Content.Load<Texture2D>("mob/1/2"));
+                    }
+                }
+            }
 
             perso1.F_Collision_Objets(monster_rect);
             perso2.F_Collision_Objets(monster_rect);

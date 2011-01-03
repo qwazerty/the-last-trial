@@ -27,8 +27,8 @@ namespace The_Last_Trial
         Vector2 spawn;
         Random random = new Random();
         int rand;
-        /*Rectangle spawnRectangle = new Rectangle((int)spawn.X - 100, (int)spawn.Y - 100, 200, 200);
-        Rectangle persoRectangle = new Rectangle((int)position.X, (int)position.Y, objet.Width, objet.Height);*/
+        int life;
+        //Rectangle spawnRectangle = new Rectangle((int)spawn.X - 100, (int)spawn.Y - 100, 200, 200);
         
 
         // CONSTRUCTEUR
@@ -39,6 +39,7 @@ namespace The_Last_Trial
             img_state = 40;
             speed = new Vector2(0.0f, 0.0f);
             tempsActuel = 0;
+            life = 15;
             //collision_state = 0;
             for (int i = 0; i < taille; i++)
             {
@@ -69,7 +70,10 @@ namespace The_Last_Trial
             /*persoRectangle += speed;
             if (!persoRectangle.Intersects(spawnRectangle))
             {*/
+            if (life > 0)
+            {
                 position += speed * time;
+            }
             //}
         }
 
@@ -77,28 +81,39 @@ namespace The_Last_Trial
          * METHODE : FONCTION *
          **********************/
 
-        public void F_Collision_Objets(Rectangle item)
+        public bool F_Collision_Objets(Rectangle item)
         {
-            /*
-            Rectangle persoRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
+            Rectangle mobRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
+            Console.WriteLine(life);
+            return item.Intersects(mobRectangle);
 
-            if (persoRectangle.Intersects(item) && !collision[collision_state])
+            //if (persoRectangle.Intersects(item) && !collision[collision_state])
+            //{
+            //    collision[collision_state] = true;
+            //    speed = Vector2.Multiply(speed, -1.0f);
+            //}
+            //else if (!(persoRectangle.Intersects(item)) && collision[collision_state])
+            //{
+            //    speed = Vector2.Zero;
+            //    collision[collision_state] = false;
+            //}
+
+            //collision_state++;
+
+            //if (collision_state == taille)
+            //{
+            //    collision_state = 0;
+            //}
+        }
+
+        public bool F_IsAlive(int life2)
+        {
+            life--;
+            if (life <= life2)
             {
-                collision[collision_state] = true;
-                speed = Vector2.Multiply(speed, -1.0f);
+                return false;
             }
-            else if (!(persoRectangle.Intersects(item)) && collision[collision_state])
-            {
-                speed = Vector2.Zero;
-                collision[collision_state] = false;
-            }
-
-            collision_state++;
-
-            if (collision_state == taille)
-            {
-                collision_state = 0;
-            }*/
+            return true;
         }
 
         public void F_Deplacer(GameTime gameTime)
@@ -141,6 +156,14 @@ namespace The_Last_Trial
                 
             }
 
+        }
+
+        public void F_Collision_Joueur(Rectangle perso)
+        {
+            if (F_Collision_Objets(perso))
+            {
+                speed = Vector2.Zero;
+            }
         }
 
         public void F_SpawnCollision()
