@@ -39,7 +39,7 @@ namespace The_Last_Trial
             img_state = 40;
             speed = new Vector2(0.0f, 0.0f);
             tempsActuel = 0;
-            life = 15;
+            life = 30;
             //collision_state = 0;
             for (int i = 0; i < taille; i++)
             {
@@ -61,6 +61,11 @@ namespace The_Last_Trial
             return speed;
         }
 
+        public int G_Life()
+        {
+            return life;
+        }
+
         /*****************
          * METHODE : SET *
          *****************/
@@ -77,33 +82,70 @@ namespace The_Last_Trial
             //}
         }
 
+        public void S_Resu()
+        {
+            life = 30;
+        }
+
         /**********************
          * METHODE : FONCTION *
          **********************/
 
+        public void F_CollisionEcran(GraphicsDeviceManager graphics)
+        {
+
+            int MaxX = graphics.GraphicsDevice.Viewport.Width - objet.Width;
+            int MinX = 0;
+            int MaxY = graphics.GraphicsDevice.Viewport.Height - objet.Height;
+            int MinY = 0;
+
+            if (position.X > MaxX)
+            {
+                speed.X = 0;
+                position.X = MaxX;
+            }
+
+            else if (position.X < MinX)
+            {
+                speed.X = 0;
+                position.X = MinX;
+            }
+
+            if (position.Y > MaxY)
+            {
+                speed.Y = 0;
+                position.Y = MaxY;
+            }
+
+            else if (position.Y < MinY)
+            {
+                speed.Y = 0;
+                position.Y = MinY;
+            }
+        }
+
         public bool F_Collision_Objets(Rectangle item)
         {
-            Rectangle mobRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
-            Console.WriteLine(life);
-            return item.Intersects(mobRectangle);
+                Rectangle mobRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
+                return item.Intersects(mobRectangle);
 
-            //if (persoRectangle.Intersects(item) && !collision[collision_state])
-            //{
-            //    collision[collision_state] = true;
-            //    speed = Vector2.Multiply(speed, -1.0f);
-            //}
-            //else if (!(persoRectangle.Intersects(item)) && collision[collision_state])
-            //{
-            //    speed = Vector2.Zero;
-            //    collision[collision_state] = false;
-            //}
+                //if (persoRectangle.Intersects(item) && !collision[collision_state])
+                //{
+                //    collision[collision_state] = true;
+                //    speed = Vector2.Multiply(speed, -1.0f);
+                //}
+                //else if (!(persoRectangle.Intersects(item)) && collision[collision_state])
+                //{
+                //    speed = Vector2.Zero;
+                //    collision[collision_state] = false;
+                //}
 
-            //collision_state++;
+                //collision_state++;
 
-            //if (collision_state == taille)
-            //{
-            //    collision_state = 0;
-            //}
+                //if (collision_state == taille)
+                //{
+                //    collision_state = 0;
+                //}
         }
 
         public bool F_IsAlive(int life2)

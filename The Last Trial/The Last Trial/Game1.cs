@@ -28,12 +28,14 @@ namespace The_Last_Trial
         Objet map1 = new Objet();
         Objet map_first = new Objet();
         Son backsound = new Son();
+        KeyboardState new_state = Keyboard.GetState();
+        KeyboardState old_state = Keyboard.GetState();
        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            this.graphics.PreferredBackBufferWidth = 983;
-            this.graphics.PreferredBackBufferHeight = 864;
+            this.graphics.PreferredBackBufferWidth = 900;
+            this.graphics.PreferredBackBufferHeight = 800;
             Content.RootDirectory = "Content";
         }
 
@@ -46,12 +48,12 @@ namespace The_Last_Trial
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             perso1.S_Texture(Content.Load<Texture2D>("perso/1/" + (perso1.G_ImgState())));
-            perso2.S_Texture(Content.Load<Texture2D>("perso/3/" + (perso2.G_ImgState())));
+            perso2.S_Texture(Content.Load<Texture2D>("perso/1/" + (perso2.G_ImgState())));
             monster.S_Texture(Content.Load<Texture2D>("mob/1/40"));
             map1.S_Texture(Content.Load<Texture2D>("map/1"));
             map_first.S_Texture(Content.Load<Texture2D>("map/2"));
 
-            backsound.Load(Content.Load<Song>("music/Kalimba"));
+            //backsound.Load(Content.Load<Song>("music/Kalimba"));
 
             map1.S_Position(new Vector2(0, 0));
             map_first.S_Position(new Vector2(0, 737));
@@ -60,7 +62,6 @@ namespace The_Last_Trial
 
         protected override void UnloadContent()
         {
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -76,13 +77,28 @@ namespace The_Last_Trial
             perso1.F_Deplacer(
                 Keys.Down, Keys.Right, 
                 Keys.Up, Keys.Left,
+                Keys.B,
                 Keyboard.GetState());
             perso2.F_Deplacer(
                 Keys.S, Keys.D,
                 Keys.W, Keys.A,
+                Keys.E,
                 Keyboard.GetState());
             monster.F_Deplacer(gameTime);
             monster.F_Collision_Joueur(perso1.G_Rectangle());
+            monster.F_Collision_Joueur(perso2.G_Rectangle());
+
+            //RESU LE MONSTRE
+            new_state = Keyboard.GetState();
+            if (new_state.IsKeyDown(Keys.U))
+            {
+                if (!old_state.IsKeyDown(Keys.U))
+                {
+                    monster.S_Resu();
+                    monster.S_Texture(Content.Load<Texture2D>("mob/1/40"));
+                }
+            }
+            old_state = new_state;
 
             // MODIFIE LES SPRITES
             perso1.F_UpdateImage(gameTime, 0.1);
@@ -96,7 +112,7 @@ namespace The_Last_Trial
             // TEST DE COLISIONS ECRAN
             perso1.F_CollisionEcran(graphics);
             perso2.F_CollisionEcran(graphics);
-            //monster.F_CollisionEcran(graphics);
+            monster.F_CollisionEcran(graphics);
 
             // COLISIONS PERSO - OBJETS
             Rectangle monster_rect = new Rectangle((int)monster.G_Position().X + (monster.G_Texture().Width) / 2,
@@ -110,15 +126,32 @@ namespace The_Last_Trial
                     {
                         monster.S_Texture(Content.Load<Texture2D>("mob/1/3"));
                     }
-                    else if (!monster.F_IsAlive(10))
+                    else if (!monster.F_IsAlive(15))
+                    {
+                        monster.S_Texture(Content.Load<Texture2D>("mob/1/2"));
+                    }
+                }
+            }
+            if ((monster.F_Collision_Objets(perso2.G_Rectangle())))
+            {
+                if (perso2.F_Attaque(Keys.Q, Keyboard.GetState()))
+                {
+                    if (!monster.F_IsAlive(0))
+                    {
+                        monster.S_Texture(Content.Load<Texture2D>("mob/1/3"));
+                    }
+                    else if (!monster.F_IsAlive(15))
                     {
                         monster.S_Texture(Content.Load<Texture2D>("mob/1/2"));
                     }
                 }
             }
 
-            perso1.F_Collision_Objets(monster_rect);
-            perso2.F_Collision_Objets(monster_rect);
+            if (monster.G_Life() > 0)
+            {
+                perso1.F_Collision_Objets(monster_rect);
+                perso2.F_Collision_Objets(monster_rect);
+            }
 
             perso1.F_Collision_Objets(r_mur_haut);
             perso2.F_Collision_Objets(r_mur_haut);
@@ -128,7 +161,7 @@ namespace The_Last_Trial
 
             // UPDATE L'IMAGE DU PERSO
             perso1.S_Texture(Content.Load<Texture2D>("perso/1/" + perso1.G_ImgState()));
-            perso2.S_Texture(Content.Load<Texture2D>("perso/3/" + perso2.G_ImgState()));
+            perso2.S_Texture(Content.Load<Texture2D>("perso/1/" + perso2.G_ImgState()));
 
             backsound.UpdateSon();
 

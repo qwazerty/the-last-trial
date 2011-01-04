@@ -21,6 +21,7 @@ namespace The_Last_Trial
         // DECLARATION VARIABLES
         int img_state;
         Vector2 speed;
+        Vector2 oldspeed;
         bool[] collision = new bool[taille];
         int collision_state;
         KeyboardState old_state;
@@ -134,6 +135,7 @@ namespace The_Last_Trial
         public void F_Deplacer(
             Keys bas, Keys droite, 
             Keys haut, Keys gauche,
+            Keys boost,
             KeyboardState new_state)
         {
             // DROITE
@@ -201,25 +203,25 @@ namespace The_Last_Trial
             }
 
             // BOOST
-            /*if (newState.IsKeyDown(Keys.B))
+            if (new_state.IsKeyDown(boost))
             {
-                if (!oldState.IsKeyDown(Keys.B))
+                if (!old_state.IsKeyDown(boost))
                 {
-                    oldSpeed = spriteSpeed;
-                    spriteSpeed = Vector2.Multiply(spriteSpeed, 2.0f);
+                    oldspeed = speed;
+                    speed = Vector2.Multiply(speed, 2.0f);
                 }
             }
-            else if (oldState.IsKeyDown(Keys.B))
+            else if (old_state.IsKeyDown(boost))
             {
-                if (spriteSpeed.X == 0 && spriteSpeed.Y == 0)
+                if (speed.X == 0 && speed.Y == 0)
                 {
-                    spriteSpeed = Vector2.Zero;
+                    speed = Vector2.Zero;
                 }
                 else
                 {
-                    spriteSpeed = oldSpeed;
+                    speed = oldspeed;
                 }
-            }*/
+            }
 
             old_state = new_state;
         }
