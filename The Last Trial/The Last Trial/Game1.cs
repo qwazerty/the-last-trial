@@ -68,6 +68,7 @@ namespace The_Last_Trial
 
         protected override void UnloadContent()
         {
+		
         }
 
         protected override void Update(GameTime gameTime)
