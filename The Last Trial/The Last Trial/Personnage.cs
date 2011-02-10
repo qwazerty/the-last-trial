@@ -26,10 +26,20 @@ namespace The_Last_Trial
         int collision_state;
         KeyboardState old_state;
         double tempsActuel;
+        Keys[] key;
+        /** KEYS STATES **
+         * 0 : BAS
+         * 1 : DROITE
+         * 2 : HAUT
+         * 3 : GAUCHE
+         * 4 : BOOST
+         * 5 : ATTAQUE
+         ***************/
 
         // CONSTRUCTEUR
-        public Personnage()
+        public Personnage(Keys[] keys)
         {
+            key = keys;
             position = new Vector2(0.0f, 500.0f);
             img_state = 40;
             speed = new Vector2(0.0f, 0.0f);
@@ -62,6 +72,11 @@ namespace The_Last_Trial
             return persoRectangle;
         }
 
+        public Keys[] G_Keys()
+        {
+            return key;
+        }
+
         /*****************
          * METHODE : SET *
          *****************/
@@ -74,6 +89,16 @@ namespace The_Last_Trial
         /**********************
          * METHODE : FONCTION *
          **********************/
+
+        public void F_Load(ContentManager content)
+        {
+            base.objet = content.Load<Texture2D>("perso/1/" + img_state);
+        }
+
+        public void F_Draw(SpriteBatch sb)
+        {
+            sb.Draw(base.objet, base.position, Color.White);
+        }
 
         public void F_CollisionEcran(GraphicsDeviceManager graphics)
         {
@@ -132,21 +157,17 @@ namespace The_Last_Trial
             }
         }
 
-        public void F_Deplacer(
-            Keys bas, Keys droite, 
-            Keys haut, Keys gauche,
-            Keys boost,
-            KeyboardState new_state)
+        public void F_Deplacer(KeyboardState new_state)
         {
             // DROITE
-            if (new_state.IsKeyDown(droite))
+            if (new_state.IsKeyDown(key[1]))
             {
-                if (!old_state.IsKeyDown(droite))
+                if (!old_state.IsKeyDown(key[1]))
                 {
                     speed.X = 150.0f;
                 }
             }
-            else if (old_state.IsKeyDown(droite))
+            else if (old_state.IsKeyDown(key[1]))
             {
                 if (speed.X > 0)
                 {
@@ -155,14 +176,14 @@ namespace The_Last_Trial
             }
 
             // GAUCHE
-            if (new_state.IsKeyDown(gauche))
+            if (new_state.IsKeyDown(key[3]))
             {
-                if (!old_state.IsKeyDown(gauche))
+                if (!old_state.IsKeyDown(key[3]))
                 {
                     speed.X = -150.0f;
                 }
             }
-            else if (old_state.IsKeyDown(gauche))
+            else if (old_state.IsKeyDown(key[3]))
             {
                 if (speed.X < 0)
                 {
@@ -171,14 +192,14 @@ namespace The_Last_Trial
             }
 
             // HAUT
-            if (new_state.IsKeyDown(haut))
+            if (new_state.IsKeyDown(key[2]))
             {
-                if (!old_state.IsKeyDown(haut))
+                if (!old_state.IsKeyDown(key[2]))
                 {
                     speed.Y = -80.0f;
                 }
             }
-            else if (old_state.IsKeyDown(haut))
+            else if (old_state.IsKeyDown(key[2]))
             {
                 if (speed.Y < 0)
                 {
@@ -187,14 +208,14 @@ namespace The_Last_Trial
             }
 
             // BAS
-            if (new_state.IsKeyDown(bas))
+            if (new_state.IsKeyDown(key[0]))
             {
-                if (!old_state.IsKeyDown(bas))
+                if (!old_state.IsKeyDown(key[0]))
                 {
                     speed.Y = 80.0f;
                 }
             }
-            else if (old_state.IsKeyDown(bas))
+            else if (old_state.IsKeyDown(key[0]))
             {
                 if (speed.Y > 0)
                 {
@@ -203,15 +224,15 @@ namespace The_Last_Trial
             }
 
             // BOOST
-            if (new_state.IsKeyDown(boost))
+            if (new_state.IsKeyDown(key[4]))
             {
-                if (!old_state.IsKeyDown(boost))
+                if (!old_state.IsKeyDown(key[4]))
                 {
                     oldspeed = speed;
                     speed = Vector2.Multiply(speed, 2.0f);
                 }
             }
-            else if (old_state.IsKeyDown(boost))
+            else if (old_state.IsKeyDown(key[4]))
             {
                 if (speed.X == 0 && speed.Y == 0)
                 {
@@ -226,9 +247,9 @@ namespace The_Last_Trial
             old_state = new_state;
         }
 
-        public bool F_Attaque(Keys attaque, KeyboardState new_state)
+        public bool F_Attaque(KeyboardState new_state)
         {
-            if (new_state.IsKeyDown(attaque))
+            if (new_state.IsKeyDown(key[5]))
             {
                     return true;
             }
@@ -326,5 +347,6 @@ namespace The_Last_Trial
 
 
         }
+
     }
 }

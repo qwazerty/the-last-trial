@@ -19,28 +19,28 @@ namespace The_Last_Trial
         const int taille = 3;
 
         // DECLARATION VARIABLES
-        int img_state;
+        int imgState;
         Vector2 speed;
         bool[] collision = new bool[taille];
-        //int collision_state;
         double tempsActuel;
         Vector2 spawn;
-        Random random = new Random();
+        private Random random;
         int rand;
         int life;
+        Personnage target = null;
+        Rectangle interact;
         //Rectangle spawnRectangle = new Rectangle((int)spawn.X - 100, (int)spawn.Y - 100, 200, 200);
-        
 
         // CONSTRUCTEUR
         public Monstre(Vector2 spawn_get)
         {
             spawn = spawn_get;
             position = spawn;
-            img_state = 40;
+            imgState = 40;
             speed = new Vector2(0.0f, 0.0f);
             tempsActuel = 0;
             life = 30;
-            //collision_state = 0;
+            random = new Random();
             for (int i = 0; i < taille; i++)
             {
                 collision[i] = false;
@@ -51,19 +51,19 @@ namespace The_Last_Trial
          * METHODE : GET *
          *****************/
 
-        public int G_ImgState()
-        {
-            return img_state;
-        }
-
         public Vector2 G_Speed()
         {
             return speed;
         }
 
-        public int G_Life()
+        public bool G_Life()
         {
-            return life;
+            return life > 0;
+        }
+
+        public Rectangle G_Rect()
+        {
+            return interact;
         }
 
         /*****************
@@ -85,11 +85,22 @@ namespace The_Last_Trial
         public void S_Resu()
         {
             life = 30;
+            imgState = 40;
         }
 
         /**********************
          * METHODE : FONCTION *
          **********************/
+
+        public void F_Load(ContentManager content)
+        {
+            base.objet = content.Load<Texture2D>("mob/1/" + imgState);
+        }
+
+        public void F_Draw(SpriteBatch sb)
+        {
+            sb.Draw(base.objet, base.position, Color.White);
+        }
 
         public void F_CollisionEcran(GraphicsDeviceManager graphics)
         {
@@ -158,6 +169,19 @@ namespace The_Last_Trial
             return true;
         }
 
+        public void F_IA(GameTime gameTime)
+        {
+            if (target == null || F_DetectPlayer())
+            { 
+                
+            }
+        }
+
+        public bool F_DetectPlayer()
+        {
+            return false;
+        }
+
         public void F_Deplacer(GameTime gameTime)
         {
             double temps = gameTime.TotalGameTime.TotalSeconds;
@@ -198,6 +222,8 @@ namespace The_Last_Trial
                 
             }
 
+            interact = new Rectangle((int)position.X + (base.objet.Width) / 2,
+                (int)position.Y, 5, base.objet.Height);
         }
 
         public void F_Collision_Joueur(Rectangle perso)
@@ -211,6 +237,23 @@ namespace The_Last_Trial
         public void F_SpawnCollision()
         { 
             
+        }
+
+        public int F_UpdateState(Personnage p)
+        {
+            if (F_Collision_Objets(p.G_Rectangle()))
+            {
+                if (p.F_Attaque(Keyboard.GetState()))
+                {
+                    if (!F_IsAlive(0))
+                        imgState = 3;
+
+                    else if (!F_IsAlive(15))
+                        imgState = 2;
+                }
+            }
+
+            return imgState;
         }
 
         public void F_UpdateImage(GameTime gameTime, double delai)

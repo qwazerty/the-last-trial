@@ -16,8 +16,8 @@ namespace The_Last_Trial
     public class Objet
     {
         // DECLARATION VARIABLES
-        public Texture2D objet;
-        public Vector2 position;
+        protected Texture2D objet;
+        protected Vector2 position;
 
         // CONSTRUCTEUR
         public Objet()

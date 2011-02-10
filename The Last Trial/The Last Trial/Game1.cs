@@ -18,11 +18,12 @@ namespace The_Last_Trial
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        const int nbPlayer = 2;
+        const int nbMob = 1;
 
         // Declaration Objets
-        Personnage perso1 = new Personnage();
-        Personnage perso2 = new Personnage();
-        Monstre monster = new Monstre(new Vector2(500.0f, 500.0f));
+        Personnage[] perso = new Personnage[nbPlayer];
+        Monstre[] monster = new Monstre[nbMob];
         Rectangle r_mur_haut = new Rectangle(0, 260, 979, 27);
         Rectangle r_mur_bas = new Rectangle(0, 800, 986, 128);
         Objet map1 = new Objet();
@@ -30,6 +31,7 @@ namespace The_Last_Trial
         Son backsound = new Son();
         KeyboardState new_state = Keyboard.GetState();
         KeyboardState old_state = Keyboard.GetState();
+        
        
         public Game1()
         {
@@ -47,17 +49,21 @@ namespace The_Last_Trial
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            perso1.S_Texture(Content.Load<Texture2D>("perso/1/" + (perso1.G_ImgState())));
-            perso2.S_Texture(Content.Load<Texture2D>("perso/1/" + (perso2.G_ImgState())));
-            monster.S_Texture(Content.Load<Texture2D>("mob/1/40"));
+
+            perso[0] = new Personnage(new Keys[] {Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.B, Keys.Space});
+            perso[1] = new Personnage(new Keys[] {Keys.S,    Keys.D,     Keys.W,  Keys.A,    Keys.E, Keys.F });
+            monster[0] = new Monstre(new Vector2(500f, 500f));
+
+            LoadPlayer();
+            LoadMonster();
+            
             map1.S_Texture(Content.Load<Texture2D>("map/1"));
             map_first.S_Texture(Content.Load<Texture2D>("map/2"));
 
-            //backsound.Load(Content.Load<Song>("music/Kalimba"));
-
             map1.S_Position(new Vector2(0, 0));
             map_first.S_Position(new Vector2(0, 737));
-            monster.S_Position(new Vector2(500, 500));
+
+            //backsound.Load(Content.Load<Song>("music/Kalimba"));
         }
 
         protected override void UnloadContent()
@@ -73,99 +79,77 @@ namespace The_Last_Trial
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            // DEPLACEMENT
-            perso1.F_Deplacer(
-                Keys.Down, Keys.Right, 
-                Keys.Up, Keys.Left,
-                Keys.B,
-                Keyboard.GetState());
-            perso2.F_Deplacer(
-                Keys.S, Keys.D,
-                Keys.W, Keys.A,
-                Keys.E,
-                Keyboard.GetState());
-            monster.F_Deplacer(gameTime);
-            monster.F_Collision_Joueur(perso1.G_Rectangle());
-            monster.F_Collision_Joueur(perso2.G_Rectangle());
+            UpdatePlayer(gameTime);
+            UpdateMonster(gameTime);
+            UpdateTest();           
 
+            backsound.UpdateSon();
+
+            base.Update(gameTime);
+        }
+
+        private void LoadPlayer()
+        {
+            for (int i = 0; i < nbPlayer; i++)
+            {
+                perso[i].F_Load(Content);
+            }
+        }
+
+        private void LoadMonster()
+        {
+            for (int i = 0; i < nbMob; i++)
+            {
+                monster[i].F_Load(Content);
+            }
+        }
+
+        private void UpdatePlayer(GameTime gameTime)
+        {
+            for (int i = 0; i < nbPlayer; i++)
+            {
+                perso[i].F_Deplacer(Keyboard.GetState());
+                perso[i].F_UpdateImage(gameTime, 0.1);
+                perso[i].S_Deplacement((float)gameTime.ElapsedGameTime.TotalSeconds);
+                perso[i].F_CollisionEcran(graphics);
+                perso[i].F_Collision_Objets(r_mur_haut);
+                perso[i].F_Collision_Objets(r_mur_bas);
+                perso[i].F_Load(Content);
+            }
+        }
+
+        private void UpdateMonster(GameTime gameTime)
+        {
+            // MONSTER
+            for (int i = 0; i < nbMob; i++)
+            {
+                // PLAYER
+                for (int j = 0; j < nbPlayer; j++)
+                {
+                    monster[i].F_Collision_Joueur(perso[j].G_Rectangle());
+                    monster[i].S_Texture(Content.Load<Texture2D>("mob/1/" + monster[i].F_UpdateState(perso[j])));
+                    if (monster[i].G_Life())
+                        perso[j].F_Collision_Objets(monster[i].G_Rect());
+                }
+
+                monster[i].F_Deplacer(gameTime);
+                monster[i].S_Deplacement((float)gameTime.ElapsedGameTime.TotalSeconds);
+                monster[i].F_CollisionEcran(graphics);
+            }
+        }
+
+        private void UpdateTest()
+        {
             //RESU LE MONSTRE
             new_state = Keyboard.GetState();
             if (new_state.IsKeyDown(Keys.U))
             {
                 if (!old_state.IsKeyDown(Keys.U))
                 {
-                    monster.S_Resu();
-                    monster.S_Texture(Content.Load<Texture2D>("mob/1/40"));
+                    monster[0].S_Resu();
                 }
             }
             old_state = new_state;
-
-            // MODIFIE LES SPRITES
-            perso1.F_UpdateImage(gameTime, 0.1);
-            perso2.F_UpdateImage(gameTime, 0.1);
-
-            // DEPLACEMENT DU PERSO
-            perso1.S_Deplacement((float)gameTime.ElapsedGameTime.TotalSeconds);
-            perso2.S_Deplacement((float)gameTime.ElapsedGameTime.TotalSeconds);
-            monster.S_Deplacement((float)gameTime.ElapsedGameTime.TotalSeconds);
-
-            // TEST DE COLISIONS ECRAN
-            perso1.F_CollisionEcran(graphics);
-            perso2.F_CollisionEcran(graphics);
-            monster.F_CollisionEcran(graphics);
-
-            // COLISIONS PERSO - OBJETS
-            Rectangle monster_rect = new Rectangle((int)monster.G_Position().X + (monster.G_Texture().Width) / 2,
-                (int)monster.G_Position().Y, 5, monster.G_Texture().Height);
-
-            if ((monster.F_Collision_Objets(perso1.G_Rectangle())))
-            {
-                if (perso1.F_Attaque(Keys.Space, Keyboard.GetState()))
-                {
-                    if (!monster.F_IsAlive(0))
-                    {
-                        monster.S_Texture(Content.Load<Texture2D>("mob/1/3"));
-                    }
-                    else if (!monster.F_IsAlive(15))
-                    {
-                        monster.S_Texture(Content.Load<Texture2D>("mob/1/2"));
-                    }
-                }
-            }
-            if ((monster.F_Collision_Objets(perso2.G_Rectangle())))
-            {
-                if (perso2.F_Attaque(Keys.Q, Keyboard.GetState()))
-                {
-                    if (!monster.F_IsAlive(0))
-                    {
-                        monster.S_Texture(Content.Load<Texture2D>("mob/1/3"));
-                    }
-                    else if (!monster.F_IsAlive(15))
-                    {
-                        monster.S_Texture(Content.Load<Texture2D>("mob/1/2"));
-                    }
-                }
-            }
-
-            if (monster.G_Life() > 0)
-            {
-                perso1.F_Collision_Objets(monster_rect);
-                perso2.F_Collision_Objets(monster_rect);
-            }
-
-            perso1.F_Collision_Objets(r_mur_haut);
-            perso2.F_Collision_Objets(r_mur_haut);
-
-            perso1.F_Collision_Objets(r_mur_bas);
-            perso2.F_Collision_Objets(r_mur_bas);
-
-            // UPDATE L'IMAGE DU PERSO
-            perso1.S_Texture(Content.Load<Texture2D>("perso/1/" + perso1.G_ImgState()));
-            perso2.S_Texture(Content.Load<Texture2D>("perso/1/" + perso2.G_ImgState()));
-
-            backsound.UpdateSon();
-
-            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -175,14 +159,17 @@ namespace The_Last_Trial
             // DESSINE LES SPRITES
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
             spriteBatch.Draw(map1.G_Texture(), map1.G_Position(), Color.White);
-            spriteBatch.Draw(monster.G_Texture(), monster.G_Position(), Color.White);
-            spriteBatch.Draw(perso1.G_Texture(), perso1.G_Position(), Color.White);
-            spriteBatch.Draw(perso2.G_Texture(), perso2.G_Position(), Color.White);
+
+            for (int i = 0; i < nbMob; i++)
+                monster[i].F_Draw(spriteBatch);
+
+            for (int i = 0; i < nbPlayer; i++)
+                perso[i].F_Draw(spriteBatch);
+
             spriteBatch.Draw(map_first.G_Texture(), map_first.G_Position(), Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
-
     }
 }
