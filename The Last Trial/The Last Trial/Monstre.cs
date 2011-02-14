@@ -21,7 +21,7 @@ namespace The_Last_Trial
         private double tempsRandom;
         private Random random;
         private Personnage target = null;
-        private Rectangle interact, spawn;
+        private Rectangle spawn;
 
         // CONSTRUCTEUR
         public Monstre(Vector2 init) : base()
@@ -39,6 +39,7 @@ namespace The_Last_Trial
             imgState = 40;
             position.X = spawn.X;
             position.Y = spawn.Y;
+            target = null;
         }
 
         // STATIC
@@ -121,7 +122,7 @@ namespace The_Last_Trial
 
         public bool F_Collision_Objets(Rectangle item)
         {
-             return item.Intersects(new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3));
+             return item.Intersects(new Rectangle((int)position.X, (int)position.Y + (objet.Height) / 2, objet.Width, objet.Height * 2 / 3));
         }
 
         public bool F_IsAlive(int life2)
@@ -140,50 +141,73 @@ namespace The_Last_Trial
             {
                 if (target == null)
                 {
-                    foreach (Personnage p in perso)
-                    {
-                        if (F_DetectPlayer(p))
-                        {
-                            target = p;
-                        }
-                    }
-                    F_RandomSpeed(gameTime);
+                    target = F_DetectPlayer(perso);
+                    F_RandomSpeed(gameTime); 
                     
+                }
+                else
+                {
+                    F_FollowPlayer();
                 }
 
                 //==\\
-                foreach (Personnage p in perso) 
-                    p.F_Collision_Objets(this.interact, gameTime);
+                foreach (Personnage p in perso)
+                {
+                    p.F_Collision_Objets(new Rectangle((int)position.X + (base.objet.Width) / 2,
+                         (int)position.Y + (objet.Height) * 2 / 3, 6, base.objet.Height / 3), gameTime);
+                }
+                
+                /*interact = ;*/
             }
         }
 
-        private bool F_DetectPlayer(Personnage p)
+        private void F_FollowPlayer()
         {
-            return false;
+            if (target.G_Position().X < position.X)
+                speed.X = -30f;
+            else if (target.G_Position().X > position.X)
+                speed.X = 30f;
+
+            if (target.G_Position().Y < position.Y)
+                speed.Y = -30f;
+            else if (target.G_Position().Y > position.Y)
+                speed.Y = 30f;
+
+        }
+
+        private Personnage F_DetectPlayer(Personnage[] perso)
+        {
+            Personnage p_ = null;
+            foreach (Personnage p in perso)
+            {
+                if (p.G_Rectangle().Intersects(new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height)))
+                    p_ = p;
+            }
+            return p_;
         }
 
         private void F_RandomSpeed(GameTime gameTime)
         {
             double temps = gameTime.TotalGameTime.TotalSeconds;
 
-            if (tempsRandom < temps - 1.5)
+            if (tempsRandom < temps - 0.5)
             {
                 rand = random.Next(1, 6);
                 // DROITE
                 if (rand == 2)
-                    speed = new Vector2(30.0f, 0.0f);
+                    speed = new Vector2(30f, 0f);
 
                 // GAUCHE
                 if (rand == 4)
-                    speed = new Vector2(-30.0f, 0.0f);
+                    speed = new Vector2(-30f, 0f);
 
                 // HAUT
                 if (rand == 3)
-                    speed = new Vector2(0.0f, -30.0f);
+                    speed = new Vector2(0f, -30f);
 
                 // BAS
                 if (rand == 1)
-                    speed = new Vector2(0.0f, 30.0f);
+                    speed = new Vector2(0f, 30f);
 
                 // STOP
                 if (rand == 5)
@@ -197,8 +221,7 @@ namespace The_Last_Trial
                     speed *= -1;
             }
 
-            interact = new Rectangle((int)position.X + (base.objet.Width) / 2,
-                (int)position.Y, 6, base.objet.Height);
+            
         }
 
         public void F_Collision_Joueur(Personnage[] perso)
@@ -207,6 +230,7 @@ namespace The_Last_Trial
             {
                 if (F_Collision_Objets(p.G_Rectangle()))
                 {
+                    target = p;
                     speed = Vector2.Zero;
                 }
             }
