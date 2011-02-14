@@ -20,39 +20,38 @@ namespace The_Last_Trial
         protected Vector2 position;
 
         // CONSTRUCTEUR
-        public Objet()
-        {
+        public Objet() { }
 
+        // METHODE GET
+        public Texture2D G_Texture() { return objet; }
+        public Vector2 G_Position() { return position; }
+
+        // METHODE SET
+        public void S_Texture(Texture2D text) { this.objet = text; }
+        public void S_Position(Vector2 pos) { this.position = pos; }        
+    }
+
+    public abstract class Mob : Objet
+    {
+        protected int imgState, life;
+        protected Vector2 speed;
+        protected double tempsImage, tempsAttaque;
+
+        protected Mob()
+        {
+            imgState = 40;
+            speed = new Vector2(0.0f, 0.0f);
+            tempsImage = 0;
+            tempsAttaque = 0;
+            /*collision = new bool[taille];
+            for (int i = 0; i < taille; i++ )
+                collision[i] = false;*/
         }
 
-        /*****************
-         * METHODE : GET *
-         *****************/
-
-        public Texture2D G_Texture()
+        protected void S_Deplacement(GameTime gt)
         {
-            return objet;
+            if (life > 0 && speed != Vector2.Zero)
+                base.position += speed * (float)gt.ElapsedGameTime.TotalSeconds;
         }
-
-        public Vector2 G_Position()
-        {
-            return position;
-        }
-
-        /*****************
-         * METHODE : SET *
-         *****************/
-
-        public void S_Texture(Texture2D text)
-        {
-            objet = text;
-        }
-        
-        public void S_Position(Vector2 pos)
-        {
-            position = pos;
-        }
-
-        
     }
 }

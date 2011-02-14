@@ -16,8 +16,8 @@ namespace The_Last_Trial
 {
     class Son
     {
-        Song back_sound;
-        bool songstart = false;
+        private Song backSound;
+        private bool songstart = false;
 
         public Son()
         {
@@ -26,18 +26,16 @@ namespace The_Last_Trial
 
         public void UpdateSon()
         {
-            // MUSIQUE DE FOND
             if (!songstart)
             {
                 //MediaPlayer.Play(back_sound);
-                // BUG COMPILATION
                 songstart = true;
             }
         }
 
         public void Load(Song content)
         {
-            back_sound = content;
+            backSound = content;
         }
     }
 }

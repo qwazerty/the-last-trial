@@ -87,6 +87,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Map.cs" />
     <Compile Include="Monstre.cs" />
     <Compile Include="Objet.cs">
       <SubType>Code</SubType>

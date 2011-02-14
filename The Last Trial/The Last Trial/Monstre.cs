@@ -13,79 +13,53 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace The_Last_Trial
 {
-    public class Monstre : Objet
+    public class Monstre : Mob
     {
-        // Nombre de collision sur la map
-        const int taille = 3;
 
         // DECLARATION VARIABLES
-        int imgState;
-        Vector2 speed;
-        bool[] collision = new bool[taille];
-        double tempsActuel;
-        Vector2 spawn;
+        private int rand;
+        private double tempsRandom;
         private Random random;
-        int rand;
-        int life;
-        Personnage target = null;
-        Rectangle interact;
-        //Rectangle spawnRectangle = new Rectangle((int)spawn.X - 100, (int)spawn.Y - 100, 200, 200);
+        private Personnage target = null;
+        private Rectangle interact, spawn;
 
         // CONSTRUCTEUR
-        public Monstre(Vector2 spawn_get)
+        public Monstre(Vector2 init) : base()
         {
-            spawn = spawn_get;
-            position = spawn;
-            imgState = 40;
-            speed = new Vector2(0.0f, 0.0f);
-            tempsActuel = 0;
-            life = 30;
+            spawn = new Rectangle((int)init.X - 50, (int)init.Y - 50, 100, 100);
+            position = init;
+            tempsRandom = 0;
+            life = 100;
             random = new Random();
-            for (int i = 0; i < taille; i++)
-            {
-                collision[i] = false;
-            }
-        }
-
-        /*****************
-         * METHODE : GET *
-         *****************/
-
-        public Vector2 G_Speed()
-        {
-            return speed;
-        }
-
-        public bool G_Life()
-        {
-            return life > 0;
-        }
-
-        public Rectangle G_Rect()
-        {
-            return interact;
-        }
-
-        /*****************
-         * METHODE : SET *
-         *****************/
-
-        public void S_Deplacement(float time)
-        {
-            /*persoRectangle += speed;
-            if (!persoRectangle.Intersects(spawnRectangle))
-            {*/
-            if (life > 0)
-            {
-                position += speed * time;
-            }
-            //}
         }
 
         public void S_Resu()
         {
             life = 30;
             imgState = 40;
+            position.X = spawn.X;
+            position.Y = spawn.Y;
+        }
+
+        // STATIC
+
+        public static void Update(Monstre[] monster, GameTime gameTime, Personnage[] perso, GraphicsDeviceManager graphics, ContentManager content)
+        {
+            foreach (Monstre m in monster)
+            {
+                m.F_Update(gameTime, perso, graphics, content);
+            }
+        }
+
+        public static void Resu(Monstre[] monster)
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.U))
+            {
+                foreach (Monstre m in monster)
+                {
+                    m.S_Resu();
+                }
+            }
         }
 
         /**********************
@@ -97,12 +71,22 @@ namespace The_Last_Trial
             base.objet = content.Load<Texture2D>("mob/1/" + imgState);
         }
 
+        public void F_Update(GameTime gameTime, Personnage[] perso, GraphicsDeviceManager graphics, ContentManager content)
+        {
+            F_IA(gameTime, perso);
+            F_CollisionEcran(graphics);
+            F_Load(content);
+            F_Collision_Joueur(perso);
+            S_Deplacement(gameTime);
+            F_UpdateState(perso);
+        }
+
         public void F_Draw(SpriteBatch sb)
         {
             sb.Draw(base.objet, base.position, Color.White);
         }
 
-        public void F_CollisionEcran(GraphicsDeviceManager graphics)
+        private void F_CollisionEcran(GraphicsDeviceManager graphics)
         {
 
             int MaxX = graphics.GraphicsDevice.Viewport.Width - objet.Width;
@@ -137,26 +121,7 @@ namespace The_Last_Trial
 
         public bool F_Collision_Objets(Rectangle item)
         {
-                Rectangle mobRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
-                return item.Intersects(mobRectangle);
-
-                //if (persoRectangle.Intersects(item) && !collision[collision_state])
-                //{
-                //    collision[collision_state] = true;
-                //    speed = Vector2.Multiply(speed, -1.0f);
-                //}
-                //else if (!(persoRectangle.Intersects(item)) && collision[collision_state])
-                //{
-                //    speed = Vector2.Zero;
-                //    collision[collision_state] = false;
-                //}
-
-                //collision_state++;
-
-                //if (collision_state == taille)
-                //{
-                //    collision_state = 0;
-                //}
+             return item.Intersects(new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3));
         }
 
         public bool F_IsAlive(int life2)
@@ -169,163 +134,104 @@ namespace The_Last_Trial
             return true;
         }
 
-        public void F_IA(GameTime gameTime)
+        public void F_IA(GameTime gameTime, Personnage[] perso)
         {
-            if (target == null || F_DetectPlayer())
-            { 
-                
+            if (life > 0)
+            {
+                if (target == null)
+                {
+                    foreach (Personnage p in perso)
+                    {
+                        if (F_DetectPlayer(p))
+                        {
+                            target = p;
+                        }
+                    }
+                    F_RandomSpeed(gameTime);
+                    
+                }
+
+                //==\\
+                foreach (Personnage p in perso) 
+                    p.F_Collision_Objets(this.interact, gameTime);
             }
         }
 
-        public bool F_DetectPlayer()
+        private bool F_DetectPlayer(Personnage p)
         {
             return false;
         }
 
-        public void F_Deplacer(GameTime gameTime)
+        private void F_RandomSpeed(GameTime gameTime)
         {
             double temps = gameTime.TotalGameTime.TotalSeconds;
 
-            if (tempsActuel < temps - 1.5)
+            if (tempsRandom < temps - 1.5)
             {
                 rand = random.Next(1, 6);
                 // DROITE
                 if (rand == 2)
-                {
                     speed = new Vector2(30.0f, 0.0f);
-                }
 
                 // GAUCHE
                 if (rand == 4)
-                {
                     speed = new Vector2(-30.0f, 0.0f);
-                }
 
                 // HAUT
                 if (rand == 3)
-                {
                     speed = new Vector2(0.0f, -30.0f);
-                }
 
                 // BAS
                 if (rand == 1)
-                {
                     speed = new Vector2(0.0f, 30.0f);
-                }
 
                 // STOP
                 if (rand == 5)
-                {
                     speed = Vector2.Zero;
-                }
-                tempsActuel = temps;
-                
+
+                tempsRandom = temps;
+            }
+            else
+            {
+                if (!spawn.Intersects(new Rectangle((int)position.X, (int)position.Y, 1, 1)))
+                    speed *= -1;
             }
 
             interact = new Rectangle((int)position.X + (base.objet.Width) / 2,
-                (int)position.Y, 5, base.objet.Height);
+                (int)position.Y, 6, base.objet.Height);
         }
 
-        public void F_Collision_Joueur(Rectangle perso)
+        public void F_Collision_Joueur(Personnage[] perso)
         {
-            if (F_Collision_Objets(perso))
+            foreach (Personnage p in perso)
             {
-                speed = Vector2.Zero;
-            }
-        }
-
-        public void F_SpawnCollision()
-        { 
-            
-        }
-
-        public int F_UpdateState(Personnage p)
-        {
-            if (F_Collision_Objets(p.G_Rectangle()))
-            {
-                if (p.F_Attaque(Keyboard.GetState()))
+                if (F_Collision_Objets(p.G_Rectangle()))
                 {
-                    if (!F_IsAlive(0))
-                        imgState = 3;
-
-                    else if (!F_IsAlive(15))
-                        imgState = 2;
+                    speed = Vector2.Zero;
                 }
             }
+        }
 
-            return imgState;
+        public void F_UpdateState(Personnage[] perso)
+        {
+            foreach (Personnage p in perso)
+            {
+                if (F_Collision_Objets(p.G_Rectangle()))
+                {
+                    if (p.F_Attaque(Keyboard.GetState()))
+                    {
+                        if (!F_IsAlive(0))
+                            imgState = 3;
+
+                        else if (!F_IsAlive(50))
+                            imgState = 2;
+                    }
+                }
+            }
         }
 
         public void F_UpdateImage(GameTime gameTime, double delai)
         {
-            /*
-            // Test si le personnage est en collision
-            bool in_collision = false;
-
-            for (int i = 0; i < taille; i++)
-            {
-                if (collision[i])
-                {
-                    in_collision = true;
-                }
-            }
-
-            if (!in_collision)
-            {
-
-                // Affichage images direction normale
-                if (speed.X > 0 && speed.Y == 0 && (img_state < 20 || img_state > 27))
-                {
-                    img_state = 20;
-                }
-                else if (speed.X < 0 && speed.Y == 0 && (img_state < 40 || img_state > 47))
-                {
-                    img_state = 40;
-                }
-                else if (speed.X == 0 && speed.Y > 0 && (img_state < 10 || img_state > 17))
-                {
-                    img_state = 10;
-                }
-                else if (speed.X == 0 && speed.Y < 0 && (img_state < 30 || img_state > 37))
-                {
-                    img_state = 30;
-                }
-
-                // Affichage images direction diagonales
-                else if (speed.X > 0 && speed.Y > 0 && (img_state < 50 || img_state > 57))
-                {
-                    img_state = 50;
-                }
-                else if (speed.X > 0 && speed.Y < 0 && (img_state < 60 || img_state > 67))
-                {
-                    img_state = 60;
-                }
-                else if (speed.X < 0 && speed.Y > 0 && (img_state < 80 || img_state > 87))
-                {
-                    img_state = 80;
-                }
-                else if (speed.X < 0 && speed.Y < 0 && (img_state < 70 || img_state > 77))
-                {
-                    img_state = 70;
-                }
-
-            }
-
-            // Update l'image de X0 à X7
-            if (speed != Vector2.Zero)
-            {
-                double temps = gameTime.TotalGameTime.TotalSeconds;
-
-                if (tempsActuel < temps - delai)
-                {
-                    img_state++;
-                    if (img_state % 10 > 7)
-                    {
-                        img_state -= img_state % 10;
-                    }
-                    tempsActuel = temps;
-                }
-            }*/
             
         }
     }
