@@ -156,8 +156,6 @@ namespace The_Last_Trial
                     p.F_Collision_Objets(new Rectangle((int)position.X + (base.objet.Width) / 2,
                          (int)position.Y + (objet.Height) * 2 / 3, 6, base.objet.Height / 3), gameTime);
                 }
-                
-                /*interact = ;*/
             }
         }
 

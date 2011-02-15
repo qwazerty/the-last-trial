@@ -19,7 +19,7 @@ namespace The_Last_Trial
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private const int nbPlayer = 2;
-        private const int nbMob = 1;
+        private const int nbMob = 2;
 
         // Declaration Objets
         private Personnage[] perso = new Personnage[nbPlayer];
@@ -98,6 +98,7 @@ namespace The_Last_Trial
         private void LoadMonster()
         {
             monster[0] = new Monstre(new Vector2(500f, 500f));
+            monster[1] = new Monstre(new Vector2(700f, 500f));
 
             foreach (Monstre m in monster)
                 m.F_Load(Content);
