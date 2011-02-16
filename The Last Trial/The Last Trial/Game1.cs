@@ -67,7 +67,7 @@ namespace The_Last_Trial
                 Monster.Update(monster, gameTime, perso, Content);
                 Personnage.Update(perso, gameTime, monster, graphics, Content, mur);
                 UpdateTest();
-                Map.Update((float)gameTime.ElapsedGameTime.TotalSeconds, perso); 
+                Map.Update((float)gameTime.ElapsedGameTime.TotalSeconds, perso, Content); 
                 menu.S_Pause(Keyboard.GetState().IsKeyDown(Keys.Escape));
             }
             else
@@ -83,13 +83,16 @@ namespace The_Last_Trial
             graphics.GraphicsDevice.Clear(Color.Pink);
 
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
-            Map.Draw(spriteBatch);
+
+            Map.DrawBack(spriteBatch);
+            Map.DrawMiddle(spriteBatch);
             foreach (Monster m in monster)
                 m.F_Draw(spriteBatch);
 
             foreach (Personnage p in perso)
                 p.F_Draw(spriteBatch);
             menu.Draw(spriteBatch);
+            Map.DrawFirst(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -97,8 +100,6 @@ namespace The_Last_Trial
 
         private void LoadMap()
         {
-            mur[0] = new Rectangle(0, 260, 979, 27);
-            mur[1] = new Rectangle(0, 800, 986, 128);
         }
 
         private void UpdateTest()

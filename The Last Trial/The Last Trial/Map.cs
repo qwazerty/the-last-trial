@@ -8,39 +8,73 @@ namespace The_Last_Trial
 {
     class Map
     {
-        private static int id;
-        private static Vector2 screenPos, origin;
-        private static Texture2D[] myTexture = new Texture2D[2];
-        private static int screenHeight;
-        private static int screenWidth;
-        private static Vector2 speed;
+        private const int PIXEL = 32;
+
+        private static int id, screenHeight, screenWidth, MaxX;
+        private static Texture2D[] first, middle, back;
+        private static Vector2 screenPos, speed;
+        private static Vector2 originBack, originMiddle, originFirst;
+        private static Rectangle[] collision;
+        private static int scroll, currentScreen;
+        private static bool scrollable;
 
         public static void Init(int id)
         {
             Map.id = id;
-            speed = new Vector2(0f, 0f);
+
+            currentScreen = 1;
+
+            if (id == 1)
+            {
+                MaxX = 3080;
+                int tab = (MaxX / 1024) + 1;
+                first = new Texture2D[tab];
+                middle = new Texture2D[tab];
+                back = new Texture2D[tab];
+                collision = new Rectangle[2];
+                collision[0] = new Rectangle(0, 320, MaxX, PIXEL);
+                collision[1] = new Rectangle(0, 768, MaxX, PIXEL);
+
+                originBack = new Vector2(0f, 0f);
+                originMiddle = new Vector2(0f, -320f);
+                originFirst = new Vector2(0f, -704f);
+            }
         }
 
         public static void Load(GraphicsDevice device, ContentManager Content)
         {
-            myTexture[0] = Content.Load<Texture2D>("map/1/1-1");
-            myTexture[1] = Content.Load<Texture2D>("map/1/1-2");
+            first[0] = Content.Load<Texture2D>("map/1/1-" + currentScreen);
+            first[1] = Content.Load<Texture2D>("map/1/1-" + (currentScreen + 1));
+
+            middle[0] = Content.Load<Texture2D>("map/1/2-" + currentScreen);
+            middle[1] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 1));
+
+            back[0] = Content.Load<Texture2D>("map/1/3-1");
+            back[1] = Content.Load<Texture2D>("map/1/3-2");
 
             screenHeight = device.Viewport.Height;
             screenWidth = device.Viewport.Width;
-
-            origin = new Vector2(0, -352);
+ 
             screenPos = new Vector2(0, 0);
+            speed = new Vector2(0f, 0f);
         }
 
-        public static void Update(float deltaX, Personnage[] perso)
+        public static void Update(float deltaX, Personnage[] perso, ContentManager Content)
         {
-            int scroll = 0;
-            bool scrollable = true; 
+            currentScreen = (int)(-screenPos.X) / 1024 + 1; 
+            
+            first[0] = Content.Load<Texture2D>("map/1/1-" + currentScreen);
+            first[1] = Content.Load<Texture2D>("map/1/1-" + (currentScreen + 1));
+
+            middle[0] = Content.Load<Texture2D>("map/1/2-" + currentScreen);
+            middle[1] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 1));
+
+            scroll = 0;
+            scrollable = true; 
             speed = new Vector2(0f, 0f);
             foreach (Personnage p in perso)
             {
-                if (p.G_Position().X >= screenWidth * 0.75)
+                if (p.G_Position().X > screenWidth * 0.75 && (- screenPos.X < MaxX))
                 {
                     if (scroll >= 0)
                     {
@@ -52,7 +86,7 @@ namespace The_Last_Trial
                         scrollable = false;
                     }
                 }
-                else if (p.G_Position().X <= screenWidth * 0.22)
+                else if (p.G_Position().X < screenWidth * 0.22 && (screenPos.X < 0))
                 {
                     if (scroll <= 0)
                     {
@@ -75,13 +109,28 @@ namespace The_Last_Trial
             }
         }
 
-        public static void Draw(SpriteBatch batch)
+        public static void DrawBack(SpriteBatch batch)
         {
-            batch.Draw(myTexture[0], screenPos, null,
-                 Color.White, 0, origin, 1, SpriteEffects.None, 0f);
-            batch.Draw(myTexture[1], new Vector2(screenPos.X + 1024, screenPos.Y), null,
-                 Color.White, 0, origin, 1, SpriteEffects.None, 0f);
+            batch.Draw(back[0], screenPos / 10, null,
+                 Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
+            batch.Draw(back[1], new Vector2(screenPos.X / 10 + 1024, screenPos.Y), null,
+                 Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
+        }
 
+        public static void DrawMiddle(SpriteBatch batch)
+        {
+            batch.Draw(middle[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
+                 Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
+            batch.Draw(middle[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
+                 Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
+        }
+
+        public static void DrawFirst(SpriteBatch batch)
+        {
+            batch.Draw(first[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
+                 Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
+            batch.Draw(first[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
+                 Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
         }
 
         public static float G_ScreenX() { return screenPos.X; }
