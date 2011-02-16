@@ -117,8 +117,8 @@ namespace The_Last_Trial
                 if (target == null)
                 {
                     target = F_DetectPlayer(perso);
-                    F_RandomSpeed(gameTime); 
-                    
+                    F_RandomSpeed(gameTime);
+
                 }
                 else
                 {

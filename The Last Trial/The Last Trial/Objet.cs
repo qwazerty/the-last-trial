@@ -52,8 +52,10 @@ namespace The_Last_Trial
 
         protected void S_Deplacement(GameTime gt)
         {
-            if (life > 0)
-                base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
+            if (life < 0)
+                speed = Vector2.Zero;
+
+            base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
         }
     }
 }
