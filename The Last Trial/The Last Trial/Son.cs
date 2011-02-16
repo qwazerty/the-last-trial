@@ -16,26 +16,19 @@ namespace The_Last_Trial
 {
     class Son
     {
-        private Song backSound;
-        private bool songstart = false;
+        private static SoundEffect[] mySound = new SoundEffect[4];
 
-        public Son()
+        public static void Load(ContentManager Content)
         {
-             MediaPlayer.IsRepeating = true;
+            //mySound[0] = Content.Load<SoundEffect>("sound/soundTrack/1");
+            mySound[1] = Content.Load<SoundEffect>("sound/soundEffect/sword_1");
+            mySound[2] = Content.Load<SoundEffect>("sound/soundEffect/fireball_1");
+            mySound[3] = Content.Load<SoundEffect>("sound/soundEffect/thunder_1");
         }
 
-        public void UpdateSon()
+        public static void Play(int i)
         {
-            if (!songstart)
-            {
-                //MediaPlayer.Play(back_sound);
-                songstart = true;
-            }
-        }
-
-        public void Load(Song content)
-        {
-            backSound = content;
+            mySound[i].Play();
         }
     }
 }

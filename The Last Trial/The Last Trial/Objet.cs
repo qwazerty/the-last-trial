@@ -37,21 +37,23 @@ namespace The_Last_Trial
         protected Vector2 speed;
         protected double tempsImage, tempsAttaque;
 
+        public Vector2 G_Speed()
+        {
+            return speed;
+        }
+
         protected Mob()
         {
             imgState = 40;
             speed = new Vector2(0.0f, 0.0f);
             tempsImage = 0;
             tempsAttaque = 0;
-            /*collision = new bool[taille];
-            for (int i = 0; i < taille; i++ )
-                collision[i] = false;*/
         }
 
         protected void S_Deplacement(GameTime gt)
         {
-            if (life > 0 && speed != Vector2.Zero)
-                base.position += speed * (float)gt.ElapsedGameTime.TotalSeconds;
+            if (life > 0)
+                base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
         }
     }
 }

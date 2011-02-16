@@ -31,10 +31,10 @@ namespace The_Last_Trial
         \*****************/
 
         // CONSTRUCTEUR
-        public Personnage(Keys[] keys) : base()
+        public Personnage(Keys[] keys, Vector2 position) : base()
         {
             key = keys;
-            position = new Vector2(0.0f, 500.0f);
+            this.position = position;
             imgState = 40;
             life = 100;
             oldState = Keyboard.GetState();
@@ -54,11 +54,21 @@ namespace The_Last_Trial
          * METHODE : FONCTION *
         \**********************/
 
-        public static void Update(Personnage[] perso, GameTime gameTime, Monstre[] monster, GraphicsDeviceManager graphics, ContentManager content
+        public static void Load(Personnage[] perso, ContentManager Content)
+        {
+            perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.B, Keys.Space }, new Vector2(300f, 500f));
+            perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(300f, 500f));
+
+            foreach (Personnage p in perso)
+                p.F_Load(Content);
+        }
+
+        public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager content
             /*TEMP*/, Rectangle[] mur)
         {
             foreach (Personnage p in perso)
             {
+                p.F_Collision_Ecran(graphics, gameTime);
                 p.F_Collision_Objets(mur[0], gameTime);
                 p.F_Collision_Objets(mur[1], gameTime);
                 p.F_Update(content, gameTime, graphics);
@@ -70,17 +80,34 @@ namespace The_Last_Trial
             objet = content.Load<Texture2D>("perso/1/" + imgState);
         }
 
-        public void F_Update(ContentManager content, GameTime gameTime, GraphicsDeviceManager graphics)
+        public void F_Update(ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
         {
             F_Deplacer(Keyboard.GetState());
             F_UpdateImage(gameTime, 0.1);
             S_Deplacement(gameTime);
-            F_Load(content);
+            F_Load(Content);
         }
 
         public void F_Draw(SpriteBatch sb)
         {
             sb.Draw(base.objet, base.position, Color.White);
+        }
+
+        public void F_Collision_Ecran(GraphicsDeviceManager graphics, GameTime gameTime)
+        {
+            int MaxX = graphics.GraphicsDevice.Viewport.Width;
+
+            if (position.X > MaxX * 0.77)
+            {
+                position.X -= (speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                speed.X = 0;
+            }
+
+            else if (position.X < MaxX * 0.20)
+            {
+                position.X -= (speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                speed.X = 0;
+            }
         }
 
         public void F_Collision_Objets(Rectangle item, GameTime gameTime)
@@ -89,7 +116,7 @@ namespace The_Last_Trial
 
             if (persoRectangle.Intersects(item))
             {
-                base.position -= speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                base.position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 speed = Vector2.Zero;
             }
         }

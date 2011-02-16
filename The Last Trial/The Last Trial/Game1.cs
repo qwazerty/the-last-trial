@@ -23,24 +23,24 @@ namespace The_Last_Trial
 
         // Declaration Objets
         private Personnage[] perso = new Personnage[nbPlayer];
-        private Monstre[] monster = new Monstre[nbMob];
-        private Map map = new Map(1);
+        private Monster[] monster = new Monster[nbMob];
         private Son backsound = new Son();
+        private Menu menu = new Menu();
 
         // TEMP
         private Rectangle[] mur = new Rectangle[2];
-        private Objet[] carte = new Objet[2];
         
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            this.graphics.PreferredBackBufferWidth = 900;
+            this.graphics.PreferredBackBufferWidth = 1200;
             this.graphics.PreferredBackBufferHeight = 800;
             Content.RootDirectory = "Content";
         }
 
         protected override void Initialize()
         {
+            Map.Init(1);
             base.Initialize();
         }
 
@@ -48,21 +48,32 @@ namespace The_Last_Trial
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            LoadPlayer();
-            LoadMonster();
+            Personnage.Load(perso, Content);
+            Monster.Load(monster, Content);
             LoadMap();
-            LoadSound();
+            Map.Load(GraphicsDevice, Content);
+            Son.Load(Content);
+            menu.Load(Content);
         }
 
         protected override void Update(GameTime gameTime)
         {
             // QUITTER
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            Monstre.Update(monster, gameTime, perso, graphics, Content);
-            Personnage.Update(perso, gameTime, monster, graphics, Content, mur);
-            UpdateTest();
+            if (!menu.G_Pause())
+            {
+                Monster.Update(monster, gameTime, perso, Content);
+                Personnage.Update(perso, gameTime, monster, graphics, Content, mur);
+                UpdateTest();
+                Map.Update((float)gameTime.ElapsedGameTime.TotalSeconds, perso); 
+                menu.S_Pause(Keyboard.GetState().IsKeyDown(Keys.Escape));
+            }
+            else
+            {
+                menu.S_Pause(Keyboard.GetState().IsKeyDown(Keys.Escape));
+            }
 
             base.Update(gameTime);
         }
@@ -72,62 +83,27 @@ namespace The_Last_Trial
             graphics.GraphicsDevice.Clear(Color.Pink);
 
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
-            spriteBatch.Draw(carte[0].G_Texture(), carte[0].G_Position(), Color.White);
-
-            foreach (Monstre m in monster)
+            Map.Draw(spriteBatch);
+            foreach (Monster m in monster)
                 m.F_Draw(spriteBatch);
 
             foreach (Personnage p in perso)
                 p.F_Draw(spriteBatch);
-
-            spriteBatch.Draw(carte[1].G_Texture(), carte[1].G_Position(), Color.White);
+            menu.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        private void LoadPlayer()
-        {
-            perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.B, Keys.Space });
-            perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F });
-
-            foreach (Personnage p in perso)
-                p.F_Load(Content);
-        }
-
-        private void LoadMonster()
-        {
-            monster[0] = new Monstre(new Vector2(500f, 500f));
-            monster[1] = new Monstre(new Vector2(700f, 500f));
-
-            foreach (Monstre m in monster)
-                m.F_Load(Content);
-        }
-
         private void LoadMap()
         {
-            carte[0] = new Objet();
-            carte[1] = new Objet();
-
             mur[0] = new Rectangle(0, 260, 979, 27);
             mur[1] = new Rectangle(0, 800, 986, 128);
-
-            carte[0].S_Texture(Content.Load<Texture2D>("map/1"));
-            carte[1].S_Texture(Content.Load<Texture2D>("map/2"));
-
-            carte[0].S_Position(new Vector2(0, 0));
-            carte[1].S_Position(new Vector2(0, 737));
-            
-        }
-
-        private void LoadSound()
-        {
-            //backsound.Load(Content.Load<Song>("music/Kalimba"));
         }
 
         private void UpdateTest()
         {
-            Monstre.Resu(monster);
+            Monster.Resu(monster);
         }
     }
 }

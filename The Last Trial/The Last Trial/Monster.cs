@@ -13,24 +13,23 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace The_Last_Trial
 {
-    public class Monstre : Mob
+    public class Monster : Mob
     {
 
         // DECLARATION VARIABLES
         private int rand;
         private double tempsRandom;
-        private Random random;
+        private static Random random = new Random();
         private Personnage target = null;
         private Rectangle spawn;
 
         // CONSTRUCTEUR
-        public Monstre(Vector2 init) : base()
+        public Monster(Vector2 init) : base()
         {
             spawn = new Rectangle((int)init.X - 50, (int)init.Y - 50, 100, 100);
             position = init;
             tempsRandom = 0;
             life = 100;
-            random = new Random();
         }
 
         public void S_Resu()
@@ -44,38 +43,47 @@ namespace The_Last_Trial
 
         // STATIC
 
-        public static void Update(Monstre[] monster, GameTime gameTime, Personnage[] perso, GraphicsDeviceManager graphics, ContentManager content)
+        public static void Load(Monster[] monster, ContentManager Content)
         {
-            foreach (Monstre m in monster)
+
+            monster[0] = new Monster(new Vector2(500f, 500f));
+            monster[1] = new Monster(new Vector2(700f, 500f));
+
+            foreach (Monster m in monster)
+                m.F_Load(Content);
+        }
+
+        public static void Update(Monster[] monster, GameTime gameTime, Personnage[] perso, ContentManager Content)
+        {
+            foreach (Monster m in monster)
             {
-                m.F_Update(gameTime, perso, graphics, content);
+                m.F_Update(gameTime, perso, Content);
             }
         }
 
-        public static void Resu(Monstre[] monster)
+        public static void Resu(Monster[] monster)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.U))
             {
-                foreach (Monstre m in monster)
+                foreach (Monster m in monster)
                 {
                     m.S_Resu();
                 }
             }
         }
 
-        /**********************
+        /**********************\
          * METHODE : FONCTION *
-         **********************/
+        \(**********************/
 
         public void F_Load(ContentManager content)
         {
             base.objet = content.Load<Texture2D>("mob/1/" + imgState);
         }
 
-        public void F_Update(GameTime gameTime, Personnage[] perso, GraphicsDeviceManager graphics, ContentManager content)
+        public void F_Update(GameTime gameTime, Personnage[] perso, ContentManager content)
         {
             F_IA(gameTime, perso);
-            F_CollisionEcran(graphics);
             F_Load(content);
             F_Collision_Joueur(perso);
             S_Deplacement(gameTime);
@@ -85,39 +93,6 @@ namespace The_Last_Trial
         public void F_Draw(SpriteBatch sb)
         {
             sb.Draw(base.objet, base.position, Color.White);
-        }
-
-        private void F_CollisionEcran(GraphicsDeviceManager graphics)
-        {
-
-            int MaxX = graphics.GraphicsDevice.Viewport.Width - objet.Width;
-            int MinX = 0;
-            int MaxY = graphics.GraphicsDevice.Viewport.Height - objet.Height;
-            int MinY = 0;
-
-            if (position.X > MaxX)
-            {
-                speed.X = 0;
-                position.X = MaxX;
-            }
-
-            else if (position.X < MinX)
-            {
-                speed.X = 0;
-                position.X = MinX;
-            }
-
-            if (position.Y > MaxY)
-            {
-                speed.Y = 0;
-                position.Y = MaxY;
-            }
-
-            else if (position.Y < MinY)
-            {
-                speed.Y = 0;
-                position.Y = MinY;
-            }
         }
 
         public bool F_Collision_Objets(Rectangle item)
@@ -191,6 +166,7 @@ namespace The_Last_Trial
             if (tempsRandom < temps - 0.5)
             {
                 rand = random.Next(1, 6);
+                Console.WriteLine(rand);
                 // DROITE
                 if (rand == 2)
                     speed = new Vector2(30f, 0f);
@@ -242,6 +218,7 @@ namespace The_Last_Trial
                 {
                     if (p.F_Attaque(Keyboard.GetState()))
                     {
+                        Son.Play(1);
                         if (!F_IsAlive(0))
                             imgState = 3;
 
