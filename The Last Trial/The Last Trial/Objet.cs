@@ -33,14 +33,9 @@ namespace The_Last_Trial
 
     public abstract class Mob : Objet
     {
-        protected int imgState, life;
+        protected int imgState, life, initLife;
         protected Vector2 speed;
-        protected double tempsImage, tempsAttaque;
-
-        public Vector2 G_Speed()
-        {
-            return speed;
-        }
+        protected double tempsImage, tempsAttaque, tempsActuel;
 
         protected Mob()
         {
@@ -50,12 +45,19 @@ namespace The_Last_Trial
             tempsAttaque = 0;
         }
 
+        public bool G_IsAlive() { return life > 0; }
+
         protected void S_Deplacement(GameTime gt)
         {
             if (life < 0)
                 speed = Vector2.Zero;
 
             base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
+        }
+
+        public void S_Degat(int degat)
+        {
+            life -= degat;
         }
     }
 }

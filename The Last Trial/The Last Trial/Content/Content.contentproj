@@ -749,6 +749,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="mob\health.png">
+      <Name>health</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="menu\" />
     <Folder Include="sound\soundTrack\" />
   </ItemGroup>

@@ -22,6 +22,15 @@ namespace The_Last_Trial
             return 2;
         }
 
+        public static void Load(Menu menu, Personnage[] perso, Monster[] monster, ContentManager Content, GraphicsDevice device, int nbPlayer)
+        {
+            Personnage.Load(perso, Content, nbPlayer);
+            Monster.Load(monster, Content);
+            Map.Load(device, Content);
+            Son.Load(Content);
+            menu.Load(Content);
+        }
+
         public static void Update(Monster[] monster, 
             Personnage[] perso, 
             GraphicsDeviceManager graphics,
@@ -41,15 +50,6 @@ namespace The_Last_Trial
                 Monster.Resu(monster);
                 pause = Keyboard.GetState().IsKeyDown(Keys.Escape);
             }
-        }
-
-        public static void Load(Menu menu, Personnage[] perso, Monster[] monster, ContentManager Content, GraphicsDevice device, int nbPlayer)
-        {
-            Personnage.Load(perso, Content, nbPlayer);
-            Monster.Load(monster, Content);
-            Map.Load(device, Content);
-            Son.Load(Content);
-            menu.Load(Content);
         }
 
         public static void Draw(Menu menu, Personnage[] perso, Monster[] monster, SpriteBatch spriteBatch, GraphicsDeviceManager graphics)

@@ -17,8 +17,7 @@ namespace The_Last_Trial
     {
 
         // DECLARATION VARIABLES
-        private Vector2 oldspeed;
-        private KeyboardState oldState;
+        private KeyboardState newState, oldState;
         private Keys[] key;
         /** KEYS STATES **\
          * 0 : BAS       *
@@ -30,13 +29,14 @@ namespace The_Last_Trial
         \*****************/
 
         // CONSTRUCTEUR
-        public Personnage(Keys[] keys, Vector2 position) : base()
+        public Personnage(Keys[] key, Vector2 position) : base()
         {
-            key = keys;
+            this.key = key;
             this.position = position;
-            imgState = 40;
-            life = 100;
-            oldState = Keyboard.GetState();
+            this.imgState = 40;
+            this.life = 100;
+            this.oldState = Keyboard.GetState();
+            this.initLife = this.life;
         }
 
         /*****************\
@@ -45,16 +45,19 @@ namespace The_Last_Trial
 
         public Rectangle G_Rectangle()
         {
-            return new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
+            return new Rectangle((int)position.X, 
+                (int)position.Y + (objet.Height * 2) / 3, 
+                objet.Width, objet.Height / 3);
         }
 
-        /**********************\
-         * METHODE : FONCTION *
-        \**********************/
+        /*****************\
+         *   STATIC FUN   *
+        \*****************/
 
         public static void Load(Personnage[] perso, ContentManager Content, int player)
         {
-            perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.B, Keys.Space }, new Vector2(300f, 500f));
+            if (player > 0)
+                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.B, Keys.Space }, new Vector2(300f, 500f));
 
             if (player > 1)
                 perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(330f, 600f));
@@ -69,16 +72,10 @@ namespace The_Last_Trial
                 p.F_Load(Content);
         }
 
-        public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager content)
+        public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager Content)
         {
             foreach (Personnage p in perso)
-            {
-                foreach (Rectangle rect in Map.G_Collision())
-                    p.F_Collision_Objets(rect, gameTime);
-
-                p.F_Collision_Ecran(graphics, gameTime);
-                p.F_Update(content, gameTime, graphics);
-            }
+                p.F_Update(monster, Content, gameTime, graphics);
         }
 
         public static void Draw(Personnage[] perso, SpriteBatch spriteBatch)
@@ -87,14 +84,27 @@ namespace The_Last_Trial
                 p.F_Draw(spriteBatch);
         }
 
+        /*****************\
+         * METHODE : FUN *
+        \*****************/
+
         private void F_Load(ContentManager content)
         {
             objet = content.Load<Texture2D>("perso/1/" + imgState);
         }
 
-        private void F_Update(ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
+        private void F_Update(Monster[] monster, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
         {
-            F_Deplacer(Keyboard.GetState());
+            foreach (Rectangle collision in Map.G_Collision())
+                F_Collision_Objets(collision, gameTime);
+            foreach (Monster m in monster)
+            {
+                if (m.G_IsAlive())
+                F_Collision_Objets(m.G_Rectangle(), gameTime);
+            }
+            F_Collision_Ecran(graphics, gameTime);
+            F_Deplacer();
+            F_Attaque(monster, gameTime);
             F_UpdateImage(gameTime, 0.1);
             S_Deplacement(gameTime);
             F_Load(Content);
@@ -104,6 +114,8 @@ namespace The_Last_Trial
         {
             sb.Draw(base.objet, base.position, Color.White);
         }
+
+        #region Collision
 
         private void F_Collision_Ecran(GraphicsDeviceManager graphics, GameTime gameTime)
         {
@@ -128,13 +140,16 @@ namespace The_Last_Trial
 
             if (persoRectangle.Intersects(rect))
             {
-                base.position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                base.position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
                 speed = Vector2.Zero;
             }
         }
 
-        private void F_Deplacer(KeyboardState newState)
+        #endregion
+
+        private void F_Deplacer()
         {
+            newState = Keyboard.GetState();
             // DROITE
             if (newState.IsKeyDown(key[1]))
             {
@@ -183,33 +198,29 @@ namespace The_Last_Trial
                     speed.Y = 0.0f;
             }
 
-            // BOOST
-            if (newState.IsKeyDown(key[4]))
-            {
-                if (!oldState.IsKeyDown(key[4]))
-                {
-                    oldspeed = speed;
-                    speed = Vector2.Multiply(speed, 2.0f);
-                }
-            }
-            else if (oldState.IsKeyDown(key[4]))
-            {
-                if (speed.X == 0 && speed.Y == 0)
-                {
-                    speed = Vector2.Zero;
-                }
-                else
-                {
-                    speed = oldspeed;
-                }
-            }
-
             oldState = newState;
         }
 
-        public bool F_Attaque(KeyboardState newState)
+        public void F_Attaque(Monster[] monster, GameTime gameTime)
         {
-            return newState.IsKeyDown(key[5]);
+            newState = Keyboard.GetState();
+
+            if (newState.IsKeyDown(key[5]))
+            {
+                foreach (Monster m in monster)
+                {
+                    if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive())
+                    {
+                        tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
+                        if (tempsActuel > tempsAttaque + 1)
+                        {
+                            m.S_Degat(42);
+                            tempsAttaque = tempsActuel;
+                            Son.Play(1);
+                        }
+                    }
+                }
+            }
         }
 
         private void F_UpdateImage(GameTime gameTime, double delai)

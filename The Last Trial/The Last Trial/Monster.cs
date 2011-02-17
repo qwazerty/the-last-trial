@@ -17,36 +17,75 @@ namespace The_Last_Trial
     {
 
         // DECLARATION VARIABLES
-        private int rand;
+        private static Texture2D health;
+        private int id, rand;
         private double tempsRandom;
         private static Random random = new Random();
         private Personnage target = null;
         private Rectangle spawn;
 
         // CONSTRUCTEUR
-        public Monster(Vector2 init) : base()
+        public Monster(Vector2 init, int id) : base()
         {
-            spawn = new Rectangle((int)init.X - 50, (int)init.Y - 50, 100, 100);
-            position = init;
+            this.id = id;
+            this.spawn = new Rectangle((int)init.X - 50, (int)init.Y - 50, 100, 100);
+            this.position = init;
+            this.life = 100;
+            this.initLife = this.life;
             tempsRandom = 0;
-            life = 100;
+        }
+
+        /*****************\
+         * METHODE : GET *
+        \*****************/
+
+        public Rectangle G_Rectangle()
+        {
+            if (id == 1)
+            {
+                return new Rectangle((int)position.X + (base.objet.Width) / 2,
+                    (int)position.Y + (objet.Height) * 2 / 3,
+                    6, base.objet.Height / 3);
+            }
+
+            return new Rectangle(0, 0, 0, 0);
+        }
+
+        public Rectangle G_Interact()
+        {
+            if (id == 1)
+            {
+                return new Rectangle((int)position.X, (int)position.Y + (objet.Height) / 2, objet.Width, objet.Height * 2 / 3);
+            }
+
+            return new Rectangle(0, 0, 0, 0);
+        }
+
+        public Rectangle G_Aggro()
+        {
+            if (id == 1)
+            {
+                return new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height);
+            }
+
+            return new Rectangle(0, 0, 0, 0);
         }
 
         public void S_Resu()
         {
-            life = 30;
+            life = 100;
             imgState = 40;
-            position.X = spawn.X;
-            position.Y = spawn.Y;
             target = null;
         }
 
-        // STATIC
+        /*****************\
+         *   STATIC FUN   *
+        \*****************/
 
         public static void Load(Monster[] monster, ContentManager Content)
         {
             foreach (Monster m in monster)
-                m.F_Load(Content);
+                m.F_Init(Content);
         }
 
         public static void Update(Monster[] monster, GameTime gameTime, Personnage[] perso, ContentManager Content)
@@ -74,67 +113,69 @@ namespace The_Last_Trial
             }
         }
 
-        /**********************\
-         * METHODE : FONCTION *
-        \(**********************/
+        /*****************\
+         * METHODE : FUN *
+        \*****************/
 
-        private void F_Load(ContentManager content)
+        private void F_Init(ContentManager Content)
         {
-            base.objet = content.Load<Texture2D>("mob/1/" + imgState);
+            health = Content.Load<Texture2D>("mob/health");
+            F_Load(Content);
+        }
+
+        private void F_Load(ContentManager Content)
+        {
+            base.objet = Content.Load<Texture2D>("mob/1/" + imgState);
         }
 
         private void F_Update(GameTime gameTime, Personnage[] perso, ContentManager content)
         {
-            F_IA(gameTime, perso);
-            F_Load(content);
-            F_Collision_Joueur(perso);
-            S_Deplacement(gameTime);
-            F_UpdateState(perso);
-        }
-
-        private void F_Draw(SpriteBatch sb)
-        {
-            sb.Draw(base.objet, base.position, Color.White);
-        }
-
-        private bool F_Collision_Objets(Rectangle item)
-        {
-             return item.Intersects(new Rectangle((int)position.X, (int)position.Y + (objet.Height) / 2, objet.Width, objet.Height * 2 / 3));
-        }
-
-        private bool F_IsAlive(int life2)
-        {
-            life--;
-            if (life <= life2)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private void F_IA(GameTime gameTime, Personnage[] perso)
-        {
-            if (life > 0)
+            if (G_IsAlive())
             {
                 if (target == null)
                 {
                     target = F_DetectPlayer(perso);
                     F_RandomSpeed(gameTime);
-
                 }
                 else
                 {
                     F_FollowPlayer();
                 }
 
-                //==\\
                 foreach (Personnage p in perso)
                 {
-                    p.F_Collision_Objets(new Rectangle((int)position.X + (base.objet.Width) / 2,
-                         (int)position.Y + (objet.Height) * 2 / 3, 6, base.objet.Height / 3), gameTime);
+                    F_Collision_Joueur(p);
                 }
             }
+            F_UpdateState();
+            F_Load(content);
+            S_Deplacement(gameTime);
         }
+
+        private void F_Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(base.objet, base.position, Color.White);
+            if (G_IsAlive())
+                DrawHealth(spriteBatch);
+        }
+
+        #region Collision
+
+        private bool F_Collision_Objets(Rectangle item)
+        {
+             return item.Intersects(G_Interact());
+        }
+
+        private void F_Collision_Joueur(Personnage p)
+        {
+            if (F_Collision_Objets(p.G_Rectangle()))
+            {
+                target = p;
+                speed = Vector2.Zero;
+            }
+        }
+
+        #endregion
 
         private void F_FollowPlayer()
         {
@@ -155,7 +196,7 @@ namespace The_Last_Trial
             Personnage p_ = null;
             foreach (Personnage p in perso)
             {
-                if (p.G_Rectangle().Intersects(new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height)))
+                if (p.G_Rectangle().Intersects(G_Aggro()))
                     p_ = p;
             }
             return p_;
@@ -168,7 +209,6 @@ namespace The_Last_Trial
             if (tempsRandom < temps - 0.5)
             {
                 rand = random.Next(1, 6);
-                Console.WriteLine(rand);
                 // DROITE
                 if (rand == 2)
                     speed = new Vector2(30f, 0f);
@@ -193,47 +233,26 @@ namespace The_Last_Trial
             }
             else
             {
-                if (!spawn.Intersects(new Rectangle((int)position.X, (int)position.Y, 1, 1)))
+                if (!spawn.Intersects(new Rectangle((int)position.X + (int)Map.G_ScreenX(), (int)position.Y, 1, 1)))
                     speed *= -1;
             }
 
             
         }
 
-        private void F_Collision_Joueur(Personnage[] perso)
+        private void F_UpdateState()
         {
-            foreach (Personnage p in perso)
-            {
-                if (F_Collision_Objets(p.G_Rectangle()))
-                {
-                    target = p;
-                    speed = Vector2.Zero;
-                }
-            }
+            if (life < 0)
+                imgState = 3;
+
+            else if (life * 2 < initLife)
+                imgState = 2;
         }
 
-        private void F_UpdateState(Personnage[] perso)
+        private void DrawHealth(SpriteBatch spriteBatch)
         {
-            foreach (Personnage p in perso)
-            {
-                if (F_Collision_Objets(p.G_Rectangle()))
-                {
-                    if (p.F_Attaque(Keyboard.GetState()))
-                    {
-                        Son.Play(1);
-                        if (!F_IsAlive(0))
-                            imgState = 3;
-
-                        else if (!F_IsAlive(50))
-                            imgState = 2;
-                    }
-                }
-            }
-        }
-
-        private void F_UpdateImage(GameTime gameTime, double delai)
-        {
-            
+            spriteBatch.Draw(health, new Rectangle((int)position.X + 1, (int)position.Y - 30, life * 100 / initLife, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
+            spriteBatch.Draw(health, new Rectangle((int)position.X, (int)position.Y - 30, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
     }
 }
