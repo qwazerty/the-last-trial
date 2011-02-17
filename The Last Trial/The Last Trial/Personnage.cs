@@ -52,10 +52,18 @@ namespace The_Last_Trial
          * METHODE : FONCTION *
         \**********************/
 
-        public static void Load(Personnage[] perso, ContentManager Content)
+        public static void Load(Personnage[] perso, ContentManager Content, int player)
         {
             perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.B, Keys.Space }, new Vector2(300f, 500f));
-            perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(300f, 500f));
+
+            if (player > 1)
+                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(330f, 600f));
+
+            if (player > 2)
+                perso[2] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(300f, 700f));
+
+            if (player > 3)
+                perso[3] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(330f, 400f));
 
             foreach (Personnage p in perso)
                 p.F_Load(Content);

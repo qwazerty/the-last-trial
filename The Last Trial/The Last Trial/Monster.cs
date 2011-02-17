@@ -45,10 +45,6 @@ namespace The_Last_Trial
 
         public static void Load(Monster[] monster, ContentManager Content)
         {
-
-            monster[0] = new Monster(new Vector2(500f, 500f));
-            monster[1] = new Monster(new Vector2(700f, 500f));
-
             foreach (Monster m in monster)
                 m.F_Load(Content);
         }

@@ -18,14 +18,15 @@ namespace The_Last_Trial
 
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private const int nbPlayer = 2;
-        private const int nbMob = 2;
+        private int nbPlayer;
+        private int nbMob;
 
         // Declaration Objets
-        private Personnage[] perso = new Personnage[nbPlayer];
-        private Monster[] monster = new Monster[nbMob];
-        private Son backsound = new Son();
+        private Personnage[] perso;
+        private Monster[] monster;
         private Menu menu = new Menu();
+
+        public int G_Player() { return nbPlayer; }
         
         public Game1()
         {
@@ -37,61 +38,33 @@ namespace The_Last_Trial
 
         protected override void Initialize()
         {
-            Map.Init(1);
+            nbPlayer = Menu.Init(perso);
+            nbMob = Map.Init(1, monster);
+            perso = new Personnage[nbPlayer];
+            monster = new Monster[nbMob];
+            monster = Map.LoadMonster(monster);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Personnage.Load(perso, Content);
-            Monster.Load(monster, Content);
-            Map.Load(GraphicsDevice, Content);
-            Menu.Load(menu, Content);
-            Son.Load(Content);
+            Menu.Load(menu, perso, monster, Content, GraphicsDevice, nbPlayer);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            // QUITTER
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            if (!menu.G_Pause())
-            {
-                Monster.Update(monster, gameTime, perso, Content);
-                Personnage.Update(perso, gameTime, monster, graphics, Content);
-                Map.Update(gameTime, perso, Content);
-                UpdateTest();
-            }
-            else
-            {
-                menu.S_Pause(Keyboard.GetState().IsKeyDown(Keys.Escape));
-            }
-
+            Menu.Update(monster, perso, graphics, gameTime, Content);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            graphics.GraphicsDevice.Clear(Color.Pink);
-            spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
-
-            Map.DrawBack(spriteBatch);
-            Map.DrawMiddle(spriteBatch);
-            Monster.Draw(monster, spriteBatch);
-            Personnage.Draw(perso, spriteBatch);
-            Menu.Draw(menu, spriteBatch);
-            Map.DrawFirst(spriteBatch);
-
-            spriteBatch.End();
+            Menu.Draw(menu, perso, monster, spriteBatch, graphics);
             base.Draw(gameTime);
-        }
-
-        private void UpdateTest()
-        {
-            Monster.Resu(monster);
-            menu.S_Pause(Keyboard.GetState().IsKeyDown(Keys.Escape));
         }
     }
 }

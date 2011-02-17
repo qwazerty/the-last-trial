@@ -18,7 +18,7 @@ namespace The_Last_Trial
         private static int scroll, currentScreen;
         private static bool scrollable;
 
-        public static void Init(int id)
+        public static int Init(int id, Monster[] monster)
         {
             Map.id = id;
 
@@ -35,7 +35,20 @@ namespace The_Last_Trial
                 originBack = new Vector2(0f, 0f);
                 originMiddle = new Vector2(0f, -320f);
                 originFirst = new Vector2(0f, -704f);
+
+                return 1;
             }
+            return 0;
+        }
+
+        public static Monster[] LoadMonster(Monster[] monster)
+        {
+            if (id == 1)
+            {
+                monster[0] = new Monster(new Vector2(2000f, 500f));
+                return monster;
+            }
+            return null;
         }
 
         public static void Load(GraphicsDevice device, ContentManager Content)

@@ -4,24 +4,67 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
 namespace The_Last_Trial
 {
     class Menu : Objet
     {
-        private bool pause;
+        private static bool pause;
 
         public bool G_Pause() { return pause; }
         public void S_Pause(bool p) { pause = p; }
 
-        public static void Load(Menu menu, ContentManager Content)
+        public static int Init(Personnage[] perso)
         {
+            // TODO : THE MAIN MENU
+            return 2;
+        }
+
+        public static void Update(Monster[] monster, 
+            Personnage[] perso, 
+            GraphicsDeviceManager graphics,
+            GameTime gameTime, 
+            ContentManager Content)
+        {
+            
+            if (pause)
+            {
+                pause = Keyboard.GetState().IsKeyDown(Keys.Escape);
+            }
+            else
+            {
+                Monster.Update(monster, gameTime, perso, Content);
+                Personnage.Update(perso, gameTime, monster, graphics, Content);
+                Map.Update(gameTime, perso, Content);
+                Monster.Resu(monster);
+                pause = Keyboard.GetState().IsKeyDown(Keys.Escape);
+            }
+        }
+
+        public static void Load(Menu menu, Personnage[] perso, Monster[] monster, ContentManager Content, GraphicsDevice device, int nbPlayer)
+        {
+            Personnage.Load(perso, Content, nbPlayer);
+            Monster.Load(monster, Content);
+            Map.Load(device, Content);
+            Son.Load(Content);
             menu.Load(Content);
         }
 
-        public static void Draw(Menu menu, SpriteBatch spriteBatch)
+        public static void Draw(Menu menu, Personnage[] perso, Monster[] monster, SpriteBatch spriteBatch, GraphicsDeviceManager graphics)
         {
+            graphics.GraphicsDevice.Clear(Color.Pink);
+            spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
+
+            Map.DrawBack(spriteBatch);
+            Map.DrawMiddle(spriteBatch);
+            Monster.Draw(monster, spriteBatch);
+            Personnage.Draw(perso, spriteBatch);
+            Map.DrawFirst(spriteBatch);
             menu.Draw(spriteBatch);
+
+            spriteBatch.End();
         }
 
         private void Load(ContentManager Content)
