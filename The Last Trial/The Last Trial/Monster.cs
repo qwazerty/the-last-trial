@@ -61,6 +61,12 @@ namespace The_Last_Trial
             }
         }
 
+        public static void Draw(Monster[] monster, SpriteBatch spriteBatch)
+        {
+            foreach (Monster m in monster)
+                m.F_Draw(spriteBatch);
+        }
+
         public static void Resu(Monster[] monster)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.U))
@@ -76,12 +82,12 @@ namespace The_Last_Trial
          * METHODE : FONCTION *
         \(**********************/
 
-        public void F_Load(ContentManager content)
+        private void F_Load(ContentManager content)
         {
             base.objet = content.Load<Texture2D>("mob/1/" + imgState);
         }
 
-        public void F_Update(GameTime gameTime, Personnage[] perso, ContentManager content)
+        private void F_Update(GameTime gameTime, Personnage[] perso, ContentManager content)
         {
             F_IA(gameTime, perso);
             F_Load(content);
@@ -90,17 +96,17 @@ namespace The_Last_Trial
             F_UpdateState(perso);
         }
 
-        public void F_Draw(SpriteBatch sb)
+        private void F_Draw(SpriteBatch sb)
         {
             sb.Draw(base.objet, base.position, Color.White);
         }
 
-        public bool F_Collision_Objets(Rectangle item)
+        private bool F_Collision_Objets(Rectangle item)
         {
              return item.Intersects(new Rectangle((int)position.X, (int)position.Y + (objet.Height) / 2, objet.Width, objet.Height * 2 / 3));
         }
 
-        public bool F_IsAlive(int life2)
+        private bool F_IsAlive(int life2)
         {
             life--;
             if (life <= life2)
@@ -110,7 +116,7 @@ namespace The_Last_Trial
             return true;
         }
 
-        public void F_IA(GameTime gameTime, Personnage[] perso)
+        private void F_IA(GameTime gameTime, Personnage[] perso)
         {
             if (life > 0)
             {
@@ -198,7 +204,7 @@ namespace The_Last_Trial
             
         }
 
-        public void F_Collision_Joueur(Personnage[] perso)
+        private void F_Collision_Joueur(Personnage[] perso)
         {
             foreach (Personnage p in perso)
             {
@@ -210,7 +216,7 @@ namespace The_Last_Trial
             }
         }
 
-        public void F_UpdateState(Personnage[] perso)
+        private void F_UpdateState(Personnage[] perso)
         {
             foreach (Personnage p in perso)
             {
@@ -229,7 +235,7 @@ namespace The_Last_Trial
             }
         }
 
-        public void F_UpdateImage(GameTime gameTime, double delai)
+        private void F_UpdateImage(GameTime gameTime, double delai)
         {
             
         }

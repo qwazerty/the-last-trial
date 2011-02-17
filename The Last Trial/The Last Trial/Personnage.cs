@@ -18,7 +18,6 @@ namespace The_Last_Trial
 
         // DECLARATION VARIABLES
         private Vector2 oldspeed;
-        //private int collisionState;
         private KeyboardState oldState;
         private Keys[] key;
         /** KEYS STATES **\
@@ -38,7 +37,6 @@ namespace The_Last_Trial
             imgState = 40;
             life = 100;
             oldState = Keyboard.GetState();
-            //collisionState = 0;
         }
 
         /*****************\
@@ -63,24 +61,30 @@ namespace The_Last_Trial
                 p.F_Load(Content);
         }
 
-        public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager content
-            /*TEMP*/, Rectangle[] mur)
+        public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager content)
         {
             foreach (Personnage p in perso)
             {
+                foreach (Rectangle rect in Map.G_Collision())
+                    p.F_Collision_Objets(rect, gameTime);
+
                 p.F_Collision_Ecran(graphics, gameTime);
-                p.F_Collision_Objets(mur[0], gameTime);
-                p.F_Collision_Objets(mur[1], gameTime);
                 p.F_Update(content, gameTime, graphics);
             }
         }
 
-        public void F_Load(ContentManager content)
+        public static void Draw(Personnage[] perso, SpriteBatch spriteBatch)
+        {
+            foreach (Personnage p in perso)
+                p.F_Draw(spriteBatch);
+        }
+
+        private void F_Load(ContentManager content)
         {
             objet = content.Load<Texture2D>("perso/1/" + imgState);
         }
 
-        public void F_Update(ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
+        private void F_Update(ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
         {
             F_Deplacer(Keyboard.GetState());
             F_UpdateImage(gameTime, 0.1);
@@ -88,12 +92,12 @@ namespace The_Last_Trial
             F_Load(Content);
         }
 
-        public void F_Draw(SpriteBatch sb)
+        private void F_Draw(SpriteBatch sb)
         {
             sb.Draw(base.objet, base.position, Color.White);
         }
 
-        public void F_Collision_Ecran(GraphicsDeviceManager graphics, GameTime gameTime)
+        private void F_Collision_Ecran(GraphicsDeviceManager graphics, GameTime gameTime)
         {
             int MaxX = graphics.GraphicsDevice.Viewport.Width;
 
@@ -110,18 +114,18 @@ namespace The_Last_Trial
             }
         }
 
-        public void F_Collision_Objets(Rectangle item, GameTime gameTime)
+        public void F_Collision_Objets(Rectangle rect, GameTime gameTime)
         {
             Rectangle persoRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
 
-            if (persoRectangle.Intersects(item))
+            if (persoRectangle.Intersects(rect))
             {
                 base.position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 speed = Vector2.Zero;
             }
         }
 
-        public void F_Deplacer(KeyboardState newState)
+        private void F_Deplacer(KeyboardState newState)
         {
             // DROITE
             if (newState.IsKeyDown(key[1]))
@@ -200,7 +204,7 @@ namespace The_Last_Trial
             return newState.IsKeyDown(key[5]);
         }
 
-        public void F_UpdateImage(GameTime gameTime, double delai)
+        private void F_UpdateImage(GameTime gameTime, double delai)
         {
             // Test si le personnage est en collision
             bool in_collision = false;

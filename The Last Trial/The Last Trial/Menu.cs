@@ -14,12 +14,22 @@ namespace The_Last_Trial
         public bool G_Pause() { return pause; }
         public void S_Pause(bool p) { pause = p; }
 
-        public void Load(ContentManager Content)
+        public static void Load(Menu menu, ContentManager Content)
+        {
+            menu.Load(Content);
+        }
+
+        public static void Draw(Menu menu, SpriteBatch spriteBatch)
+        {
+            menu.Draw(spriteBatch);
+        }
+
+        private void Load(ContentManager Content)
         {
             //objet = Content.Load<Texture2D>("menu/1/");
         }
 
-        public void Draw(SpriteBatch sb)
+        private void Draw(SpriteBatch sb)
         {
             //sb.Draw(base.objet, base.position, Color.White);
         }
