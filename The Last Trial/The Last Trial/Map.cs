@@ -16,6 +16,7 @@ namespace The_Last_Trial
         private static Vector2 originBack, originMiddle, originFirst;
         private static Rectangle[] collision;
         private static int scroll, currentScreen;
+        private static float offsetY;
         private static bool scrollable;
 
         public static int Init(int id, Monster[] monster)
@@ -24,7 +25,7 @@ namespace The_Last_Trial
 
             if (id == 1)
             {
-                MaxX = 3080;
+                MaxX = 4 * 1024;
                 first = new Texture2D[3];
                 middle = new Texture2D[3];
                 back = new Texture2D[3];
@@ -45,7 +46,7 @@ namespace The_Last_Trial
         {
             if (id == 1)
             {
-                monster[0] = new Monster(new Vector2(1230f, 500f), 1);
+                monster[0] = new Monster(new Vector2(1024f, 400f), 1);
                 monster[1] = new Monster(new Vector2(1280f, 600f), 1);
                 return monster;
             }
@@ -71,11 +72,11 @@ namespace The_Last_Trial
 
             back[0] = Content.Load<Texture2D>("map/1/3-1");
             back[1] = Content.Load<Texture2D>("map/1/3-2");
-
+            back[2] = Content.Load<Texture2D>("map/1/3-3");
  
         }
 
-        public static void Update(GameTime gameTime, Personnage[] perso, ContentManager Content)
+        public static void Update(GameTime gameTime, Personnage[] perso, ContentManager Content, int nbPlayer)
         {
             float deltaX = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -89,6 +90,7 @@ namespace The_Last_Trial
             middle[1] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 1));
             middle[2] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 2));
 
+            offsetY = 0;
             scroll = 0;
             scrollable = true; 
             speed = new Vector2(0f, 0f);
@@ -118,7 +120,11 @@ namespace The_Last_Trial
                         scrollable = false;
                     }
                 }
+
+                offsetY += p.G_Position().Y;
             }
+            offsetY /= (nbPlayer * 5);
+            offsetY -= back[0].Height - (screenHeight - first[0].Height - middle[0].Height);
             if (scrollable && G_Scroll())
             {
                 screenPos.X -= (deltaX) * speed.X;
@@ -129,31 +135,33 @@ namespace The_Last_Trial
             }
         }
 
-        public static void DrawBack(SpriteBatch batch)
+        public static void DrawBack(SpriteBatch spriteBatch)
         {
-            batch.Draw(back[0], screenPos / 10, null,
+            spriteBatch.Draw(back[0], new Vector2(screenPos.X / 10, screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
-            batch.Draw(back[1], new Vector2(screenPos.X / 10 + 1024, screenPos.Y), null,
+            spriteBatch.Draw(back[1], new Vector2(screenPos.X / 10 + 1024, screenPos.Y + offsetY), null,
+                 Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
+            spriteBatch.Draw(back[2], new Vector2(screenPos.X / 10 + 2048, screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
         }
 
-        public static void DrawMiddle(SpriteBatch batch)
+        public static void DrawMiddle(SpriteBatch spriteBatch)
         {
-            batch.Draw(middle[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
+            spriteBatch.Draw(middle[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
                  Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
-            batch.Draw(middle[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
+            spriteBatch.Draw(middle[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
                  Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
-            batch.Draw(middle[2], new Vector2(screenPos.X + 1024 * (currentScreen + 1), screenPos.Y), null,
+            spriteBatch.Draw(middle[2], new Vector2(screenPos.X + 1024 * (currentScreen + 1), screenPos.Y), null,
                  Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
         }
 
-        public static void DrawFirst(SpriteBatch batch)
+        public static void DrawFirst(SpriteBatch spriteBatch)
         {
-            batch.Draw(first[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
+            spriteBatch.Draw(first[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
-            batch.Draw(first[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
+            spriteBatch.Draw(first[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
-            batch.Draw(first[2], new Vector2(screenPos.X + 1024 * (currentScreen + 1), screenPos.Y), null,
+            spriteBatch.Draw(first[2], new Vector2(screenPos.X + 1024 * (currentScreen + 1), screenPos.Y), null,
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
         }
 

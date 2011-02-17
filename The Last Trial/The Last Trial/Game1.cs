@@ -57,7 +57,7 @@ namespace The_Last_Trial
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            Menu.Update(monster, perso, graphics, gameTime, Content);
+            Menu.Update(monster, perso, graphics, gameTime, Content, nbPlayer);
             base.Update(gameTime);
         }
 

@@ -20,7 +20,7 @@ namespace The_Last_Trial
 
         public static void Load(ContentManager Content)
         {
-            //mySound[0] = Content.Load<SoundEffect>("sound/soundTrack/1");
+            mySound[0] = Content.Load<SoundEffect>("sound/soundTrack/1");
             mySound[1] = Content.Load<SoundEffect>("sound/soundEffect/sword_1");
             mySound[2] = Content.Load<SoundEffect>("sound/soundEffect/fireball_1");
             mySound[3] = Content.Load<SoundEffect>("sound/soundEffect/thunder_1");

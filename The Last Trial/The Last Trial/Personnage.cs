@@ -24,8 +24,7 @@ namespace The_Last_Trial
          * 1 : DROITE    *
          * 2 : HAUT      *
          * 3 : GAUCHE    *
-         * 4 : BOOST     *
-         * 5 : ATTAQUE   *
+         * 4 : ATTAQUE   *
         \*****************/
 
         // CONSTRUCTEUR
@@ -33,7 +32,7 @@ namespace The_Last_Trial
         {
             this.key = key;
             this.position = position;
-            this.imgState = 40;
+            this.imgState = 20;
             this.life = 100;
             this.oldState = Keyboard.GetState();
             this.initLife = this.life;
@@ -54,19 +53,21 @@ namespace The_Last_Trial
          *   STATIC FUN   *
         \*****************/
 
+        #region Static
+
         public static void Load(Personnage[] perso, ContentManager Content, int player)
         {
             if (player > 0)
-                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.B, Keys.Space }, new Vector2(300f, 500f));
+                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space }, new Vector2(300f, 500f));
 
             if (player > 1)
-                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(330f, 600f));
+                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.F }, new Vector2(330f, 600f));
 
             if (player > 2)
-                perso[2] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(300f, 700f));
+                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0 }, new Vector2(300f, 650f));
 
             if (player > 3)
-                perso[3] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.E, Keys.F }, new Vector2(330f, 400f));
+                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.OemSemicolon, Keys.O, Keys.K, Keys.J }, new Vector2(330f, 350f));
 
             foreach (Personnage p in perso)
                 p.F_Load(Content);
@@ -84,9 +85,13 @@ namespace The_Last_Trial
                 p.F_Draw(spriteBatch);
         }
 
+        #endregion
+
         /*****************\
          * METHODE : FUN *
         \*****************/
+
+        #region Update
 
         private void F_Load(ContentManager content)
         {
@@ -105,7 +110,7 @@ namespace The_Last_Trial
             F_Collision_Ecran(graphics, gameTime);
             F_Deplacer();
             F_Attaque(monster, gameTime);
-            F_UpdateImage(gameTime, 0.1);
+            F_UpdateImage(gameTime);
             S_Deplacement(gameTime);
             F_Load(Content);
         }
@@ -115,19 +120,21 @@ namespace The_Last_Trial
             sb.Draw(base.objet, base.position, Color.White);
         }
 
+        #endregion
+
         #region Collision
 
         private void F_Collision_Ecran(GraphicsDeviceManager graphics, GameTime gameTime)
         {
             int MaxX = graphics.GraphicsDevice.Viewport.Width;
 
-            if (position.X > MaxX * 0.77)
+            if (position.X > MaxX * 0.79)
             {
                 position.X -= (speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 speed.X = 0;
             }
 
-            else if (position.X < MaxX * 0.20)
+            else if (position.X < MaxX * 0.185)
             {
                 position.X -= (speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 speed.X = 0;
@@ -136,12 +143,21 @@ namespace The_Last_Trial
 
         public void F_Collision_Objets(Rectangle rect, GameTime gameTime)
         {
-            Rectangle persoRectangle = new Rectangle((int)position.X, (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3);
-
-            if (persoRectangle.Intersects(rect))
+            if (rect.Intersects(G_Rectangle()))
             {
-                base.position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
-                speed = Vector2.Zero;
+                position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                // Test pour detecter si collision X ou Y
+                if (new Rectangle((int)position.X + (int)((speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds), 
+                    (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3).Intersects(rect))
+                {
+                    speed.X = 0;
+                }
+                if (new Rectangle((int)position.X, (int)position.Y + (int)((speed.Y - Map.G_Speed().Y) * (float)gameTime.ElapsedGameTime.TotalSeconds) + 
+                    (objet.Height * 2) / 3, objet.Width, objet.Height / 3).Intersects(rect))
+                {
+                    speed.Y = 0;
+                }
             }
         }
 
@@ -205,7 +221,7 @@ namespace The_Last_Trial
         {
             newState = Keyboard.GetState();
 
-            if (newState.IsKeyDown(key[5]))
+            if (newState.IsKeyDown(key[4]))
             {
                 foreach (Monster m in monster)
                 {
@@ -223,7 +239,7 @@ namespace The_Last_Trial
             }
         }
 
-        private void F_UpdateImage(GameTime gameTime, double delai)
+        private void F_UpdateImage(GameTime gameTime)
         {
             // Test si le personnage est en collision
             bool in_collision = false;
@@ -264,7 +280,7 @@ namespace The_Last_Trial
             {
                 double temps = gameTime.TotalGameTime.TotalSeconds;
 
-                if (tempsImage < temps - delai)
+                if (tempsImage < temps - 0.1)
                 {
                     imgState++;
                     if (imgState % 10 > 7)

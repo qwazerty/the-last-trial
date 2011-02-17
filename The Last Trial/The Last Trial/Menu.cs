@@ -28,6 +28,7 @@ namespace The_Last_Trial
             Monster.Load(monster, Content);
             Map.Load(device, Content);
             Son.Load(Content);
+            Son.Play(0);
             menu.Load(Content);
         }
 
@@ -35,7 +36,8 @@ namespace The_Last_Trial
             Personnage[] perso, 
             GraphicsDeviceManager graphics,
             GameTime gameTime, 
-            ContentManager Content)
+            ContentManager Content,
+            int nbPlayer)
         {
             
             if (pause)
@@ -46,7 +48,7 @@ namespace The_Last_Trial
             {
                 Monster.Update(monster, gameTime, perso, Content);
                 Personnage.Update(perso, gameTime, monster, graphics, Content);
-                Map.Update(gameTime, perso, Content);
+                Map.Update(gameTime, perso, Content, nbPlayer);
                 Monster.Resu(monster);
                 pause = Keyboard.GetState().IsKeyDown(Keys.Escape);
             }
