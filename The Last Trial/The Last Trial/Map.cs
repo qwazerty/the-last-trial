@@ -37,7 +37,7 @@ namespace The_Last_Trial
                 originMiddle = new Vector2(0f, -320f);
                 originFirst = new Vector2(0f, -704f);
 
-                return 2;
+                return 5;
             }
             return 0;
         }
@@ -46,8 +46,11 @@ namespace The_Last_Trial
         {
             if (id == 1)
             {
-                monster[0] = new Monster(new Vector2(1024f, 400f), 1);
-                monster[1] = new Monster(new Vector2(1280f, 600f), 1);
+                monster[0] = new Monster(new Vector2(1280f, 400f), 1);
+                monster[1] = new Monster(new Vector2(1600f, 600f), 1);
+                monster[2] = new Monster(new Vector2(2000f, 500f), 1);
+                monster[3] = new Monster(new Vector2(2500f, 400f), 1);
+                monster[4] = new Monster(new Vector2(2600f, 600f), 1);
                 return monster;
             }
             return null;

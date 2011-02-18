@@ -18,15 +18,16 @@ namespace The_Last_Trial
 
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private int nbPlayer;
-        private int nbMob;
+        private static int nbPlayer;
+        private static int nbMonster;
 
         // Declaration Objets
         private Personnage[] perso;
         private Monster[] monster;
         private Menu menu = new Menu();
 
-        public int G_Player() { return nbPlayer; }
+        public static int G_Player() { return nbPlayer; }
+        public static int G_Monster() { return nbMonster; }
         
         public Game1()
         {
@@ -39,9 +40,9 @@ namespace The_Last_Trial
         protected override void Initialize()
         {
             nbPlayer = Menu.Init(perso);
-            nbMob = Map.Init(1, monster);
+            nbMonster = Map.Init(1, monster);
             perso = new Personnage[nbPlayer];
-            monster = new Monster[nbMob];
+            monster = new Monster[nbMonster];
             monster = Map.LoadMonster(monster);
             base.Initialize();
         }
@@ -54,7 +55,8 @@ namespace The_Last_Trial
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            // QUITTER
+            if (Keyboard.GetState().IsKeyDown(Keys.Delete))
                 this.Exit();
 
             Menu.Update(monster, perso, graphics, gameTime, Content, nbPlayer);

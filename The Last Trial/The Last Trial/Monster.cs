@@ -18,7 +18,7 @@ namespace The_Last_Trial
 
         // DECLARATION VARIABLES
         private static Texture2D health;
-        private int id, rand;
+        private int rand;
         private double tempsRandom;
         private static Random random = new Random();
         private Personnage target = null;
@@ -38,6 +38,8 @@ namespace The_Last_Trial
         /*****************\
          * METHODE : GET *
         \*****************/
+
+        #region GET & SET
 
         public Rectangle G_Rectangle()
         {
@@ -61,14 +63,10 @@ namespace The_Last_Trial
             return new Rectangle(0, 0, 0, 0);
         }
 
+
         public Rectangle G_Aggro()
         {
-            if (id == 1)
-            {
-                return new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height);
-            }
-
-            return new Rectangle(0, 0, 0, 0);
+            return new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height);
         }
 
         public void S_Resu()
@@ -78,9 +76,13 @@ namespace The_Last_Trial
             target = null;
         }
 
+        #endregion
+
         /*****************\
          *   STATIC FUN   *
         \*****************/
+
+        #region Static Load, Update & Draw
 
         public static void Load(Monster[] monster, ContentManager Content)
         {
@@ -91,9 +93,7 @@ namespace The_Last_Trial
         public static void Update(Monster[] monster, GameTime gameTime, Personnage[] perso, ContentManager Content)
         {
             foreach (Monster m in monster)
-            {
                 m.F_Update(gameTime, perso, Content);
-            }
         }
 
         public static void Draw(Monster[] monster, SpriteBatch spriteBatch)
@@ -113,9 +113,13 @@ namespace The_Last_Trial
             }
         }
 
+        #endregion
+
         /*****************\
          * METHODE : FUN *
         \*****************/
+
+        #region Load, Update & Draw
 
         private void F_Init(ContentManager Content)
         {
@@ -159,6 +163,8 @@ namespace The_Last_Trial
                 DrawHealth(spriteBatch);
         }
 
+        #endregion
+
         #region Collision
 
         private bool F_Collision_Objets(Rectangle item)
@@ -177,17 +183,19 @@ namespace The_Last_Trial
 
         #endregion
 
+        #region IA
+
         private void F_FollowPlayer()
         {
             if (target.G_Position().X < position.X)
-                speed.X = -30f;
+                speed.X = -50f;
             else if (target.G_Position().X > position.X)
-                speed.X = 30f;
+                speed.X = 50f;
 
-            if (target.G_Position().Y < position.Y)
-                speed.Y = -30f;
-            else if (target.G_Position().Y > position.Y)
-                speed.Y = 30f;
+            if (target.G_Position().Y < position.Y + 79)
+                speed.Y = -50f;
+            else if (target.G_Position().Y > position.Y + 79)
+                speed.Y = 50f;
 
         }
 
@@ -237,22 +245,20 @@ namespace The_Last_Trial
                     speed *= -1;
             }
 
-            
         }
+
+        #endregion
 
         private void F_UpdateState()
         {
-            if (life < 0)
+            if (life <= 0)
                 imgState = 3;
-
-            else if (life * 2 < initLife)
-                imgState = 2;
         }
 
         private void DrawHealth(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(health, new Rectangle((int)position.X + 1, (int)position.Y - 30, life * 100 / initLife, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
-            spriteBatch.Draw(health, new Rectangle((int)position.X, (int)position.Y - 30, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
+            spriteBatch.Draw(health, new Rectangle((int)position.X + 76, (int)position.Y + objet.Height + 15, life * 100 / initLife, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
+            spriteBatch.Draw(health, new Rectangle((int)position.X + 75, (int)position.Y + objet.Height + 15, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
     }
 }
