@@ -30,8 +30,9 @@ namespace The_Last_Trial
         \*****************/
 
         // CONSTRUCTEUR
-        public Personnage(Keys[] key, Vector2 position) : base()
+        public Personnage(Keys[] key, Vector2 position, int id) : base()
         {
+            this.id = id;
             this.key = key;
             this.position = position;
             this.imgState = 20;
@@ -63,16 +64,16 @@ namespace The_Last_Trial
         public static void Load(Personnage[] perso, ContentManager Content, int player)
         {
             if (player > 0)
-                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 500f));
+                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 500f), 1);
 
             if (player > 1)
-                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.F, Keys.D0 }, new Vector2(330f, 600f));
+                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D0 }, new Vector2(330f, 600f), 3);
 
             if (player > 2)
-                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D0 }, new Vector2(300f, 650f));
+                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D0 }, new Vector2(300f, 650f), 1);
 
             if (player > 3)
-                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.OemSemicolon, Keys.O, Keys.K, Keys.J, Keys.D0 }, new Vector2(330f, 350f));
+                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.OemSemicolon, Keys.O, Keys.K, Keys.J, Keys.D0 }, new Vector2(330f, 350f), 1);
 
             foreach (Personnage p in perso)
                 p.F_Load(Content);
@@ -106,7 +107,7 @@ namespace The_Last_Trial
 
         private void F_Load(ContentManager content)
         {
-            objet = content.Load<Texture2D>("perso/1/" + imgState);
+            objet = content.Load<Texture2D>("perso/" + id + "/" + imgState);
         }
 
         private void F_Update(Personnage[] perso, Monster[] monster, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
@@ -350,59 +351,49 @@ namespace The_Last_Trial
 
         #endregion
 
-        private void F_UpdateImage(GameTime gameTime)
-        {
-            // Test si le personnage est en collision
-            bool in_collision = false;
+        //private void F_UpdateImage(GameTime gameTime)
+        //{
+        //    // Affichage images direction normale
+        //    if (speed.X > 0 && speed.Y == 0 && (imgState < 20 || imgState > 27))
+        //        imgState = 20;
 
-            if (!in_collision)
-            {
-                
-                // Affichage images direction normale
-                if (speed.X > 0 && speed.Y == 0 && (imgState < 20 || imgState > 27))
-                    imgState = 20;
+        //    else if (speed.X < 0 && speed.Y == 0 && (imgState < 40 || imgState > 47))
+        //        imgState = 40;
 
-                else if (speed.X < 0 && speed.Y == 0 && (imgState < 40 || imgState > 47))
-                    imgState = 40;
+        //    else if (speed.X == 0 && speed.Y > 0 && (imgState < 10 || imgState > 17))
+        //        imgState = 10;
 
-                else if (speed.X == 0 && speed.Y > 0 && (imgState < 10 || imgState > 17))
-                    imgState = 10;
+        //    else if (speed.X == 0 && speed.Y < 0 && (imgState < 30 || imgState > 37))
+        //        imgState = 30;
 
-                else if (speed.X == 0 && speed.Y < 0 && (imgState < 30 || imgState > 37))
-                    imgState = 30;
+        //    // Affichage images direction diagonales
+        //    else if (speed.X > 0 && speed.Y > 0 && (imgState < 50 || imgState > 57))
+        //        imgState = 50;
 
-                // Affichage images direction diagonales
-                else if (speed.X > 0 && speed.Y > 0 && (imgState < 50 || imgState > 57))
-                    imgState = 50;
+        //    else if (speed.X > 0 && speed.Y < 0 && (imgState < 60 || imgState > 67))
+        //        imgState = 60;
 
-                else if (speed.X > 0 && speed.Y < 0 && (imgState < 60 || imgState > 67))
-                    imgState = 60;
+        //    else if (speed.X < 0 && speed.Y > 0 && (imgState < 80 || imgState > 87))
+        //        imgState = 80;
 
-                else if (speed.X < 0 && speed.Y > 0 && (imgState < 80 || imgState > 87))
-                    imgState = 80;
+        //    else if (speed.X < 0 && speed.Y < 0 && (imgState < 70 || imgState > 77))
+        //        imgState = 70;
 
-                else if (speed.X < 0 && speed.Y < 0 && (imgState < 70 || imgState > 77))
-                    imgState = 70;
+        //    // Update l'image de X0 à X7
+        //    if (speed != Vector2.Zero)
+        //    {
+        //        double temps = gameTime.TotalGameTime.TotalSeconds;
 
-            }
-
-            // Update l'image de X0 à X7
-            if (speed != Vector2.Zero)
-            {
-                double temps = gameTime.TotalGameTime.TotalSeconds;
-
-                if (tempsImage < temps - 0.1)
-                {
-                    imgState++;
-                    if (imgState % 10 > 7)
-                        imgState -= imgState % 10;
+        //        if (tempsImage < temps - 0.1)
+        //        {
+        //            imgState++;
+        //            if (imgState % 10 > 7)
+        //                imgState -= imgState % 10;
                     
-                    tempsImage = temps;
-                }
-            }
-
-
-        }
+        //            tempsImage = temps;
+        //        }
+        //    }
+        //}
 
     }
 }

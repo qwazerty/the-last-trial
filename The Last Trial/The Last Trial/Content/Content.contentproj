@@ -642,13 +642,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="mob\1\1.png">
-      <Name>1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="sound\soundEffect\sword_1.wav">
       <Name>sword_1</Name>
       <Importer>WavImporter</Importer>
@@ -1267,6 +1260,13 @@
   <ItemGroup>
     <Compile Include="mob\1\3.png">
       <Name>3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="perso\3\99.png">
+      <Name>99</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

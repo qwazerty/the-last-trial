@@ -152,6 +152,7 @@ namespace The_Last_Trial
                 }
             }
             F_UpdateState();
+            F_UpdateImage(gameTime);
             F_Load(content);
             S_Deplacement(gameTime);
         }
@@ -187,14 +188,14 @@ namespace The_Last_Trial
 
         private void F_FollowPlayer()
         {
-            if (target.G_Position().X < position.X)
+            if (target.G_Position().X + 10 < position.X)
                 speed.X = -50f;
-            else if (target.G_Position().X > position.X)
+            else if (target.G_Position().X - 10 > position.X)
                 speed.X = 50f;
 
-            if (target.G_Position().Y < position.Y + 79)
+            if (target.G_Position().Y + 10 < position.Y + 79)
                 speed.Y = -50f;
-            else if (target.G_Position().Y > position.Y + 79)
+            else if (target.G_Position().Y - 10 > position.Y + 79)
                 speed.Y = 50f;
 
         }

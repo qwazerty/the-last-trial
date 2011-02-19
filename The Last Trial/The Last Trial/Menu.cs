@@ -19,7 +19,7 @@ namespace The_Last_Trial
         public static int Init(Personnage[] perso)
         {
             // TODO : THE MAIN MENU
-            return 1;
+            return 2;
         }
 
         public static void Load(Menu menu, Personnage[] perso, Monster[] monster, ContentManager Content, GraphicsDevice device, int nbPlayer)
