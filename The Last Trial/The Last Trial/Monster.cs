@@ -74,6 +74,7 @@ namespace The_Last_Trial
         public void S_Resu()
         {
             life = 100;
+            initLife = 100;
             imgState = 40;
         }
 
@@ -252,7 +253,7 @@ namespace The_Last_Trial
 
         private void DrawHealth(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(health, new Rectangle((int)position.X + 76, (int)position.Y + objet.Height + 15, life * 100 / initLife, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
+            spriteBatch.Draw(health, new Rectangle((int)position.X + 76, (int)position.Y + objet.Height + 15, life, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
             spriteBatch.Draw(health, new Rectangle((int)position.X + 75, (int)position.Y + objet.Height + 15, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
     }

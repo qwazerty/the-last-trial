@@ -17,6 +17,8 @@ namespace The_Last_Trial
     class Son
     {
         private static SoundEffect[] mySound = new SoundEffect[5];
+        private static SoundEffectInstance instance;
+
 
         public static void Load(ContentManager Content)
         {
@@ -30,6 +32,14 @@ namespace The_Last_Trial
         public static void Play(int i)
         {
             mySound[i].Play();
+
+        }
+
+        public static void PlayLoop(int i)
+        {
+            instance = mySound[i].CreateInstance();
+            instance.IsLooped = true;
+            instance.Play();
         }
     }
 }

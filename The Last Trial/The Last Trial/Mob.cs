@@ -15,11 +15,13 @@ namespace The_Last_Trial
 {
     public abstract class Mob : Objet
     {
-        protected int imgState, life, initLife;
+        protected int imgState, life, initLife, oldDegats;
         protected Vector2 speed;
         protected double tempsImage, tempsActuel;
         protected double[] tempsAttaque = new double[2];
         protected int id;
+        protected int degats = 0;
+        private static SpriteFont gameFont;
 
         protected Mob()
         {
@@ -32,11 +34,41 @@ namespace The_Last_Trial
             }
         }
 
+        public static void Load(ContentManager Content)
+        {
+            gameFont = Content.Load<SpriteFont>("gamefont");
+        }
+
+        public static void Draw(Mob[] mob, SpriteBatch sb)
+        {
+            foreach (Mob m in mob)
+            {
+                m.F_Draw_degats(m, sb);
+            }
+        }
+
+        private void F_Draw_degats(Mob m, SpriteBatch sb)
+        {
+            if (degats != 0)
+            {
+                initLife = life - degats;
+                oldDegats = degats;
+                degats = 0;
+            }
+            if (initLife < life && G_IsAlive())
+            {
+                sb.DrawString(gameFont, Convert.ToString(oldDegats), new Vector2(m.position.X + 100, m.position.Y + 40), Color.Red);
+                life -= 3;
+            }
+            else
+                oldDegats = 0;
+        }
+
         public bool G_IsAlive() { return life > 0; }
 
         protected void S_Deplacement(GameTime gt)
         {
-            if (life < 0)
+            if (life <= 0)
                 speed = Vector2.Zero;
 
             base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
@@ -44,7 +76,7 @@ namespace The_Last_Trial
 
         public void S_Degat(int degat)
         {
-            life -= degat;
+            degats = degat;
         }
 
         protected void F_UpdateImage(GameTime gameTime)

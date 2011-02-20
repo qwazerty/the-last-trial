@@ -20,11 +20,13 @@ namespace The_Last_Trial
         private SpriteBatch spriteBatch;
         private static int nbPlayer;
         private static int nbMonster;
+        private static bool play;
 
         // Declaration Objets
         private Personnage[] perso;
         private Monster[] monster;
-        private Menu menu = new Menu();
+        private PNJ pnj;
+        private Menu menu;
 
         public static int G_Player() { return nbPlayer; }
         public static int G_Monster() { return nbMonster; }
@@ -35,38 +37,49 @@ namespace The_Last_Trial
             this.graphics.PreferredBackBufferWidth = 1200;
             this.graphics.PreferredBackBufferHeight = 800;
             Content.RootDirectory = "Content";
+            play = false;
         }
 
         protected override void Initialize()
         {
-            nbPlayer = Menu.Init(perso);
-            nbMonster = Map.Init(1, monster);
-            perso = new Personnage[nbPlayer];
-            monster = new Monster[nbMonster];
-            monster = Map.LoadMonster(monster);
+            menu = new Menu(Content);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Menu.Load(menu, perso, monster, Content, GraphicsDevice, nbPlayer);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            // QUITTER
-            if (Keyboard.GetState().IsKeyDown(Keys.Delete))
-                this.Exit();
+            if (play)
+                Menu.Update(monster, perso, pnj, graphics, gameTime, Content, nbPlayer, this);
+            else
+            {
+                nbPlayer = Menu.Init(perso);
+                play = nbPlayer != 0;
+                if (play)
+                    Load();
+            }
 
-            Menu.Update(monster, perso, graphics, gameTime, Content, nbPlayer);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            Menu.Draw(menu, perso, monster, spriteBatch, graphics);
+            Menu.Draw(menu, perso, monster, pnj, spriteBatch, graphics, play);
             base.Draw(gameTime);
+        }
+
+        private void Load()
+        {
+            nbMonster = Map.Init(1, monster);
+            perso = new Personnage[nbPlayer];
+            monster = new Monster[nbMonster];
+            monster = Map.LoadMonster(monster); 
+            pnj = new PNJ(new Vector2(3900, 500), 42);
+            Menu.Load(menu, perso, monster, pnj, Content, GraphicsDevice, nbPlayer);
         }
     }
 }

@@ -11,72 +11,125 @@ namespace The_Last_Trial
 {
     class Menu : Objet
     {
-        private static bool pause;
+        private static bool pause = true;
+        private static bool firstPause = false;
+        private static int state = 1;
+        private static KeyboardState oldState, newState;
+        private static SpriteFont menuFont;
 
-        public bool G_Pause() { return pause; }
-        public void S_Pause(bool p) { pause = p; }
+        public Menu(ContentManager Content) 
+        {
+            objet = Content.Load<Texture2D>("menu/1");
+            menuFont = Content.Load<SpriteFont>("menufont");
+            oldState = Keyboard.GetState();
+        }
 
         public static int Init(Personnage[] perso)
         {
-            // TODO : THE MAIN MENU
-            return 2;
+            newState = Keyboard.GetState();
+            if (newState.IsKeyDown(Keys.Enter))
+            {
+                pause = false;
+                return state;
+            }
+            if (newState.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
+            {
+                if (state == 1)
+                    state = 4;
+                else
+                    state--;
+            }
+            if (newState.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+            {
+                if (state == 4)
+                    state = 1;
+                else
+                    state++;
+            }
+            oldState = newState;
+            return 0;
         }
 
-        public static void Load(Menu menu, Personnage[] perso, Monster[] monster, ContentManager Content, GraphicsDevice device, int nbPlayer)
+        public static void Load(Menu menu, Personnage[] perso, Monster[] monster, PNJ pnj, ContentManager Content, GraphicsDevice device, int nbPlayer)
         {
+            Mob.Load(Content);
             Personnage.Load(perso, Content, nbPlayer);
             Monster.Load(monster, Content);
+            PNJ.Load(pnj, Content);
             Map.Load(device, Content);
             Son.Load(Content);
-            //Son.Play(0);
-            menu.Load(Content);
+            Son.PlayLoop(0);
         }
 
         public static void Update(Monster[] monster, 
             Personnage[] perso, 
+            PNJ pnj,
             GraphicsDeviceManager graphics,
             GameTime gameTime, 
             ContentManager Content,
-            int nbPlayer)
+            int nbPlayer,
+            Game1 game)
         {
             
             if (pause)
             {
-                pause = Keyboard.GetState().IsKeyDown(Keys.Escape);
+                if (!Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    firstPause = false;
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !firstPause)
+                    pause = false;
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                    pause = false;
+
+                if (Keyboard.GetState().IsKeyDown(Keys.Delete))
+                    game.Exit();
             }
             else
             {
                 Monster.Update(monster, gameTime, perso, Content);
-                Personnage.Update(perso, gameTime, monster, graphics, Content);
+                Personnage.Update(perso, gameTime, monster, graphics, Content); 
+                PNJ.Update(pnj, perso[0], gameTime, graphics, Content);
                 Map.Update(gameTime, perso, Content, nbPlayer);
                 Monster.Resu(monster);
-                pause = Keyboard.GetState().IsKeyDown(Keys.Escape);
+                if (!Keyboard.GetState().IsKeyDown(Keys.Escape))
+                    firstPause = true;
+                pause = (Keyboard.GetState().IsKeyDown(Keys.Escape) && firstPause);
             }
         }
 
-        public static void Draw(Menu menu, Personnage[] perso, Monster[] monster, SpriteBatch spriteBatch, GraphicsDeviceManager graphics)
+        public static void Draw(Menu menu, Personnage[] perso, Monster[] monster, PNJ pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, bool play)
         {
             graphics.GraphicsDevice.Clear(Color.Pink);
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
 
-            Map.DrawBack(spriteBatch);
-            Map.DrawMiddle(spriteBatch);
-            Monster.Draw(monster, spriteBatch);
-            Personnage.Draw(perso, spriteBatch);
-            Map.DrawFirst(spriteBatch);
-            menu.Draw(spriteBatch);
+            if (play)
+            {
+                Map.DrawBack(spriteBatch);
+                Map.DrawMiddle(spriteBatch);
+                Mob.Draw(monster, spriteBatch);
+                Monster.Draw(monster, spriteBatch);
+                Personnage.Draw(perso, spriteBatch);
+                PNJ.Draw(pnj, perso[0], spriteBatch);
+                Map.DrawFirst(spriteBatch);
+                menu.Draw(spriteBatch);
+            }
+            else
+            {
+                menu.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
         }
 
-        private void Load(ContentManager Content)
-        {
-            //objet = Content.Load<Texture2D>("menu/1/");
-        }
-
         private void Draw(SpriteBatch sb)
         {
-            //sb.Draw(base.objet, base.position, Color.White);
+            if (pause)
+                sb.Draw(objet, position, Color.White);
+
+            if (Game1.G_Player() == 0)
+            {
+                sb.DrawString(menuFont, Convert.ToString(state), new Vector2(700, 500), Color.White);
+            }
         }
     }
 }

@@ -62,18 +62,18 @@ namespace The_Last_Trial
                 perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 500f), 1);
 
             if (player > 1)
-                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D0 }, new Vector2(330f, 600f), 3);
+                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 600f), 3);
 
             if (player > 2)
                 perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D0 }, new Vector2(300f, 650f), 1);
 
             if (player > 3)
-                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.OemSemicolon, Keys.O, Keys.K, Keys.J, Keys.D0 }, new Vector2(330f, 350f), 1);
+                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D0 }, new Vector2(330f, 350f), 1);
 
             foreach (Personnage p in perso)
                 p.F_Load(Content);
 
-            gameFont = Content.Load<SpriteFont>("gamefont");
+            gameFont = Content.Load<SpriteFont>("overkillfont");
         }
 
         public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager Content)
@@ -125,10 +125,10 @@ namespace The_Last_Trial
 
         private void F_Draw(SpriteBatch sb)
         {
-            if (imgState != 99)
+            if (imgState < 100)
                 sb.Draw(base.objet, base.position, Color.White);
             else
-                sb.Draw(base.objet, new Vector2(position.X - 142, position.Y - 50), Color.White);
+                sb.Draw(base.objet, new Vector2(position.X - 240, position.Y - 210), Color.White);
         }
 
         #endregion
@@ -228,6 +228,11 @@ namespace The_Last_Trial
             oldState = newState;
         }
 
+        public bool F_Interact(PNJ pnj)
+        {
+            return G_Rectangle().Intersects(pnj.G_Interact());
+        }
+
         #region Attaque & Magie
 
         public void F_Attaque(Monster[] monster, GameTime gameTime)
@@ -265,7 +270,7 @@ namespace The_Last_Trial
             bool m_target = false;
 
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-            if (tempsActuel > tempsAttaque[1] + 5)
+            if (tempsActuel > tempsAttaque[1] + 3)
             {
                 if (newState.IsKeyDown(key[5]))
                 {
@@ -304,13 +309,26 @@ namespace The_Last_Trial
                     //}
 
                     Son.Play(4);
-                    imgState = 99;
+                    imgState = 101;
                     tempsAttaque[1] = tempsActuel;
                 }
             }
             else
-            { 
-                
+            {
+                if (tempsActuel > tempsAttaque[1] + 1)
+                    if (imgState == 105)
+                        imgState = 20;
+                    else { }
+                else if (tempsActuel > tempsAttaque[1] + 0.8)
+                    imgState = 105;
+                else if (tempsActuel > tempsAttaque[1] + 0.6)
+                    imgState = 104;
+                else if (tempsActuel > tempsAttaque[1] + 0.4)
+                    imgState = 103;
+                else if (tempsActuel > tempsAttaque[1] + 0.2)
+                    imgState = 102;
+                if (imgState > 100)
+                    speed = Vector2.Zero;
             }
         }
 
