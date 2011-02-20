@@ -1258,8 +1258,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="mob\1\3.png">
-      <Name>3</Name>
+    <Compile Include="mob\1\0.png">
+      <Name>0</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -159,12 +159,12 @@ namespace The_Last_Trial
                 position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 // Test pour detecter si collision X ou Y
-                if (new Rectangle((int)position.X + (int)((speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds), 
+                if (new Rectangle((int)position.X + (int)((speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds * 2), 
                     (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3).Intersects(rect))
                 {
                     speed.X = 0;
                 }
-                if (new Rectangle((int)position.X, (int)position.Y + (int)((speed.Y - Map.G_Speed().Y) * (float)gameTime.ElapsedGameTime.TotalSeconds) + 
+                if (new Rectangle((int)position.X, (int)position.Y + (int)((speed.Y - Map.G_Speed().Y) * (float)gameTime.ElapsedGameTime.TotalSeconds * 2) + 
                     (objet.Height * 2) / 3, objet.Width, objet.Height / 3).Intersects(rect))
                 {
                     speed.Y = 0;
@@ -240,10 +240,12 @@ namespace The_Last_Trial
                 if (tempsActuel > tempsAttaque[0] + 0.5)
                 {
                     Son.Play(1);
+                    bool attaque = false;
                     foreach (Monster m in monster)
                     {
-                        if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive())
+                        if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive() && !attaque)
                         {
+                            attaque = true;
                             m.S_Degat(42);
                         }
                     }
@@ -259,7 +261,7 @@ namespace The_Last_Trial
 
             Monster[] m_target_ovrkl = new Monster[Game1.G_Monster()];
             Personnage[] p_target_ovrkl = new Personnage[Game1.G_Player()];
-            bool p_target = false;
+            //bool p_target = false;
             bool m_target = false;
 
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -272,10 +274,10 @@ namespace The_Last_Trial
                         m_target_ovrkl[i] = null;
                     }
 
-                    /*for (int i = 0; i < Game1.G_Player(); i++)
-                    {
-                        p_target_ovrkl[i] = null;
-                    }*/
+                    //for (int i = 0; i < Game1.G_Player(); i++)
+                    //{
+                    //    p_target_ovrkl[i] = null;
+                    //}
 
                     for (int i = 0; i < Game1.G_Monster(); i++)
                     {
@@ -288,19 +290,18 @@ namespace The_Last_Trial
 
                         if (m_target && monster[i].G_IsAlive() && m_target_ovrkl[i] != null)
                         {
-                            Console.WriteLine(i + " : " + m_target_ovrkl[i]);
                             monster[i].S_Degat(1337);
                         }
                     }
 
-                    /*for (int i = 0; i < Game1.G_Player(); i++)
-                    {
-                        if (F_DetectAllies(perso) != null)
-                        {
-                            p_target_ovrkl[i] = F_DetectAllies(perso);
-                            p_target = true;
-                        }
-                    }*/
+                    //for (int i = 0; i < Game1.G_Player(); i++)
+                    //{
+                    //    if (F_DetectAllies(perso) != null)
+                    //    {
+                    //        p_target_ovrkl[i] = F_DetectAllies(perso);
+                    //        p_target = true;
+                    //    }
+                    //}
 
                     Son.Play(4);
                     imgState = 99;

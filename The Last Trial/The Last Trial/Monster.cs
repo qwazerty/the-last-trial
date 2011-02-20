@@ -75,8 +75,6 @@ namespace The_Last_Trial
         {
             life = 100;
             imgState = 40;
-            target = null;
-            spawn = new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height);
         }
 
         #endregion
@@ -154,7 +152,6 @@ namespace The_Last_Trial
                     F_Collision_Joueur(p);
                 }
             }
-            F_UpdateState();
             F_UpdateImage(gameTime);
             F_Load(content);
             S_Deplacement(gameTime);
@@ -252,12 +249,6 @@ namespace The_Last_Trial
         }
 
         #endregion
-
-        private void F_UpdateState()
-        {
-            if (life <= 0)
-                imgState = 3;
-        }
 
         private void DrawHealth(SpriteBatch spriteBatch)
         {
