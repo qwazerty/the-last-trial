@@ -46,19 +46,17 @@ namespace The_Last_Trial
             textFont = Content.Load<SpriteFont>("textfont");
         }
 
-        public static void Update(PNJ pnj, Personnage perso, GameTime gameTime, GraphicsDeviceManager graphics, ContentManager Content)
+        public static void Update(PNJ pnj, Personnage[] perso, GameTime gameTime, GraphicsDeviceManager graphics, ContentManager Content)
         {
             pnj.F_Update(pnj, perso, Content, gameTime, graphics);
         }
 
-        public static void Draw(PNJ pnj, Personnage perso, SpriteBatch spriteBatch)
+        public static void Draw(PNJ pnj, SpriteBatch spriteBatch)
         {
             pnj.F_Draw(spriteBatch);
 
             if (parler)
-            {
                 spriteBatch.DrawString(textFont, message, new Vector2(pnj.position.X - 170, pnj.position.Y - 60), Color.DeepPink);
-            }
         }
         #endregion
 
@@ -68,7 +66,7 @@ namespace The_Last_Trial
             objet = content.Load<Texture2D>("perso/" + 2 + "/" + 40);
         }
 
-        private void F_Update(PNJ pnj,Personnage perso, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
+        private void F_Update(PNJ pnj, Personnage[] perso, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
         {
             S_Deplacement(gameTime);
             F_Parler(perso, pnj);
@@ -80,12 +78,14 @@ namespace The_Last_Trial
         }
         #endregion
 
-        public bool F_Parler(Personnage perso, PNJ pnj)
+        public bool F_Parler(Personnage[] perso, PNJ pnj)
         {
-            if (perso.F_Interact(pnj))
-                parler = true;
-            else
-                parler = false;
+            parler = false;
+            foreach (Personnage p in perso)
+            {
+                if (p.F_Interact(pnj))
+                    parler = true;
+            }
             return parler;
         }
     }

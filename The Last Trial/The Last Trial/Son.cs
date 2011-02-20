@@ -32,7 +32,6 @@ namespace The_Last_Trial
         public static void Play(int i)
         {
             mySound[i].Play();
-
         }
 
         public static void PlayLoop(int i)

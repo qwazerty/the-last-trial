@@ -357,7 +357,7 @@ namespace The_Last_Trial
         {
             foreach (Personnage p in perso)
             {
-                if (p.imgState == 99)
+                if (p.imgState > 100)
                     return p;
             }
             return null;

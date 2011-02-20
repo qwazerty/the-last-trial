@@ -57,9 +57,11 @@ namespace The_Last_Trial
                 Menu.Update(monster, perso, pnj, graphics, gameTime, Content, nbPlayer, this);
             else
             {
-                nbPlayer = Menu.Init(perso);
+                nbPlayer = Menu.Init(perso, Content, gameTime);
                 play = nbPlayer != 0;
-                if (play)
+                if (nbPlayer == -1)
+                    this.Exit();
+                else if (play)
                     Load();
             }
 
