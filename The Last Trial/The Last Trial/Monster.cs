@@ -28,7 +28,7 @@ namespace The_Last_Trial
         public Monster(Vector2 init, int id) : base()
         {
             this.id = id;
-            this.spawn = new Rectangle((int)init.X - 50, (int)init.Y - 50, 100, 100);
+            this.spawn = new Rectangle((int)init.X - 200, (int)init.Y - 200, 400, 400);
             this.position = init;
             this.life = 100;
             this.initLife = this.life;
@@ -45,9 +45,7 @@ namespace The_Last_Trial
         {
             if (id == 1)
             {
-                return new Rectangle((int)position.X + (base.objet.Width) / 2,
-                    (int)position.Y + (objet.Height) * 2 / 3,
-                    6, base.objet.Height / 3);
+                return new Rectangle((int)position.X + 115, (int)position.Y + 165, 20, 20);
             }
 
             return new Rectangle(0, 0, 0, 0);
@@ -57,16 +55,20 @@ namespace The_Last_Trial
         {
             if (id == 1)
             {
-                return new Rectangle((int)position.X, (int)position.Y + (objet.Height) / 2, objet.Width, objet.Height * 2 / 3);
+                return new Rectangle((int)position.X + 70, (int)position.Y + 125, 100, 100);
             }
 
             return new Rectangle(0, 0, 0, 0);
         }
 
-
         public Rectangle G_Aggro()
         {
-            return new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height);
+            return new Rectangle((int)position.X - 100, (int)position.Y + 100, objet.Width + 200, objet.Height + 270);
+        }
+
+        public Rectangle G_Random()
+        {
+            return new Rectangle((int)position.X - 100 - (int)Map.G_ScreenX(), (int)position.Y + 100, objet.Width + 200, objet.Height + 270);
         }
 
         public void S_Resu()
@@ -74,6 +76,7 @@ namespace The_Last_Trial
             life = 100;
             imgState = 40;
             target = null;
+            spawn = new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height);
         }
 
         #endregion
@@ -188,9 +191,9 @@ namespace The_Last_Trial
 
         private void F_FollowPlayer()
         {
-            if (target.G_Position().X + 10 < position.X)
+            if (target.G_Position().X + 10 < position.X + 130)
                 speed.X = -50f;
-            else if (target.G_Position().X - 10 > position.X)
+            else if (target.G_Position().X - 10 > position.X + 130)
                 speed.X = 50f;
 
             if (target.G_Position().Y + 10 < position.Y + 79)
@@ -242,7 +245,7 @@ namespace The_Last_Trial
             }
             else
             {
-                if (!spawn.Intersects(new Rectangle((int)position.X + (int)Map.G_ScreenX(), (int)position.Y, 1, 1)))
+                if (!spawn.Intersects(G_Random()))
                     speed *= -1;
             }
 

@@ -28,7 +28,7 @@ namespace The_Last_Trial
             Monster.Load(monster, Content);
             Map.Load(device, Content);
             Son.Load(Content);
-            Son.Play(0);
+            //Son.Play(0);
             menu.Load(Content);
         }
 

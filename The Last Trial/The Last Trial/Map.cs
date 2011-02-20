@@ -46,9 +46,9 @@ namespace The_Last_Trial
         {
             if (id == 1)
             {
-                monster[0] = new Monster(new Vector2(1280f, 400f), 1);
-                monster[1] = new Monster(new Vector2(1600f, 600f), 1);
-                monster[2] = new Monster(new Vector2(2000f, 500f), 1);
+                monster[0] = new Monster(new Vector2(1120f, 400f), 1);
+                monster[1] = new Monster(new Vector2(1600f, 500f), 1);
+                monster[2] = new Monster(new Vector2(2000f, 450f), 1);
                 monster[3] = new Monster(new Vector2(2500f, 400f), 1);
                 monster[4] = new Monster(new Vector2(2600f, 600f), 1);
                 return monster;

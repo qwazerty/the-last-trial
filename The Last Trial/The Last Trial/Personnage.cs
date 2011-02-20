@@ -49,11 +49,6 @@ namespace The_Last_Trial
         {
             return new Rectangle((int)position.X, (int)position.Y + objet.Height * 2 / 3, objet.Width, objet.Height / 3);
         }
-        
-        public void S_Resu()
-        {
-            life = 100;
-        }
 
         /*****************\
          *   STATIC FUN   *
@@ -164,12 +159,12 @@ namespace The_Last_Trial
                 position -= (speed - Map.G_Speed()) * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 // Test pour detecter si collision X ou Y
-                if (new Rectangle((int)position.X + (int)((speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds * 2), 
+                if (new Rectangle((int)position.X + (int)((speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds), 
                     (int)position.Y + (objet.Height * 2) / 3, objet.Width, objet.Height / 3).Intersects(rect))
                 {
                     speed.X = 0;
                 }
-                if (new Rectangle((int)position.X, (int)position.Y + (int)((speed.Y - Map.G_Speed().Y) * (float)gameTime.ElapsedGameTime.TotalSeconds * 2) + 
+                if (new Rectangle((int)position.X, (int)position.Y + (int)((speed.Y - Map.G_Speed().Y) * (float)gameTime.ElapsedGameTime.TotalSeconds) + 
                     (objet.Height * 2) / 3, objet.Width, objet.Height / 3).Intersects(rect))
                 {
                     speed.Y = 0;
@@ -350,50 +345,6 @@ namespace The_Last_Trial
         }
 
         #endregion
-
-        //private void F_UpdateImage(GameTime gameTime)
-        //{
-        //    // Affichage images direction normale
-        //    if (speed.X > 0 && speed.Y == 0 && (imgState < 20 || imgState > 27))
-        //        imgState = 20;
-
-        //    else if (speed.X < 0 && speed.Y == 0 && (imgState < 40 || imgState > 47))
-        //        imgState = 40;
-
-        //    else if (speed.X == 0 && speed.Y > 0 && (imgState < 10 || imgState > 17))
-        //        imgState = 10;
-
-        //    else if (speed.X == 0 && speed.Y < 0 && (imgState < 30 || imgState > 37))
-        //        imgState = 30;
-
-        //    // Affichage images direction diagonales
-        //    else if (speed.X > 0 && speed.Y > 0 && (imgState < 50 || imgState > 57))
-        //        imgState = 50;
-
-        //    else if (speed.X > 0 && speed.Y < 0 && (imgState < 60 || imgState > 67))
-        //        imgState = 60;
-
-        //    else if (speed.X < 0 && speed.Y > 0 && (imgState < 80 || imgState > 87))
-        //        imgState = 80;
-
-        //    else if (speed.X < 0 && speed.Y < 0 && (imgState < 70 || imgState > 77))
-        //        imgState = 70;
-
-        //    // Update l'image de X0 à X7
-        //    if (speed != Vector2.Zero)
-        //    {
-        //        double temps = gameTime.TotalGameTime.TotalSeconds;
-
-        //        if (tempsImage < temps - 0.1)
-        //        {
-        //            imgState++;
-        //            if (imgState % 10 > 7)
-        //                imgState -= imgState % 10;
-                    
-        //            tempsImage = temps;
-        //        }
-        //    }
-        //}
 
     }
 }
