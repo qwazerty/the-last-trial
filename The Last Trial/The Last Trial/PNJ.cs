@@ -15,7 +15,7 @@ namespace The_Last_Trial
 {
     public class PNJ : Mob
     {
-        public static string message = "Sorry Mario, your princess \n is in another castle...";
+        public static string message = "Sorry Mario, your princess\n is in another castle...";
         private static SpriteFont textFont;
         public static bool parler;
 

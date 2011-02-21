@@ -36,7 +36,7 @@ namespace The_Last_Trial
         }
 
         // BORDEL DE MERDE !!!
-        // Je vous met au defi de comprendre cette fonction !
+        // Je vous met au defi de comprendre cette fonction ! :D
         public static int Init(Personnage[] perso, ContentManager Content, GameTime gameTime)
         {
             newState = Keyboard.GetState();
@@ -127,7 +127,12 @@ namespace The_Last_Trial
                     if (state == 39)
                         return -1;
                     else
+                    {
+                        menuObject[0].S_Texture(Content.Load<Texture2D>("menu/back"));
+                        menuObject[0].S_Position(new Vector2(150, 400));
+                        menuObject[1].S_Position(new Vector2(150, 560));
                         return state;
+                    }
                 }
                 else
                 {
@@ -201,7 +206,7 @@ namespace The_Last_Trial
             PNJ.Load(pnj, Content);
             Map.Load(device, Content);
             Son.Load(Content);
-            //Son.PlayLoop(0);
+            Son.PlayLoop(0);
         }
 
         public static void Update(Monster[] monster, 
@@ -216,16 +221,43 @@ namespace The_Last_Trial
             
             if (pause)
             {
-                if (!Keyboard.GetState().IsKeyDown(Keys.Escape))
+                newState = Keyboard.GetState();
+                string[] cursor = new string[2];
+                if (state == 1)
+                {
+                    cursor[0] = "_";
+                    cursor[1] = "";
+                }
+                else
+                {
+                    cursor[0] = "";
+                    cursor[1] = "_";
+                } 
+                
+                menuObject[0].S_Texture(Content.Load<Texture2D>("menu/back" + cursor[0]));
+                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit" + cursor[1]));
+
+                if (!newState.IsKeyDown(Keys.Escape))
                     firstPause = false;
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !firstPause)
+                if (newState.IsKeyDown(Keys.Escape) && !firstPause)
                     pause = false;
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Enter))
-                    pause = false;
+                if ((newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up)) || (newState.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down)))
+                {
+                    if (state == 1)
+                        state = 2;
+                    else
+                        state = 1;
+                }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Delete))
-                    game.Exit();
+                if (newState.IsKeyDown(Keys.Enter))
+                {
+                    if (state == 1)
+                        pause = false;
+                    else if (state == 2)
+                        game.Exit();
+                }
+                oldState = newState;
             }
             else
             {
@@ -237,6 +269,8 @@ namespace The_Last_Trial
                 if (!Keyboard.GetState().IsKeyDown(Keys.Escape))
                     firstPause = true;
                 pause = (Keyboard.GetState().IsKeyDown(Keys.Escape) && firstPause);
+                if (pause)
+                    state = 1;
             }
         }
 
