@@ -111,7 +111,7 @@ namespace The_Last_Trial
                         scrollable = false;
                     }
                 }
-                else if (p.G_Position().X < screenWidth * 0.22 && (screenPos.X < 0))
+                else if (p.G_Position().X < screenWidth * 0.22 /*0.2*/ && (screenPos.X < 0))
                 {
                     if (scroll <= 0)
                     {
@@ -140,11 +140,11 @@ namespace The_Last_Trial
 
         public static void DrawBack(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(back[0], new Vector2(screenPos.X / 10, screenPos.Y + offsetY), null,
+            spriteBatch.Draw(back[0], new Vector2(screenPos.X / 5, screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(back[1], new Vector2(screenPos.X / 10 + 1024, screenPos.Y + offsetY), null,
+            spriteBatch.Draw(back[1], new Vector2(screenPos.X / 5 + 1024, screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(back[2], new Vector2(screenPos.X / 10 + 2048, screenPos.Y + offsetY), null,
+            spriteBatch.Draw(back[2], new Vector2(screenPos.X / 5 + 2048, screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
         }
 

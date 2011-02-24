@@ -160,7 +160,7 @@ namespace The_Last_Trial
 
         private void F_Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(base.objet, base.position, Color.White);
+            spriteBatch.Draw(objet, new Vector2((int)position.X, (int)position.Y), Color.White);
             if (G_IsAlive())
                 DrawHealth(spriteBatch);
         }

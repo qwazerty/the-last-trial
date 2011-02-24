@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using System.Threading;
 
 namespace The_Last_Trial
 {
@@ -40,6 +41,14 @@ namespace The_Last_Trial
         public static int Init(Personnage[] perso, ContentManager Content, GameTime gameTime)
         {
             newState = Keyboard.GetState();
+            if (newState.IsKeyDown(Keys.F12))
+            {
+                menuObject[0].S_Texture(Content.Load<Texture2D>("menu/back"));
+                menuObject[0].S_Position(new Vector2(150, 400));
+                menuObject[1].S_Position(new Vector2(150, 560));
+                pause = false;
+                return 2;
+            }
             tempsActuel = (float)gameTime.TotalRealTime.TotalSeconds;
             if (state <= 0)
             {
@@ -47,14 +56,22 @@ namespace The_Last_Trial
                 {
                     temp += (tempsInit + 0.9f - tempsActuel) * 4;
                 }
-                else if (tempsInit + 1 > tempsActuel) { }
+                else if (tempsInit + 1 > tempsActuel) 
+                { 
+                }
                 else
                 {
                     if (tempsInit + 1.9 > tempsActuel)
+                    {
                         temp -= (tempsInit + 1.9f - tempsActuel) * 4;
-                    else if (tempsInit + 2 > tempsActuel) { }
+                    }
+                    else if (tempsInit + 2 > tempsActuel)
+                    {
+                    }
                     else
+                    {
                         tempsInit = tempsActuel;
+                    }
                 }
 
                 string[] cursor = new string[2];
@@ -87,9 +104,13 @@ namespace The_Last_Trial
                 if ((newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up)) || (newState.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down)))
                 {
                     if (state == -1)
+                    {
                         state = 0;
+                    }
                     else
+                    {
                         state = -1;
+                    }
                 }
             }
             else
@@ -98,15 +119,21 @@ namespace The_Last_Trial
                 {
                     temp += (tempsActuel - tempsInit) * 10;
                     if (state != 42)
+                    {
                         menuObject[2].S_Position(new Vector2(150 + temp, 400));
+                    }
                     else
+                    {
                         menuObject[2].S_Position(new Vector2(150 + temp, 560));
+                    }
                 }
                 else if (tempsInit + 4.5 > tempsActuel && state > 40)
                 {
                     firstPause = true;
                     if (state == 42)
+                    {
                         return -1;
+                    }
 
                     menuObject[0].S_Texture(Content.Load<Texture2D>("menu/player"));
                     menuObject[0].S_Position(new Vector2(20, 400));
@@ -118,14 +145,20 @@ namespace The_Last_Trial
                 {
                     temp -= (tempsActuel - tempsInit) * 10;
                     if (state != 39)
+                    {
                         menuObject[2].S_Position(new Vector2(820 + temp, 240));
+                    }
                     else
+                    {
                         menuObject[2].S_Position(new Vector2(820 + temp, 400));
+                    }
                 }
                 else if (start)
                 {
                     if (state == 39)
+                    {
                         return -1;
+                    }
                     else
                     {
                         menuObject[0].S_Texture(Content.Load<Texture2D>("menu/back"));
@@ -144,9 +177,13 @@ namespace The_Last_Trial
                     }
                     string cursor;
                     if (pause)
+                    {
                         cursor = "";
+                    }
                     else
+                    {
                         cursor = "_";
+                    }
 
                     menuObject[2].S_Position(new Vector2(820 + temp, 400));
                     menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit" + cursor));
@@ -155,20 +192,30 @@ namespace The_Last_Trial
                     {
                         temp += (tempsInit + 0.9f - tempsActuel) * 4;
                     }
-                    else if (tempsInit + 1 > tempsActuel) { }
+                    else if (tempsInit + 1 > tempsActuel) 
+                    { 
+                    }
                     else
                     {
                         if (tempsInit + 1.9 > tempsActuel)
+                        {
                             temp -= (tempsInit + 1.9f - tempsActuel) * 4;
-                        else if (tempsInit + 2 > tempsActuel) { }
+                        }
+                        else if (tempsInit + 2 > tempsActuel)
+                        {
+                        }
                         else
+                        {
                             tempsInit = tempsActuel;
+                        }
                     }
 
                     if (newState.IsKeyDown(Keys.Enter))
                     {
                         if (pause == false)
+                        {
                             state = 39;
+                        }
 
                         tempsInit = tempsActuel;
                         pause = false;
@@ -177,16 +224,24 @@ namespace The_Last_Trial
                     else if (newState.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
                     {
                         if (state == 1)
+                        {
                             state = 4;
+                        }
                         else
+                        {
                             state--;
+                        }
                     }
                     else if (newState.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
                     {
                         if (state == 4)
+                        {
                             state = 1;
+                        }
                         else
+                        {
                             state++;
+                        }
                     }
                     else if ((newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up)) || (newState.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down)))
                     {

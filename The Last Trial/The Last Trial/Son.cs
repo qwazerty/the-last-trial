@@ -38,6 +38,7 @@ namespace The_Last_Trial
         {
             instance = mySound[i].CreateInstance();
             instance.IsLooped = true;
+            instance.Volume = 0.7f;
             instance.Play();
         }
     }

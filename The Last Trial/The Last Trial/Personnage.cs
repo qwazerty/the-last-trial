@@ -19,6 +19,7 @@ namespace The_Last_Trial
         // DECLARATION VARIABLES
         private static SpriteFont gameFont;
         private KeyboardState newState, oldState;
+        private int oldImage;
         private Keys[] key;
         /** KEYS STATES **\
          * 0 : BAS       *
@@ -65,10 +66,10 @@ namespace The_Last_Trial
                 perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 600f), 3);
 
             if (player > 2)
-                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D0 }, new Vector2(300f, 650f), 1);
+                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(300f, 650f), 1);
 
             if (player > 3)
-                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D0 }, new Vector2(330f, 350f), 1);
+                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(330f, 350f), 3);
 
             foreach (Personnage p in perso)
                 p.F_Load(Content);
@@ -108,9 +109,9 @@ namespace The_Last_Trial
         private void F_Update(Personnage[] perso, Monster[] monster, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
         {
             F_Deplacer();
+            F_UpdateImage(gameTime);
             F_Attaque(monster, gameTime);
             F_OverKill(monster, perso, gameTime);
-            F_UpdateImage(gameTime);
             foreach (Rectangle collision in Map.G_Collision())
                 F_Collision_Objets(collision, gameTime);
             foreach (Monster m in monster)
@@ -125,10 +126,13 @@ namespace The_Last_Trial
 
         private void F_Draw(SpriteBatch sb)
         {
-            if (imgState < 100)
-                sb.Draw(base.objet, base.position, Color.White);
+            // CODE SALE
+            if (imgState < 0 && id == 1)
+                sb.Draw(objet, new Vector2((int)position.X - 40, (int)position.Y - 30), Color.White);
+            else if (imgState < 100)
+                sb.Draw(objet, new Vector2((int)position.X, (int)position.Y), Color.White);
             else
-                sb.Draw(base.objet, new Vector2(position.X - 240, position.Y - 210), Color.White);
+                sb.Draw(objet, new Vector2((int)position.X - 240, (int)position.Y - 210), Color.White);
         }
 
         #endregion
@@ -145,7 +149,7 @@ namespace The_Last_Trial
                 speed.X = 0;
             }
 
-            else if (position.X < MaxX * 0.185)
+            else if (position.X < MaxX * 0.185 /*0.6*/)
             {
                 position.X -= (speed.X - Map.G_Speed().X) * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 speed.X = 0;
@@ -174,77 +178,17 @@ namespace The_Last_Trial
 
         #endregion
 
-        private void F_Deplacer()
-        {
-            newState = Keyboard.GetState();
-            // DROITE
-            if (newState.IsKeyDown(key[1]))
-            {
-                if (!oldState.IsKeyDown(key[1]))
-                    speed.X = 150.0f;
-            }
-            else if (oldState.IsKeyDown(key[1]))
-            {
-                if (speed.X > 0)
-                    speed.X = 0.0f;
-            }
-
-            // GAUCHE
-            if (newState.IsKeyDown(key[3]))
-            {
-                if (!oldState.IsKeyDown(key[3]))
-                    speed.X = -150.0f;
-            }
-            else if (oldState.IsKeyDown(key[3]))
-            {
-                if (speed.X < 0)
-                    speed.X = 0.0f;
-            }
-
-            // HAUT
-            if (newState.IsKeyDown(key[2]))
-            {
-                if (!oldState.IsKeyDown(key[2]))
-                    speed.Y = -80.0f;
-            }
-            else if (oldState.IsKeyDown(key[2]))
-            {
-                if (speed.Y < 0)
-                    speed.Y = 0.0f;
-            }
-
-            // BAS
-            if (newState.IsKeyDown(key[0]))
-            {
-                if (!oldState.IsKeyDown(key[0]))
-                    speed.Y = 80.0f;
-            }
-            else if (oldState.IsKeyDown(key[0]))
-            {
-                if (speed.Y > 0)
-                    speed.Y = 0.0f;
-            }
-
-            oldState = newState;
-        }
-
-        public bool F_Interact(PNJ pnj)
-        {
-            return G_Rectangle().Intersects(pnj.G_Interact());
-        }
-
         #region Attaque & Magie
 
         public void F_Attaque(Monster[] monster, GameTime gameTime)
         {
             newState = Keyboard.GetState();
-
-            if (newState.IsKeyDown(key[4]))
+            tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
+            if (tempsActuel > tempsAttaque[0] + 0.5)
             {
-                tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-                if (tempsActuel > tempsAttaque[0] + 0.5)
+                if (newState.IsKeyDown(key[4]))
                 {
-                    Son.Play(1);
+                    oldImage = imgState;
                     bool attaque = false;
                     foreach (Monster m in monster)
                     {
@@ -254,10 +198,90 @@ namespace The_Last_Trial
                             m.S_Degat(42);
                         }
                     }
+                    if (id == 3)
+                        Son.Play(3);
+
                     tempsAttaque[0] = tempsActuel;
                 }
             }
+            // CODE SALE !
+            else if (id == 1)
+            {
+                if (tempsActuel > tempsAttaque[0] + 0.4)
+                {
+                    if (imgState % 10 == -3)
+                    {
+                        Son.Play(1);
+                        imgState = oldImage / 10 * 10;
+                    }
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.3)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -23;
+                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -13;
+                    if (oldImage / 10 == 7)
+                        imgState = -43;
+                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -33;
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.2)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -22;
+                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -12;
+                    if (oldImage / 10 == 7)
+                        imgState = -42;
+                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -32;
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.1)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -21;
+                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -11;
+                    if (oldImage / 10 == 7)
+                        imgState = -41;
+                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -31;
+                }
+                else if (tempsActuel > tempsAttaque[0])
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -20;
+                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -10;
+                    if (oldImage / 10 == 7)
+                        imgState = -40;
+                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -30;
+                }
 
+                if (imgState < 0)
+                    speed = Vector2.Zero;
+            }
+            else if (id == 3)
+            {
+                if (tempsActuel > tempsAttaque[0] + 0.4)
+                {
+                    if (imgState < 0)
+                    {
+                        imgState = oldImage / 10 * 10;
+                    }
+                }
+                else
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 3 || oldImage / 10 == 5 || oldImage / 10 == 6)
+                        imgState = -10;
+                    else
+                        imgState = -20;
+                }
+                if (imgState < 0)
+                    speed = Vector2.Zero;
+            }
         }
 
         public void F_OverKill(Monster[] monster, Personnage[] perso, GameTime gameTime)
@@ -364,6 +388,66 @@ namespace The_Last_Trial
         }
 
         #endregion
+
+        private void F_Deplacer()
+        {
+            newState = Keyboard.GetState();
+            // DROITE
+            if (newState.IsKeyDown(key[1]))
+            {
+                if (!oldState.IsKeyDown(key[1]))
+                    speed.X = 150.0f;
+            }
+            else if (oldState.IsKeyDown(key[1]))
+            {
+                if (speed.X > 0)
+                    speed.X = 0.0f;
+            }
+
+            // GAUCHE
+            if (newState.IsKeyDown(key[3]))
+            {
+                if (!oldState.IsKeyDown(key[3]))
+                    speed.X = -150.0f;
+            }
+            else if (oldState.IsKeyDown(key[3]))
+            {
+                if (speed.X < 0)
+                    speed.X = 0.0f;
+            }
+
+            // HAUT
+            if (newState.IsKeyDown(key[2]))
+            {
+                if (!oldState.IsKeyDown(key[2]))
+                    speed.Y = -80.0f;
+            }
+            else if (oldState.IsKeyDown(key[2]))
+            {
+                if (speed.Y < 0)
+                    speed.Y = 0.0f;
+            }
+
+            // BAS
+            if (newState.IsKeyDown(key[0]))
+            {
+                if (!oldState.IsKeyDown(key[0]))
+                    speed.Y = 80.0f;
+            }
+            else if (oldState.IsKeyDown(key[0]))
+            {
+                if (speed.Y > 0)
+                    speed.Y = 0.0f;
+            }
+
+            oldState = newState;
+        }
+
+        public bool F_Interact(PNJ pnj)
+        {
+            return G_Rectangle().Intersects(pnj.G_Interact());
+        }
+
 
     }
 }
