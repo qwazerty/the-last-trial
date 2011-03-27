@@ -84,7 +84,7 @@ namespace The_Last_Trial
          *   STATIC FUN   *
         \*****************/
 
-        #region Static Load, Update & Draw
+        #region Static Load & Update
 
         public static void Load(Monster[] monster, ContentManager Content)
         {
@@ -96,12 +96,6 @@ namespace The_Last_Trial
         {
             foreach (Monster m in monster)
                 m.F_Update(gameTime, perso, Content);
-        }
-
-        public static void Draw(Monster[] monster, SpriteBatch spriteBatch)
-        {
-            foreach (Monster m in monster)
-                m.F_Draw(spriteBatch);
         }
 
         public static void Resu(Monster[] monster)
@@ -158,7 +152,7 @@ namespace The_Last_Trial
             S_Deplacement(gameTime);
         }
 
-        private void F_Draw(SpriteBatch spriteBatch)
+        public void F_Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(objet, new Vector2((int)position.X, (int)position.Y), Color.White);
             if (G_IsAlive())

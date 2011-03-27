@@ -79,7 +79,7 @@ namespace The_Last_Trial
  
         }
 
-        public static void Update(GameTime gameTime, Personnage[] perso, ContentManager Content, int nbPlayer)
+        public static void Update(GameTime gameTime, Personnage[] perso, ContentManager Content)
         {
             float deltaX = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -126,7 +126,7 @@ namespace The_Last_Trial
 
                 offsetY += p.G_Position().Y;
             }
-            offsetY /= (nbPlayer * 5);
+            offsetY /= (Game1.G_Player() * 5);
             offsetY -= back[0].Height - (screenHeight - first[0].Height - middle[0].Height);
             if (scrollable && G_Scroll())
             {

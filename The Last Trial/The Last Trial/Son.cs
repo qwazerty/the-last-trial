@@ -19,7 +19,6 @@ namespace The_Last_Trial
         private static SoundEffect[] mySound = new SoundEffect[5];
         private static SoundEffectInstance instance;
 
-
         public static void Load(ContentManager Content)
         {
             mySound[0] = Content.Load<SoundEffect>("sound/soundTrack/1");

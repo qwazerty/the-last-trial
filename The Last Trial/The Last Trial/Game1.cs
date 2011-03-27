@@ -54,7 +54,7 @@ namespace The_Last_Trial
         protected override void Update(GameTime gameTime)
         {
             if (play)
-                Menu.Update(monster, perso, pnj, graphics, gameTime, Content, nbPlayer, this);
+                Menu.Update(monster, perso, pnj, graphics, gameTime, Content, this);
             else
             {
                 nbPlayer = Menu.Init(perso, Content, gameTime);
@@ -62,7 +62,14 @@ namespace The_Last_Trial
                 if (nbPlayer == -1)
                     this.Exit();
                 else if (play)
-                    Load();
+                {
+                    nbMonster = Map.Init(1, monster);
+                    perso = new Personnage[nbPlayer];
+                    monster = new Monster[nbMonster];
+                    monster = Map.LoadMonster(monster);
+                    pnj = new PNJ(new Vector2(3900, 500), 42);
+                    Menu.Load(menu, perso, monster, pnj, Content, GraphicsDevice, nbPlayer);
+                }
             }
 
             base.Update(gameTime);
@@ -72,16 +79,6 @@ namespace The_Last_Trial
         {
             Menu.Draw(menu, perso, monster, pnj, spriteBatch, graphics, play);
             base.Draw(gameTime);
-        }
-
-        private void Load()
-        {
-            nbMonster = Map.Init(1, monster);
-            perso = new Personnage[nbPlayer];
-            monster = new Monster[nbMonster];
-            monster = Map.LoadMonster(monster); 
-            pnj = new PNJ(new Vector2(3900, 500), 42);
-            Menu.Load(menu, perso, monster, pnj, Content, GraphicsDevice, nbPlayer);
         }
     }
 }

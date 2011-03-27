@@ -27,7 +27,7 @@ namespace The_Last_Trial
          * 2 : HAUT      *
          * 3 : GAUCHE    *
          * 4 : ATTAQUE   *
-         * 5 : OMGOVERKILL*
+         * 5 : OVERKILL  *
         \*****************/
 
         // CONSTRUCTEUR
@@ -48,14 +48,14 @@ namespace The_Last_Trial
 
         public Rectangle G_Rectangle()
         {
-            return new Rectangle((int)position.X, (int)position.Y + objet.Height * 2 / 3, objet.Width, objet.Height / 3);
+            return new Rectangle((int)position.X, (int)position.Y + 66, 60, 33);
         }
 
         /*****************\
-         *   STATIC FUN   *
+         * STATIC : FUN  *
         \*****************/
 
-        #region Static Load, Update & Draw
+        #region Static Load & Update
 
         public static void Load(Personnage[] perso, ContentManager Content, int player)
         {
@@ -81,16 +81,6 @@ namespace The_Last_Trial
         {
             foreach (Personnage p in perso)
                 p.F_Update(perso, monster, Content, gameTime, graphics);
-        }
-
-        public static void Draw(Personnage[] perso, SpriteBatch spriteBatch)
-        {
-            foreach (Personnage p in perso)
-                p.F_Draw(spriteBatch);
-
-            Personnage personnage = F_IsOverKilling(perso);
-            if (personnage != null)
-                spriteBatch.DrawString(gameFont, "OVERKILL", new Vector2(personnage.G_Position().X - 100, personnage.G_Position().Y - 120), Color.Firebrick);
         }
 
         #endregion
@@ -124,7 +114,7 @@ namespace The_Last_Trial
             F_Load(Content);
         }
 
-        private void F_Draw(SpriteBatch sb)
+        public void F_Draw(SpriteBatch sb)
         {
             // CODE SALE
             if (imgState < 0 && id == 1)
@@ -133,6 +123,9 @@ namespace The_Last_Trial
                 sb.Draw(objet, new Vector2((int)position.X, (int)position.Y), Color.White);
             else
                 sb.Draw(objet, new Vector2((int)position.X - 240, (int)position.Y - 210), Color.White);
+
+            if (imgState > 100)
+                sb.DrawString(gameFont, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
         }
 
         #endregion
@@ -375,16 +368,6 @@ namespace The_Last_Trial
                 m_ = m;
 
             return m_;
-        }
-
-        public static Personnage F_IsOverKilling(Personnage[] perso)
-        {
-            foreach (Personnage p in perso)
-            {
-                if (p.imgState > 100)
-                    return p;
-            }
-            return null;
         }
 
         #endregion

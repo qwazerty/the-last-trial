@@ -264,62 +264,18 @@ namespace The_Last_Trial
             Son.PlayLoop(0);
         }
 
-        public static void Update(Monster[] monster, 
-            Personnage[] perso, 
-            PNJ pnj,
-            GraphicsDeviceManager graphics,
-            GameTime gameTime, 
-            ContentManager Content,
-            int nbPlayer,
-            Game1 game)
+        public static void Update(Monster[] monster, Personnage[] perso, PNJ pnj, GraphicsDeviceManager graphics, GameTime gameTime, ContentManager Content, Game1 game)
         {
-            
             if (pause)
             {
-                newState = Keyboard.GetState();
-                string[] cursor = new string[2];
-                if (state == 1)
-                {
-                    cursor[0] = "_";
-                    cursor[1] = "";
-                }
-                else
-                {
-                    cursor[0] = "";
-                    cursor[1] = "_";
-                } 
-                
-                menuObject[0].S_Texture(Content.Load<Texture2D>("menu/back" + cursor[0]));
-                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit" + cursor[1]));
-
-                if (!newState.IsKeyDown(Keys.Escape))
-                    firstPause = false;
-                if (newState.IsKeyDown(Keys.Escape) && !firstPause)
-                    pause = false;
-
-                if ((newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up)) || (newState.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down)))
-                {
-                    if (state == 1)
-                        state = 2;
-                    else
-                        state = 1;
-                }
-
-                if (newState.IsKeyDown(Keys.Enter))
-                {
-                    if (state == 1)
-                        pause = false;
-                    else if (state == 2)
-                        game.Exit();
-                }
-                oldState = newState;
+                UpdatePause(Content, game);
             }
             else
             {
                 Monster.Update(monster, gameTime, perso, Content);
                 Personnage.Update(perso, gameTime, monster, graphics, Content); 
                 PNJ.Update(pnj, perso, gameTime, graphics, Content);
-                Map.Update(gameTime, perso, Content, nbPlayer);
+                Map.Update(gameTime, perso, Content);
                 Monster.Resu(monster);
                 if (!Keyboard.GetState().IsKeyDown(Keys.Escape))
                     firstPause = true;
@@ -338,10 +294,7 @@ namespace The_Last_Trial
             {
                 Map.DrawBack(spriteBatch);
                 Map.DrawMiddle(spriteBatch);
-                Mob.Draw(monster, spriteBatch);
-                Monster.Draw(monster, spriteBatch);
-                Personnage.Draw(perso, spriteBatch);
-                PNJ.Draw(pnj, spriteBatch);
+                Mob.Draw(perso, monster, pnj, spriteBatch);
                 Map.DrawFirst(spriteBatch);
                 menu.Draw(spriteBatch);
             }
@@ -388,6 +341,47 @@ namespace The_Last_Trial
                 sb.Draw(menuObject[1].G_Texture(), menuObject[1].G_Position(), Color.White);
             }
 
+        }
+
+        private static void UpdatePause(ContentManager Content, Game1 game)
+        {
+            newState = Keyboard.GetState();
+            string[] cursor = new string[2];
+            if (state == 1)
+            {
+                cursor[0] = "_";
+                cursor[1] = "";
+            }
+            else
+            {
+                cursor[0] = "";
+                cursor[1] = "_";
+            }
+
+            menuObject[0].S_Texture(Content.Load<Texture2D>("menu/back" + cursor[0]));
+            menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit" + cursor[1]));
+
+            if (!newState.IsKeyDown(Keys.Escape))
+                firstPause = false;
+            if (newState.IsKeyDown(Keys.Escape) && !firstPause)
+                pause = false;
+
+            if ((newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up)) || (newState.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down)))
+            {
+                if (state == 1)
+                    state = 2;
+                else
+                    state = 1;
+            }
+
+            if (newState.IsKeyDown(Keys.Enter))
+            {
+                if (state == 1)
+                    pause = false;
+                else if (state == 2)
+                    game.Exit();
+            }
+            oldState = newState;
         }
     }
 }

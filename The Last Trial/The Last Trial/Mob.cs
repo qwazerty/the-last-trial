@@ -15,13 +15,14 @@ namespace The_Last_Trial
 {
     public abstract class Mob : Objet
     {
+        protected int id;
         protected int imgState, life, initLife, oldDegats;
         protected Vector2 speed;
         protected double tempsImage, tempsActuel;
         protected double[] tempsAttaque = new double[2];
-        protected int id;
         protected int degats = 0;
         private static SpriteFont gameFont;
+        private static int[] array = new int[Game1.G_Player() + Game1.G_Monster()];
 
         protected Mob()
         {
@@ -39,15 +40,56 @@ namespace The_Last_Trial
             gameFont = Content.Load<SpriteFont>("gamefont");
         }
 
-        public static void Draw(Mob[] mob, SpriteBatch sb)
+        public static void Draw(Personnage[] perso, Monster[] monster, PNJ pnj, SpriteBatch sb)
         {
-            foreach (Mob m in mob)
+            Vector2[] sort = new Vector2[Game1.G_Player() + Game1.G_Monster()];
+            for (int k = 0; k < Game1.G_Player(); k++)
             {
-                m.F_Draw_degats(m, sb);
+                sort[k].X = k;
+                sort[k].Y = perso[k].position.Y + 65;
+                if (! perso[k].G_IsAlive())
+                    sort[k].Y -= 4242;
+            }
+            for (int k = 0; k < Game1.G_Monster(); k++)
+            {
+                sort[k + Game1.G_Player()].X = k + Game1.G_Player();
+                sort[k + Game1.G_Player()].Y = monster[k].position.Y + 140;
+                if (!monster[k].G_IsAlive())
+                    sort[k + Game1.G_Player()].Y -= 4242;
+            }
+
+            for (int i = 0; i < Game1.G_Player() + Game1.G_Monster(); i++)
+            {
+                int min = -1;
+                for (int k = 0; k < Game1.G_Player() + Game1.G_Monster(); k++)
+                {
+                    if ((sort[k].X != -1) && (min == -1 || sort[k].Y < sort[min].Y))
+                    {
+                        min = k;
+                    }
+                }
+                array[i] = (int)sort[min].X;
+                sort[min].X = -1;
+            }
+
+
+            foreach (int i in array)
+            {
+                if (i < Game1.G_Player())
+                    perso[i].F_Draw(sb);
+                else
+                    monster[i - Game1.G_Player()].F_Draw(sb);
+            }
+
+            PNJ.Draw(pnj, sb);
+
+            foreach (Monster m in monster)
+            {
+                m.F_DrawDegats(m, sb);
             }
         }
 
-        private void F_Draw_degats(Mob m, SpriteBatch sb)
+        private void F_DrawDegats(Monster m, SpriteBatch sb)
         {
             if (degats != 0)
             {
