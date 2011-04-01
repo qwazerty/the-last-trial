@@ -34,6 +34,9 @@ namespace The_Last_Trial
             pause = true;
             start = false;
             tempsInit = 0;
+
+            Son.Load(Content);
+            Son.PlayLoop(0);
         }
 
         // BORDEL DE MERDE !!!
@@ -260,11 +263,9 @@ namespace The_Last_Trial
             Monster.Load(monster, Content);
             PNJ.Load(pnj, Content);
             Map.Load(device, Content);
-            Son.Load(Content);
-            Son.PlayLoop(0);
         }
 
-        public static void Update(Monster[] monster, Personnage[] perso, PNJ pnj, GraphicsDeviceManager graphics, GameTime gameTime, ContentManager Content, Game1 game)
+        public static bool Update(Monster[] monster, Personnage[] perso, PNJ pnj, GraphicsDeviceManager graphics, GameTime gameTime, ContentManager Content, Game1 game)
         {
             if (pause)
             {
@@ -279,10 +280,13 @@ namespace The_Last_Trial
                 Monster.Resu(monster);
                 if (!Keyboard.GetState().IsKeyDown(Keys.Escape))
                     firstPause = true;
+
+            
                 pause = (Keyboard.GetState().IsKeyDown(Keys.Escape) && firstPause);
                 if (pause)
                     state = 1;
             }
+            return GameOver(perso, Content);
         }
 
         public static void Draw(Menu menu, Personnage[] perso, Monster[] monster, PNJ pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, bool play)
@@ -382,6 +386,36 @@ namespace The_Last_Trial
                     game.Exit();
             }
             oldState = newState;
+        }
+
+        private static bool GameOver(Personnage[] perso, ContentManager Content)
+        {
+            bool continuer = false;
+            foreach (Personnage p in perso)
+            {
+                if (p.G_IsAlive())
+                {
+                    continuer = true;
+                }
+            }
+            if (!continuer)
+            {
+                menuFont = Content.Load<SpriteFont>("menufont");
+                oldState = Keyboard.GetState();
+                menuObject[0] = new Objet(new Vector2(500, 400));
+                menuObject[0].S_Texture(Content.Load<Texture2D>("menu/new"));
+                menuObject[1] = new Objet(new Vector2(486, 560));
+                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit"));
+                menuObject[2] = new Objet(new Vector2(150, 400));
+                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/epee"));
+                temp = 0;
+                state = 0;
+                firstPause = false;
+                start = false;
+                tempsInit = 0;
+            }
+
+            return continuer;
         }
     }
 }

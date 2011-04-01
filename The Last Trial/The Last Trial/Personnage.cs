@@ -17,9 +17,7 @@ namespace The_Last_Trial
     {
 
         // DECLARATION VARIABLES
-        private static SpriteFont gameFont;
-        private KeyboardState newState, oldState;
-        private int oldImage;
+        private static SpriteFont overKill;
         private Keys[] key;
         /** KEYS STATES **\
          * 0 : BAS       *
@@ -74,7 +72,7 @@ namespace The_Last_Trial
             foreach (Personnage p in perso)
                 p.F_Load(Content);
 
-            gameFont = Content.Load<SpriteFont>("overkillfont");
+            overKill = Content.Load<SpriteFont>("overkillfont");
         }
 
         public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager Content)
@@ -98,20 +96,24 @@ namespace The_Last_Trial
 
         private void F_Update(Personnage[] perso, Monster[] monster, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
         {
-            F_Deplacer();
-            F_UpdateImage(gameTime);
-            F_Attaque(monster, gameTime);
-            F_OverKill(monster, perso, gameTime);
-            foreach (Rectangle collision in Map.G_Collision())
-                F_Collision_Objets(collision, gameTime);
-            foreach (Monster m in monster)
+            if (G_IsAlive())
             {
-                if (m.G_IsAlive())
-                    F_Collision_Objets(m.G_Rectangle(), gameTime);
+                F_Deplacer();
+                F_Attaque(monster, gameTime);
+                F_OverKill(monster, perso, gameTime);
+                foreach (Rectangle collision in Map.G_Collision())
+                    F_Collision_Objets(collision, gameTime);
+                foreach (Monster m in monster)
+                {
+                    if (m.G_IsAlive())
+                        F_Collision_Objets(m.G_Rectangle(), gameTime);
+                }
+                F_Collision_Ecran(graphics, gameTime);
             }
-            F_Collision_Ecran(graphics, gameTime);
-            S_Deplacement(gameTime);
+
+            F_UpdateImage(gameTime);
             F_Load(Content);
+            S_Deplacement(gameTime);
         }
 
         public void F_Draw(SpriteBatch sb)
@@ -125,7 +127,10 @@ namespace The_Last_Trial
                 sb.Draw(objet, new Vector2((int)position.X - 240, (int)position.Y - 210), Color.White);
 
             if (imgState > 100)
-                sb.DrawString(gameFont, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
+                sb.DrawString(overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
+
+            if (G_IsAlive())
+                DrawHealth(sb);
         }
 
         #endregion
@@ -188,7 +193,7 @@ namespace The_Last_Trial
                         if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            m.S_Degat(42);
+                            m.S_Degat(42 + random.Next(10));
                         }
                     }
                     if (id == 3)
@@ -431,6 +436,44 @@ namespace The_Last_Trial
             return G_Rectangle().Intersects(pnj.G_Interact());
         }
 
+        #region Health
+
+        private void DrawHealth(SpriteBatch spriteBatch)
+        {
+            int x = 0, y = 0;
+            if (id == 1)
+            {
+                x = 10;
+                y = 10;
+            }
+            else if (id == 3)
+            {
+                x = 10;
+                y = 30;
+            }
+
+            spriteBatch.Draw(health, new Rectangle(x + 1, y, life, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
+            spriteBatch.Draw(health, new Rectangle(x, y, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
+        }
+
+        public void F_DrawDegats(SpriteBatch sb)
+        {
+            if (degats != 0)
+            {
+                initLife = life - degats;
+                oldDegats = degats;
+                degats = 0;
+            }
+            if (initLife < life && G_IsAlive())
+            {
+                sb.DrawString(gameFont, Convert.ToString(oldDegats), new Vector2(position.X + 10, position.Y - 30), Color.Red);
+                life -= 3;
+            }
+            else
+                oldDegats = 0;
+        }
+
+        #endregion
 
     }
 }

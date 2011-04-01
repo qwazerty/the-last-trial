@@ -54,7 +54,13 @@ namespace The_Last_Trial
         protected override void Update(GameTime gameTime)
         {
             if (play)
-                Menu.Update(monster, perso, pnj, graphics, gameTime, Content, this);
+            {
+                play = Menu.Update(monster, perso, pnj, graphics, gameTime, Content, this);
+                if (!play)
+                {
+                    nbPlayer = 0;
+                }
+            }
             else
             {
                 nbPlayer = Menu.Init(perso, Content, gameTime);

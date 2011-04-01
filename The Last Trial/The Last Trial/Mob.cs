@@ -15,14 +15,20 @@ namespace The_Last_Trial
 {
     public abstract class Mob : Objet
     {
+        protected int rand;
+        protected static Random random = new Random();
         protected int id;
         protected int imgState, life, initLife, oldDegats;
         protected Vector2 speed;
         protected double tempsImage, tempsActuel;
         protected double[] tempsAttaque = new double[2];
         protected int degats = 0;
-        private static SpriteFont gameFont;
+        protected static SpriteFont gameFont;
         private static int[] array = new int[Game1.G_Player() + Game1.G_Monster()];
+
+        protected KeyboardState newState, oldState;
+        protected int oldImage;
+        protected static Texture2D health;
 
         protected Mob()
         {
@@ -53,7 +59,7 @@ namespace The_Last_Trial
             for (int k = 0; k < Game1.G_Monster(); k++)
             {
                 sort[k + Game1.G_Player()].X = k + Game1.G_Player();
-                sort[k + Game1.G_Player()].Y = monster[k].position.Y + 140;
+                sort[k + Game1.G_Player()].Y = monster[k].position.Y + 155;
                 if (!monster[k].G_IsAlive())
                     sort[k + Game1.G_Player()].Y -= 4242;
             }
@@ -85,25 +91,13 @@ namespace The_Last_Trial
 
             foreach (Monster m in monster)
             {
-                m.F_DrawDegats(m, sb);
+                m.F_DrawDegats(sb);
             }
-        }
 
-        private void F_DrawDegats(Monster m, SpriteBatch sb)
-        {
-            if (degats != 0)
+            foreach (Personnage p in perso)
             {
-                initLife = life - degats;
-                oldDegats = degats;
-                degats = 0;
+                p.F_DrawDegats(sb);
             }
-            if (initLife < life && G_IsAlive())
-            {
-                sb.DrawString(gameFont, Convert.ToString(oldDegats), new Vector2(m.position.X + 100, m.position.Y + 40), Color.Red);
-                life -= 3;
-            }
-            else
-                oldDegats = 0;
         }
 
         public bool G_IsAlive() { return life > 0; }

@@ -17,10 +17,7 @@ namespace The_Last_Trial
     {
 
         // DECLARATION VARIABLES
-        private static Texture2D health;
-        private int rand;
         private double tempsRandom;
-        private static Random random = new Random();
         private Personnage target = null;
         private Rectangle spawn;
 
@@ -146,7 +143,10 @@ namespace The_Last_Trial
                 {
                     F_Collision_Joueur(p);
                 }
+
+                F_Attaque(perso, gameTime);
             }
+
             F_UpdateImage(gameTime);
             F_Load(content);
             S_Deplacement(gameTime);
@@ -170,7 +170,7 @@ namespace The_Last_Trial
 
         private void F_Collision_Joueur(Personnage p)
         {
-            if (F_Collision_Objets(p.G_Rectangle()))
+            if (F_Collision_Objets(p.G_Rectangle()) && p.G_IsAlive())
             {
                 target = p;
                 speed = Vector2.Zero;
@@ -183,15 +183,23 @@ namespace The_Last_Trial
 
         private void F_FollowPlayer()
         {
-            if (target.G_Position().X + 10 < position.X + 130)
-                speed.X = -50f;
-            else if (target.G_Position().X - 10 > position.X + 130)
-                speed.X = 50f;
+            if (!target.G_IsAlive())
+            {
+                target = null;
+                spawn = new Rectangle((int)position.X - 200 - (int)Map.G_ScreenX(), (int)position.Y - 200, 400, 400);
+            }
+            else
+            {
+                if (target.G_Position().X + 10 < position.X + 130)
+                    speed.X = -50f;
+                else if (target.G_Position().X - 10 > position.X + 130)
+                    speed.X = 50f;
 
-            if (target.G_Position().Y + 10 < position.Y + 79)
-                speed.Y = -50f;
-            else if (target.G_Position().Y - 10 > position.Y + 79)
-                speed.Y = 50f;
+                if (target.G_Position().Y + 10 < position.Y + 79)
+                    speed.Y = -50f;
+                else if (target.G_Position().Y - 10 > position.Y + 79)
+                    speed.Y = 50f;
+            }
 
         }
 
@@ -245,10 +253,60 @@ namespace The_Last_Trial
 
         #endregion
 
+        #region Attaque & Magie
+
+        public void F_Attaque(Personnage[] perso, GameTime gameTime)
+        {
+            newState = Keyboard.GetState();
+            tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
+            if (tempsActuel > tempsAttaque[0] + 1)
+            {
+                oldImage = imgState;
+                bool attaque = false;
+                foreach (Personnage p in perso)
+                {
+                    if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
+                    {
+                        attaque = true;
+                        p.S_Degat(5 + random.Next(5));
+                    }
+                }
+                if (attaque)
+                {
+                    Son.Play(2);
+                    tempsAttaque[0] = tempsActuel;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Health
+
         private void DrawHealth(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(health, new Rectangle((int)position.X + 76, (int)position.Y + objet.Height + 15, life, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
             spriteBatch.Draw(health, new Rectangle((int)position.X + 75, (int)position.Y + objet.Height + 15, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
+
+        public void F_DrawDegats(SpriteBatch sb)
+        {
+            if (degats != 0)
+            {
+                initLife = life - degats;
+                oldDegats = degats;
+                degats = 0;
+            }
+            if (initLife < life && G_IsAlive())
+            {
+                sb.DrawString(gameFont, Convert.ToString(oldDegats), new Vector2(position.X + 100, position.Y + 40), Color.Red);
+                life -= 3;
+            }
+            else
+                oldDegats = 0;
+        }
+
+        #endregion
+
     }
 }

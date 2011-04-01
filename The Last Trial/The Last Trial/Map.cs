@@ -99,32 +99,35 @@ namespace The_Last_Trial
             speed = new Vector2(0f, 0f);
             foreach (Personnage p in perso)
             {
-                if (p.G_Position().X > screenWidth * 0.75 && (-screenPos.X < MaxX - screenWidth))
+                if (p.G_IsAlive())
                 {
-                    if (scroll >= 0)
+                    if (p.G_Position().X > screenWidth * 0.75 && (-screenPos.X < MaxX - screenWidth))
                     {
-                        scroll = 1;
-                        speed = new Vector2(150f, 0f);
+                        if (scroll >= 0)
+                        {
+                            scroll = 1;
+                            speed = new Vector2(150f, 0f);
+                        }
+                        else
+                        {
+                            scrollable = false;
+                        }
                     }
-                    else
+                    else if (p.G_Position().X < screenWidth * 0.22 /*0.2*/ && (screenPos.X < 0))
                     {
-                        scrollable = false;
+                        if (scroll <= 0)
+                        {
+                            scroll = -1;
+                            speed = new Vector2(-150f, 0f);
+                        }
+                        else
+                        {
+                            scrollable = false;
+                        }
                     }
-                }
-                else if (p.G_Position().X < screenWidth * 0.22 /*0.2*/ && (screenPos.X < 0))
-                {
-                    if (scroll <= 0)
-                    {
-                        scroll = -1;
-                        speed = new Vector2(-150f, 0f);
-                    }
-                    else
-                    {
-                        scrollable = false;
-                    }
-                }
 
-                offsetY += p.G_Position().Y;
+                    offsetY += p.G_Position().Y;
+                }
             }
             offsetY /= (Game1.G_Player() * 5);
             offsetY -= back[0].Height - (screenHeight - first[0].Height - middle[0].Height);
