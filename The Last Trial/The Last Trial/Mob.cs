@@ -1,52 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 
 namespace The_Last_Trial
 {
     public abstract class Mob : Objet
     {
-        protected int rand;
-        protected static Random random = new Random();
-        protected int id;
-        protected int imgState, life, initLife, oldDegats;
+        #region VAR
+        protected int id, imgState, life, lifeMax, initLife, oldDegats;
         protected Vector2 speed;
         protected double tempsImage, tempsActuel;
-        protected double[] tempsAttaque = new double[2];
         protected int degats = 0;
-        protected static SpriteFont gameFont;
-        private static int[] array = new int[Game1.G_Player() + Game1.G_Monster()];
+        private static int[] array;
 
+        protected int rand;
+        protected static Random random = new Random();
+        protected static Texture2D health, ui1, ui2;
+        protected static SpriteFont gameFont, overKill, textFont;
         protected KeyboardState newState, oldState;
         protected int oldImage;
-        protected static Texture2D health;
+        #endregion
 
         protected Mob()
         {
             imgState = 40;
             speed = new Vector2(0.0f, 0.0f);
             tempsImage = 0;
-            for (int i = 0; i <= 1; i++)
-            {
-                tempsAttaque[i] = -5;
-            }
         }
+
+        public bool G_IsAlive() { return life > 0; }
 
         public static void Load(ContentManager Content)
         {
-            gameFont = Content.Load<SpriteFont>("gamefont");
+            ui1 = Content.Load<Texture2D>("ui/1");
+            ui2 = Content.Load<Texture2D>("ui/2");
+            health = Content.Load<Texture2D>("mob/health");
+            overKill = Content.Load<SpriteFont>("font/overkillfont");
+            gameFont = Content.Load<SpriteFont>("font/gamefont");
+            textFont = Content.Load<SpriteFont>("font/textfont");
+            array = new int[Game1.G_Player() + Game1.G_Monster()];
         }
 
-        public static void Draw(Personnage[] perso, Monster[] monster, PNJ pnj, SpriteBatch sb)
+        public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch sb)
         {
             Vector2[] sort = new Vector2[Game1.G_Player() + Game1.G_Monster()];
             for (int k = 0; k < Game1.G_Player(); k++)
@@ -99,8 +96,6 @@ namespace The_Last_Trial
                 p.F_DrawDegats(sb);
             }
         }
-
-        public bool G_IsAlive() { return life > 0; }
 
         protected void S_Deplacement(GameTime gt)
         {

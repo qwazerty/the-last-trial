@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 
 namespace The_Last_Trial
 {
     public class Personnage : Mob
     {
-
-        // DECLARATION VARIABLES
-        private static SpriteFont overKill;
+        #region VAR
         private Keys[] key;
+        private int classe, power, powerMax, xp, xpMax, level;
+        private double[] tempsAttaque = new double[2];
+        private double tempsRegen;
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -27,52 +20,88 @@ namespace The_Last_Trial
          * 4 : ATTAQUE   *
          * 5 : OVERKILL  *
         \*****************/
+        #endregion
 
         // CONSTRUCTEUR
-        public Personnage(Keys[] key, Vector2 position, int id) : base()
+        public Personnage(Keys[] key, Vector2 position, int id, int classe) : base()
         {
             this.id = id;
+            this.classe = classe;
             this.key = key;
             this.position = position;
             this.imgState = 20;
             this.life = 100;
-            this.oldState = Keyboard.GetState();
             this.initLife = this.life;
+            this.lifeMax = this.life;
+            this.xp = 0;
+            this.xpMax = 142;
+            this.level = 0;
+            this.tempsRegen = 0;
+
+            if (id == 2)
+            {
+                powerMax = 1000;
+            }
+            else
+            {
+                powerMax = 500;
+            }
+            power = powerMax;
+
+            for (int i = 0; i <= 1; i++)
+            {
+                tempsAttaque[i] = -5;
+            }
+
+            this.oldState = Keyboard.GetState();
         }
 
-        /*****************\
-         * METHODE : GET *
-        \*****************/
+        #region GET & SET
 
         public Rectangle G_Rectangle()
         {
             return new Rectangle((int)position.X, (int)position.Y + 66, 60, 33);
         }
 
-        /*****************\
-         * STATIC : FUN  *
-        \*****************/
+        public bool G_Interact(PNJ pnj)
+        {
+            return G_Rectangle().Intersects(pnj.G_Interact());
+        }
 
+        private void S_Xp(int xp_)
+        {
+            this.xp += xp_;
+            if (this.xp >= xpMax)
+            {
+                this.xp = this.xp - xpMax;
+                xpMax *= 2;
+                level++;
+                life = lifeMax;
+                initLife = lifeMax;
+            }
+        }
+
+        #endregion
+        
         #region Static Load & Update
 
         public static void Load(Personnage[] perso, ContentManager Content, int player)
         {
             if (player > 0)
-                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 500f), 1);
+                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 500f), 1, 1);
 
             if (player > 1)
-                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 600f), 3);
+                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 600f), 2, 3);
 
             if (player > 2)
-                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(300f, 650f), 1);
+                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(300f, 650f), 3, 1);
 
             if (player > 3)
-                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(330f, 350f), 3);
+                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(330f, 350f), 4, 1);
 
             foreach (Personnage p in perso)
                 p.F_Load(Content);
 
-            overKill = Content.Load<SpriteFont>("overkillfont");
         }
 
         public static void Update(Personnage[] perso, GameTime gameTime, Monster[] monster, GraphicsDeviceManager graphics, ContentManager Content)
@@ -83,15 +112,11 @@ namespace The_Last_Trial
 
         #endregion
 
-        /*****************\
-         * METHODE : FUN *
-        \*****************/
-
         #region Load, Update & Draw
 
-        private void F_Load(ContentManager content)
+        private void F_Load(ContentManager Content)
         {
-            objet = content.Load<Texture2D>("perso/" + id + "/" + imgState);
+            objet = Content.Load<Texture2D>("perso/" + classe + "/" + imgState);
         }
 
         private void F_Update(Personnage[] perso, Monster[] monster, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
@@ -102,13 +127,16 @@ namespace The_Last_Trial
                 F_Attaque(monster, gameTime);
                 F_OverKill(monster, perso, gameTime);
                 foreach (Rectangle collision in Map.G_Collision())
+                {
                     F_Collision_Objets(collision, gameTime);
+                }
                 foreach (Monster m in monster)
                 {
                     if (m.G_IsAlive())
                         F_Collision_Objets(m.G_Rectangle(), gameTime);
                 }
                 F_Collision_Ecran(graphics, gameTime);
+                F_UpdateRegen(gameTime);
             }
 
             F_UpdateImage(gameTime);
@@ -130,7 +158,7 @@ namespace The_Last_Trial
                 sb.DrawString(overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
 
             if (G_IsAlive())
-                DrawHealth(sb);
+                F_DrawHealth(sb);
         }
 
         #endregion
@@ -154,7 +182,7 @@ namespace The_Last_Trial
             }
         }
 
-        public void F_Collision_Objets(Rectangle rect, GameTime gameTime)
+        private void F_Collision_Objets(Rectangle rect, GameTime gameTime)
         {
             if (rect.Intersects(G_Rectangle()))
             {
@@ -178,22 +206,27 @@ namespace The_Last_Trial
 
         #region Attaque & Magie
 
-        public void F_Attaque(Monster[] monster, GameTime gameTime)
+        private void F_Attaque(Monster[] monster, GameTime gameTime)
         {
             newState = Keyboard.GetState();
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
             if (tempsActuel > tempsAttaque[0] + 0.5)
             {
-                if (newState.IsKeyDown(key[4]))
+                if (newState.IsKeyDown(key[4]) && power >= 100)
                 {
                     oldImage = imgState;
                     bool attaque = false;
+                    power -= 100;
                     foreach (Monster m in monster)
                     {
                         if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            m.S_Degat(42 + random.Next(10));
+                            m.S_Degat(42 + random.Next(10) + 10 * level);
+                            if (m.G_Killed())
+                            {
+                                S_Xp(m.G_MaxLife());
+                            }
                         }
                     }
                     if (id == 3)
@@ -203,7 +236,7 @@ namespace The_Last_Trial
                 }
             }
             // CODE SALE !
-            else if (id == 1)
+            else if (classe == 1)
             {
                 if (tempsActuel > tempsAttaque[0] + 0.4)
                 {
@@ -261,7 +294,7 @@ namespace The_Last_Trial
                 if (imgState < 0)
                     speed = Vector2.Zero;
             }
-            else if (id == 3)
+            else if (classe == 3)
             {
                 if (tempsActuel > tempsAttaque[0] + 0.4)
                 {
@@ -282,7 +315,7 @@ namespace The_Last_Trial
             }
         }
 
-        public void F_OverKill(Monster[] monster, Personnage[] perso, GameTime gameTime)
+        private void F_OverKill(Monster[] monster, Personnage[] perso, GameTime gameTime)
         {
             newState = Keyboard.GetState();
 
@@ -294,8 +327,9 @@ namespace The_Last_Trial
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
             if (tempsActuel > tempsAttaque[1] + 3)
             {
-                if (newState.IsKeyDown(key[5]))
+                if (newState.IsKeyDown(key[5]) && power >= 500)
                 {
+                    power -= 500;
                     for (int i = 0; i < Game1.G_Monster(); i++)
                     {
                         m_target_ovrkl[i] = null;
@@ -354,7 +388,7 @@ namespace The_Last_Trial
             }
         }
 
-        public Personnage F_DetectAllies(Personnage[] perso)
+        private Personnage F_DetectAllies(Personnage[] perso)
         {
             Personnage p_ = null;
             foreach (Personnage p in perso)
@@ -365,7 +399,7 @@ namespace The_Last_Trial
             return p_;
         }
 
-        public Monster F_DetectMonsters(Monster m)
+        private Monster F_DetectMonsters(Monster m)
         {
             Monster m_ = null;
 
@@ -431,29 +465,60 @@ namespace The_Last_Trial
             oldState = newState;
         }
 
-        public bool F_Interact(PNJ pnj)
+        #region UI
+
+        private void F_UpdateRegen(GameTime gameTime)
         {
-            return G_Rectangle().Intersects(pnj.G_Interact());
+            if (tempsRegen + 0.05 < gameTime.TotalGameTime.TotalSeconds)
+            {
+                tempsRegen = gameTime.TotalGameTime.TotalSeconds;
+                power += 2;
+                if (power > powerMax)
+                {
+                    power = powerMax;
+                }
+            }
         }
 
-        #region Health
-
-        private void DrawHealth(SpriteBatch spriteBatch)
+        private void F_DrawHealth(SpriteBatch spriteBatch)
         {
-            int x = 0, y = 0;
             if (id == 1)
             {
-                x = 10;
-                y = 10;
+                spriteBatch.Draw(ui1, new Rectangle(10, 10, ui1.Width, ui1.Height), Color.White);
+                spriteBatch.Draw(health, new Rectangle(110, 42, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
+                spriteBatch.Draw(health, new Rectangle(110, 62, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
+                spriteBatch.Draw(health, new Rectangle(110, 82, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+                spriteBatch.DrawString(textFont, "Ilean", new Vector2(112, 6), Color.White);
+                spriteBatch.DrawString(textFont, "Ilean", new Vector2(113, 7), Color.Black);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(240, 6), Color.White);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(241, 7), Color.Black);
+            }
+            else if (id == 2)
+            {
+                spriteBatch.Draw(ui2, new Rectangle(938, 10, ui2.Width, ui2.Height), Color.White);
+                spriteBatch.Draw(health, new Rectangle(946, 42, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
+                spriteBatch.Draw(health, new Rectangle(946, 62, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
+                spriteBatch.Draw(health, new Rectangle(946, 82, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+                spriteBatch.DrawString(textFont, "Waydjinn", new Vector2(935, 6), Color.White);
+                spriteBatch.DrawString(textFont, "Waydjinn", new Vector2(936, 7), Color.Black);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(1066, 6), Color.White);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(1067, 7), Color.Black);
             }
             else if (id == 3)
             {
-                x = 10;
-                y = 30;
+                spriteBatch.Draw(ui1, new Rectangle(10, 700, ui1.Width, ui1.Height), Color.White);
+                spriteBatch.Draw(health, new Rectangle(110, 742, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
+                spriteBatch.Draw(health, new Rectangle(110, 762, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
+                spriteBatch.Draw(health, new Rectangle(110, 782, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+            }
+            else if (id == 4)
+            {
+                spriteBatch.Draw(ui2, new Rectangle(938, 700, ui2.Width, ui2.Height), Color.White);
+                spriteBatch.Draw(health, new Rectangle(946, 742, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
+                spriteBatch.Draw(health, new Rectangle(946, 762, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
+                spriteBatch.Draw(health, new Rectangle(946, 782, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
             }
 
-            spriteBatch.Draw(health, new Rectangle(x + 1, y, life, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
-            spriteBatch.Draw(health, new Rectangle(x, y, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
 
         public void F_DrawDegats(SpriteBatch sb)
@@ -466,7 +531,7 @@ namespace The_Last_Trial
             }
             if (initLife < life && G_IsAlive())
             {
-                sb.DrawString(gameFont, Convert.ToString(oldDegats), new Vector2(position.X + 10, position.Y - 30), Color.Red);
+                sb.DrawString(gameFont, oldDegats.ToString(), new Vector2(position.X + 10, position.Y - 30), Color.Red);
                 life -= 3;
             }
             else

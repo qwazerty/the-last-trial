@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 
 namespace The_Last_Trial
 {
@@ -18,25 +10,39 @@ namespace The_Last_Trial
 
         // DECLARATION VARIABLES
         private double tempsRandom;
-        private Personnage target = null;
+        private Personnage target;
         private Rectangle spawn;
+        private double[] tempsAttaque = new double[1];
 
         // CONSTRUCTEUR
         public Monster(Vector2 init, int id) : base()
         {
+            this.target = null;
             this.id = id;
             this.spawn = new Rectangle((int)init.X - 200, (int)init.Y - 200, 400, 400);
             this.position = init;
             this.life = 100;
             this.initLife = this.life;
+            this.lifeMax = this.life;
             tempsRandom = 0;
+            tempsAttaque[0] = -5;
         }
 
-        /*****************\
-         * METHODE : GET *
-        \*****************/
+        /***********\
+         * METHODE *
+        \***********/
 
         #region GET & SET
+
+        public bool G_Killed()
+        {
+            return life - degats <= 0;
+        }
+
+        public int G_MaxLife()
+        {
+            return lifeMax;
+        }
 
         public Rectangle G_Rectangle()
         {
@@ -77,10 +83,6 @@ namespace The_Last_Trial
 
         #endregion
 
-        /*****************\
-         *   STATIC FUN   *
-        \*****************/
-
         #region Static Load & Update
 
         public static void Load(Monster[] monster, ContentManager Content)
@@ -108,15 +110,10 @@ namespace The_Last_Trial
 
         #endregion
 
-        /*****************\
-         * METHODE : FUN *
-        \*****************/
-
         #region Load, Update & Draw
 
         private void F_Init(ContentManager Content)
         {
-            health = Content.Load<Texture2D>("mob/health");
             F_Load(Content);
         }
 
@@ -255,7 +252,7 @@ namespace The_Last_Trial
 
         #region Attaque & Magie
 
-        public void F_Attaque(Personnage[] perso, GameTime gameTime)
+        private void F_Attaque(Personnage[] perso, GameTime gameTime)
         {
             newState = Keyboard.GetState();
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -299,7 +296,7 @@ namespace The_Last_Trial
             }
             if (initLife < life && G_IsAlive())
             {
-                sb.DrawString(gameFont, Convert.ToString(oldDegats), new Vector2(position.X + 100, position.Y + 40), Color.Red);
+                sb.DrawString(gameFont, oldDegats.ToString(), new Vector2(position.X + 100, position.Y + 40), Color.Red);
                 life -= 3;
             }
             else

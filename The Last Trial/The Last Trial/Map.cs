@@ -1,34 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
 namespace The_Last_Trial
 {
     class Map
     {
+        #region VAR
         private const int PIXEL = 32;
 
-        private static int id, screenHeight, screenWidth, MaxX;
+        private static int id, screenHeight, screenWidth, MaxX, scroll, currentScreen;
         private static Texture2D[] first, middle, back;
         private static Vector2 screenPos, speed;
         private static Vector2 originBack, originMiddle, originFirst;
+        private static int speedBack, speedMiddle, speedFirst;
         private static Rectangle[] collision;
-        private static int scroll, currentScreen;
         private static float offsetY;
-        private static bool scrollable;
+        private static bool scrollable, firstHide, parallax;
+        #endregion
 
-        public static int Init(int id, Monster[] monster)
+        /***********\
+         * METHODE *
+        \***********/
+
+        #region GET
+
+        public static float G_ScreenX() { return screenPos.X; }
+        public static Vector2 G_Speed() { return speed; }
+        public static bool G_Scroll() { return speed != Vector2.Zero; }
+        public static Rectangle[] G_Collision() { return collision; }
+        public static bool G_FirstHide() { return firstHide; }
+
+        public static bool G_EndLevel(Monster[] monster)
+        {
+            bool mobAlive = false;
+            try
+            {
+                foreach (Monster m in monster)
+                {
+                    if (m.G_IsAlive())
+                    {
+                        mobAlive = true;
+                    }
+                }
+            }
+            catch (NullReferenceException) { }
+            return (-screenPos.X >= MaxX - screenWidth && Keyboard.GetState().IsKeyDown(Keys.Enter) && !mobAlive);
+        }
+
+        #endregion
+
+        #region Init & Load
+
+        public static int Init(int id, Monster[] monster, PNJ[] pnj)
         {
             Map.id = id;
+            first = new Texture2D[3];
+            middle = new Texture2D[3];
+            back = new Texture2D[3];
 
             if (id == 1)
             {
                 MaxX = 4 * 1024;
-                first = new Texture2D[3];
-                middle = new Texture2D[3];
-                back = new Texture2D[3];
                 collision = new Rectangle[2];
                 collision[0] = new Rectangle(0, 320, MaxX, PIXEL);
                 collision[1] = new Rectangle(0, 768, MaxX, PIXEL);
@@ -36,8 +71,47 @@ namespace The_Last_Trial
                 originBack = new Vector2(0f, 0f);
                 originMiddle = new Vector2(0f, -320f);
                 originFirst = new Vector2(0f, -704f);
+                speedBack = 5;
+                speedMiddle = 1;
+                speedFirst = 1;
+                firstHide = true;
+                parallax = true;
+
+                pnj[0] = new PNJ(new Vector2(800, 500), 42, "Hi. Good luck, have fun !");
+                pnj[1] = new PNJ(new Vector2(3900, 500), 42, "Sorry Mario, your princess\n is in another castle...");
 
                 return 5;
+            }
+            if (id == 2)
+            {
+                MaxX = 2 * 1024;
+                collision = new Rectangle[2];
+                collision[0] = new Rectangle(0, 288, MaxX, PIXEL);
+                collision[1] = new Rectangle(0, 800, MaxX, PIXEL);
+
+                originBack = new Vector2(0f, 0f);
+                originMiddle = new Vector2(0f, -224f);
+                originFirst = new Vector2(0f, -320f);
+                speedBack = 1;
+                speedMiddle = 1;
+                speedFirst = 1;
+                firstHide = false;
+                parallax = false;
+
+                return 1;
+            }
+            return 0;
+        }
+
+        public static int InitPNJ(int id)
+        {
+            if (id == 1)
+            {
+                return 2;
+            }
+            if (id == 2)
+            {
+                return 0;
             }
             return 0;
         }
@@ -51,47 +125,44 @@ namespace The_Last_Trial
                 monster[2] = new Monster(new Vector2(2000f, 350f), 1);
                 monster[3] = new Monster(new Vector2(2500f, 300f), 1);
                 monster[4] = new Monster(new Vector2(2600f, 400f), 1);
-                return monster;
             }
-            return null;
+            if (id == 2)
+            { 
+                monster[0] = new Monster(new Vector2(1220f, 400f), 1);
+            }
+            return monster;
         }
 
         public static void Load(GraphicsDevice device, ContentManager Content)
         {
-            currentScreen = 1;
+            currentScreen = 0;
             screenPos = new Vector2(0, 0);
             speed = new Vector2(0f, 0f);
 
             screenHeight = device.Viewport.Height;
             screenWidth = device.Viewport.Width;
 
-            first[0] = Content.Load<Texture2D>("map/1/1-" + currentScreen);
-            first[1] = Content.Load<Texture2D>("map/1/1-" + (currentScreen + 1));
-            first[2] = Content.Load<Texture2D>("map/1/1-" + (currentScreen + 2));
-
-            middle[0] = Content.Load<Texture2D>("map/1/2-" + currentScreen);
-            middle[1] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 1));
-            middle[2] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 2));
-
-            back[0] = Content.Load<Texture2D>("map/1/3-1");
-            back[1] = Content.Load<Texture2D>("map/1/3-2");
-            back[2] = Content.Load<Texture2D>("map/1/3-3");
- 
         }
+
+        #endregion
 
         public static void Update(GameTime gameTime, Personnage[] perso, ContentManager Content)
         {
             float deltaX = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            currentScreen = (int)(-screenPos.X) / 1024 + 1;
+            currentScreen = (int)(-screenPos.X) / 1024;
 
-            first[0] = Content.Load<Texture2D>("map/1/1-" + currentScreen);
-            first[1] = Content.Load<Texture2D>("map/1/1-" + (currentScreen + 1));
-            first[2] = Content.Load<Texture2D>("map/1/1-" + (currentScreen + 2));
+            first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst));
+            first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
+            first[2] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 2));
 
-            middle[0] = Content.Load<Texture2D>("map/1/2-" + currentScreen);
-            middle[1] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 1));
-            middle[2] = Content.Load<Texture2D>("map/1/2-" + (currentScreen + 2));
+            middle[0] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle));
+            middle[1] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 1));
+            middle[2] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 2));
+
+            back[0] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack));
+            back[1] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 1));
+            back[2] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 2));
 
             offsetY = 0;
             scroll = 0;
@@ -113,7 +184,7 @@ namespace The_Last_Trial
                             scrollable = false;
                         }
                     }
-                    else if (p.G_Position().X < screenWidth * 0.22 /*0.2*/ && (screenPos.X < 0))
+                    else if (p.G_Position().X < screenWidth * 0.22 && (screenPos.X < 0))
                     {
                         if (scroll <= 0)
                         {
@@ -126,11 +197,17 @@ namespace The_Last_Trial
                         }
                     }
 
-                    offsetY += p.G_Position().Y;
+                    if (parallax)
+                    {
+                        offsetY += p.G_Position().Y;
+                    }
                 }
             }
-            offsetY /= (Game1.G_Player() * 5);
-            offsetY -= back[0].Height - (screenHeight - first[0].Height - middle[0].Height);
+            if (parallax)
+            {
+                offsetY /= (Game1.G_Player() * 5);
+                offsetY -= back[0].Height - (screenHeight - first[0].Height - middle[0].Height);
+            }
             if (scrollable && G_Scroll())
             {
                 screenPos.X -= (deltaX) * speed.X;
@@ -141,39 +218,38 @@ namespace The_Last_Trial
             }
         }
 
+        #region Draw
+
         public static void DrawBack(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(back[0], new Vector2(screenPos.X / 5, screenPos.Y + offsetY), null,
+            spriteBatch.Draw(back[0], new Vector2(screenPos.X / speedBack + 1024 * (currentScreen / speedBack), screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(back[1], new Vector2(screenPos.X / 5 + 1024, screenPos.Y + offsetY), null,
+            spriteBatch.Draw(back[1], new Vector2(screenPos.X / speedBack + 1024 * (currentScreen / speedBack + 1), screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(back[2], new Vector2(screenPos.X / 5 + 2048, screenPos.Y + offsetY), null,
+            spriteBatch.Draw(back[2], new Vector2(screenPos.X / speedBack + 1024 * (currentScreen / speedBack + 2), screenPos.Y + offsetY), null,
                  Color.White, 0, originBack, 1, SpriteEffects.None, 0f);
         }
 
         public static void DrawMiddle(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(middle[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
+            spriteBatch.Draw(middle[0], new Vector2(screenPos.X / speedMiddle + 1024 * (currentScreen), screenPos.Y), null,
                  Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(middle[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
+            spriteBatch.Draw(middle[1], new Vector2(screenPos.X / speedMiddle + 1024 * (currentScreen + 1), screenPos.Y), null,
                  Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(middle[2], new Vector2(screenPos.X + 1024 * (currentScreen + 1), screenPos.Y), null,
+            spriteBatch.Draw(middle[2], new Vector2(screenPos.X / speedMiddle + 1024 * (currentScreen + 2), screenPos.Y), null,
                  Color.White, 0, originMiddle, 1, SpriteEffects.None, 0f);
         }
 
         public static void DrawFirst(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(first[0], new Vector2(screenPos.X + 1024 * (currentScreen - 1), screenPos.Y), null,
+            spriteBatch.Draw(first[0], new Vector2(screenPos.X / speedFirst + 1024 * (currentScreen), screenPos.Y), null,
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(first[1], new Vector2(screenPos.X + 1024 * currentScreen, screenPos.Y), null,
+            spriteBatch.Draw(first[1], new Vector2(screenPos.X / speedFirst + 1024 * (currentScreen + 1), screenPos.Y), null,
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
-            spriteBatch.Draw(first[2], new Vector2(screenPos.X + 1024 * (currentScreen + 1), screenPos.Y), null,
+            spriteBatch.Draw(first[2], new Vector2(screenPos.X / speedFirst + 1024 * (currentScreen + 2), screenPos.Y), null,
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
         }
 
-        public static float G_ScreenX() { return screenPos.X; }
-        public static Vector2 G_Speed() { return speed; }
-        public static bool G_Scroll() { return speed != Vector2.Zero; }
-        public static Rectangle[] G_Collision() { return collision; }
+        #endregion
     }
 }
