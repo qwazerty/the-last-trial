@@ -45,14 +45,15 @@ namespace The_Last_Trial
 
         protected override void Update(GameTime gameTime)
         {
-            if (Map.G_EndLevel(monster))
-            {
-                level++;
-                LoadLevel(gameTime);
-            }
+            
 
             if (play)
             {
+                if (Map.G_EndLevel(monster))
+                {
+                    level++;
+                    LoadLevel(gameTime);
+                }
                 play = Menu.Update(monster, perso, pnj, graphics, gameTime, Content, this);
                 if (!play)
                 {
