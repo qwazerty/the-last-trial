@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace The_Last_Trial
 {
-    class Menu : Objet
+    public class Menu : Objet
     {
         private static bool pause, firstPause, start;
         private static int state;
@@ -266,10 +266,10 @@ namespace The_Last_Trial
             //Thread.Sleep(3000);
         }
 
-        public static void Load(Personnage[] perso, Monster[] monster, PNJ[] pnj, ContentManager Content, GameTime gameTime, int nbPlayer)
+        public static void Load(Personnage[] perso, Monster[] monster, PNJ[] pnj, ContentManager Content, GameTime gameTime)
         {
             Mob.Load(Content);
-            Personnage.Load(perso, Content, nbPlayer);
+            Personnage.Load(perso, Content);
             Monster.Load(monster, Content);
             PNJ.Load(pnj, Content);
             Map.Load(Content);
@@ -280,11 +280,11 @@ namespace The_Last_Trial
 
         #region Update
 
-        public static bool Update(Monster[] monster, Personnage[] perso, PNJ[] pnj, GraphicsDeviceManager graphics, GameTime gameTime, ContentManager Content, Game1 game)
+        public static bool Update(Monster[] monster, Personnage[] perso, PNJ[] pnj, GraphicsDeviceManager graphics, GameTime gameTime, ContentManager Content)
         {
             if (pause)
             {
-                UpdatePause(Content, game);
+                UpdatePause(Content);
             }
             else
             {
@@ -303,7 +303,7 @@ namespace The_Last_Trial
             return GameOver(perso, Content);
         }
 
-        private static void UpdatePause(ContentManager Content, Game1 game)
+        private static void UpdatePause(ContentManager Content)
         {
             newState = Keyboard.GetState();
             string[] cursor = new string[2];
@@ -339,8 +339,7 @@ namespace The_Last_Trial
                 if (state == 1)
                     pause = false;
                 else if (state == 2)
-                    //game.Exit();
-                    ;
+                    Program.gs.Exit();
             }
             oldState = newState;
         }
@@ -375,7 +374,7 @@ namespace The_Last_Trial
 
         private void Draw(SpriteBatch sb)
         {
-            if (Game1.G_Player() == 0)
+            if (GameState.G_Player() == 0)
             {
                 sb.Draw(objet, position, Color.White);
                 sb.Draw(menuObject[0].G_Texture(), menuObject[0].G_Position(), Color.White);

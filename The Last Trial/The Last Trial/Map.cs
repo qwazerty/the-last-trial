@@ -205,7 +205,7 @@ namespace The_Last_Trial
             }
             if (parallax)
             {
-                offsetY /= (Game1.G_Player() * 5);
+                offsetY /= (GameState.G_Player() * 5);
                 offsetY -= back[0].Height - (screenHeight - first[0].Height - middle[0].Height);
             }
             if (scrollable && G_Scroll())

@@ -2,12 +2,14 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
 
 namespace The_Last_Trial
 {
     public class Personnage : Mob
     {
         #region VAR
+
         private Keys[] key;
         private int classe, power, powerMax, xp, xpMax, level;
         private double[] tempsAttaque = new double[2];
@@ -20,6 +22,7 @@ namespace The_Last_Trial
          * 4 : ATTAQUE   *
          * 5 : OVERKILL  *
         \*****************/
+
         #endregion
 
         // CONSTRUCTEUR
@@ -30,8 +33,8 @@ namespace The_Last_Trial
             this.key = key;
             this.position = position;
             this.imgState = 20;
-            this.life = 100;
-            this.initLife = this.life;
+            this.initLife = 100;
+            this.life = this.initLife;
             this.lifeMax = this.life;
             this.xp = 0;
             this.xpMax = 142;
@@ -85,20 +88,27 @@ namespace The_Last_Trial
         
         #region Static Load & Update
 
-        public static void Load(Personnage[] perso, ContentManager Content, int player)
+        public static void Load(Personnage[] perso, ContentManager Content)
         {
-            if (player > 0)
-                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 500f), 1, 1);
+            //DEBUT SETUP
+            //string str = "";
+            //string line;
+            //StreamReader sr = new StreamReader("setup");
+            //line = sr.ReadLine();
+            if (GameState.G_Level() == 1)
+            {
+                if (GameState.G_Player() > 0)
+                    perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 350f), 1, 1);
 
-            if (player > 1)
-                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 600f), 2, 3);
+                if (GameState.G_Player() > 1)
+                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, 2);
 
-            if (player > 2)
-                perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(300f, 650f), 3, 1);
+                if (GameState.G_Player() > 2)
+                    perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(360f, 550f), 3, 3);
 
-            if (player > 3)
-                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(330f, 350f), 4, 1);
-
+                if (GameState.G_Player() > 3)
+                    perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(390f, 650f), 4, 4);
+            }
             foreach (Personnage p in perso)
                 p.F_Load(Content);
 
@@ -116,7 +126,14 @@ namespace The_Last_Trial
 
         private void F_Load(ContentManager Content)
         {
+            position = new Vector2(270 + 30 * id, 250 + 100 * id);
+            this.imgState = 20;
             objet = Content.Load<Texture2D>("perso/" + classe + "/" + imgState);
+            this.life = this.initLife;
+            for (int i = 0; i <= 1; i++)
+            {
+                tempsAttaque[i] = -5;
+            }
         }
 
         private void F_Update(Personnage[] perso, Monster[] monster, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
@@ -140,7 +157,7 @@ namespace The_Last_Trial
             }
 
             F_UpdateImage(gameTime);
-            F_Load(Content);
+            objet = Content.Load<Texture2D>("perso/" + classe + "/" + imgState);
             S_Deplacement(gameTime);
         }
 
@@ -319,8 +336,8 @@ namespace The_Last_Trial
         {
             newState = Keyboard.GetState();
 
-            Monster[] m_target_ovrkl = new Monster[Game1.G_Monster()];
-            Personnage[] p_target_ovrkl = new Personnage[Game1.G_Player()];
+            Monster[] m_target_ovrkl = new Monster[GameState.G_Monster()];
+            Personnage[] p_target_ovrkl = new Personnage[GameState.G_Player()];
             //bool p_target = false;
             bool m_target = false;
 
@@ -330,7 +347,7 @@ namespace The_Last_Trial
                 if (newState.IsKeyDown(key[5]) && power >= 500)
                 {
                     power -= 500;
-                    for (int i = 0; i < Game1.G_Monster(); i++)
+                    for (int i = 0; i < GameState.G_Monster(); i++)
                     {
                         m_target_ovrkl[i] = null;
                     }
@@ -340,7 +357,7 @@ namespace The_Last_Trial
                     //    p_target_ovrkl[i] = null;
                     //}
 
-                    for (int i = 0; i < Game1.G_Monster(); i++)
+                    for (int i = 0; i < GameState.G_Monster(); i++)
                     {
                         m_target_ovrkl[i] = F_DetectMonsters(monster[i]);
                         foreach (Monster m in m_target_ovrkl)

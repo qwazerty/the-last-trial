@@ -7,12 +7,11 @@ namespace The_Last_Trial
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        public static GameState gs = new GameState();
+        
         static void Main(string[] args)
         {
-            using (GameState gs = new GameState())
-            {
-                gs.Run();
-            }
+            gs.Run();
         }
     }
 }

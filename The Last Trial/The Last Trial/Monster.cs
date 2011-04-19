@@ -26,7 +26,7 @@ namespace The_Last_Trial
             this.lifeMax = this.life;
             tempsRandom = 0;
             tempsAttaque[0] = -5;
-        }
+        }    
 
         /***********\
          * METHODE *
