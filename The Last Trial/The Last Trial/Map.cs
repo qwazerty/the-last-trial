@@ -133,14 +133,14 @@ namespace The_Last_Trial
             return monster;
         }
 
-        public static void Load(GraphicsDevice device, ContentManager Content)
+        public static void Load(ContentManager Content)
         {
             currentScreen = 0;
             screenPos = new Vector2(0, 0);
             speed = new Vector2(0f, 0f);
 
-            screenHeight = device.Viewport.Height;
-            screenWidth = device.Viewport.Width;
+            screenHeight = 800;
+            screenWidth = 1200;
 
         }
 

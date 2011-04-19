@@ -1,13 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace The_Last_Trial
 {
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class Game1
     {
-
-        private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
+        
         private static int nbPlayer;
         private static int nbMonster;
         private static bool play;
@@ -22,37 +21,21 @@ namespace The_Last_Trial
         public static int G_Player() { return nbPlayer; }
         public static int G_Monster() { return nbMonster; }
         
-        public Game1()
+        public Game1(ContentManager Content)
         {
-            graphics = new GraphicsDeviceManager(this);
-            this.graphics.PreferredBackBufferWidth = 1200;
-            this.graphics.PreferredBackBufferHeight = 800;
-            Content.RootDirectory = "Content";
+            menu = new Menu(Content);
             play = false;
             level = 1;
         }
 
-        protected override void Initialize()
+        public void Update(GameTime gameTime, GraphicsDeviceManager graphics, ContentManager Content)
         {
-            menu = new Menu(Content);
-            base.Initialize();
-        }
-
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-        }
-
-        protected override void Update(GameTime gameTime)
-        {
-            
-
             if (play)
             {
                 if (Map.G_EndLevel(monster))
                 {
                     level++;
-                    LoadLevel(gameTime);
+                    LoadLevel(gameTime, Content);
                 }
                 play = Menu.Update(monster, perso, pnj, graphics, gameTime, Content, this);
                 if (!play)
@@ -65,31 +48,29 @@ namespace The_Last_Trial
                 nbPlayer = Menu.Init(perso, Content, gameTime);
                 play = nbPlayer != 0;
                 if (nbPlayer == -1)
-                    this.Exit();
+                    //this.Exit();
+                    ;
                 else if (play)
                 {
-                    LoadLevel(gameTime);
+                    perso = new Personnage[nbPlayer];
+                    LoadLevel(gameTime, Content);
                     //Menu.LoadingScreen(spriteBatch, Content);
                 }
             }
-
-            base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, GraphicsDeviceManager graphics)
         {
             Menu.Draw(menu, perso, monster, pnj, spriteBatch, graphics, play);
-            base.Draw(gameTime);
         }
 
-        private void LoadLevel(GameTime gameTime)
+        private void LoadLevel(GameTime gameTime, ContentManager Content)
         {
             pnj = new PNJ[Map.InitPNJ(level)];
             nbMonster = Map.Init(level, monster, pnj);
-            perso = new Personnage[nbPlayer];
             monster = new Monster[nbMonster];
             monster = Map.LoadMonster(monster);
-            Menu.Load(menu, perso, monster, pnj, Content, GraphicsDevice, gameTime, nbPlayer);
+            Menu.Load(perso, monster, pnj, Content, gameTime, nbPlayer);
         }
     }
 }

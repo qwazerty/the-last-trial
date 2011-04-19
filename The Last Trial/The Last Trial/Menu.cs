@@ -266,13 +266,13 @@ namespace The_Last_Trial
             //Thread.Sleep(3000);
         }
 
-        public static void Load(Menu menu, Personnage[] perso, Monster[] monster, PNJ[] pnj, ContentManager Content, GraphicsDevice device, GameTime gameTime, int nbPlayer)
+        public static void Load(Personnage[] perso, Monster[] monster, PNJ[] pnj, ContentManager Content, GameTime gameTime, int nbPlayer)
         {
             Mob.Load(Content);
             Personnage.Load(perso, Content, nbPlayer);
             Monster.Load(monster, Content);
             PNJ.Load(pnj, Content);
-            Map.Load(device, Content);
+            Map.Load(Content);
             Map.Update(gameTime, perso, Content);
         }
 
@@ -339,7 +339,8 @@ namespace The_Last_Trial
                 if (state == 1)
                     pause = false;
                 else if (state == 2)
-                    game.Exit();
+                    //game.Exit();
+                    ;
             }
             oldState = newState;
         }

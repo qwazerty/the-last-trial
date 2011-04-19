@@ -9,9 +9,9 @@ namespace The_Last_Trial
         /// </summary>
         static void Main(string[] args)
         {
-            using (Game1 game = new Game1())
+            using (GameState gs = new GameState())
             {
-                game.Run();
+                gs.Run();
             }
         }
     }
