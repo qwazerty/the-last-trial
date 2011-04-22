@@ -107,7 +107,7 @@ namespace The_Last_Trial
 
         public void S_Degat(int degat)
         {
-            degats = degat;
+            life -= degat;
         }
 
         protected void F_UpdateImage(GameTime gameTime)

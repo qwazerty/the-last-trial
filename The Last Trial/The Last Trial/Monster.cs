@@ -21,7 +21,7 @@ namespace The_Last_Trial
             this.id = id;
             this.spawn = new Rectangle((int)init.X - 200, (int)init.Y - 200, 400, 400);
             this.position = init;
-            this.life = 100;
+            this.life = 100 + (500 * (id - 1));
             this.initLife = this.life;
             this.lifeMax = this.life;
             tempsRandom = 0;
@@ -50,6 +50,10 @@ namespace The_Last_Trial
             {
                 return new Rectangle((int)position.X + 115, (int)position.Y + 165, 20, 20);
             }
+            if (id == 2)
+            {
+                return new Rectangle((int)position.X + 115, (int)position.Y + 165, 20, 20);
+            }
 
             return new Rectangle(0, 0, 0, 0);
         }
@@ -57,6 +61,10 @@ namespace The_Last_Trial
         public Rectangle G_Interact()
         {
             if (id == 1)
+            {
+                return new Rectangle((int)position.X + 70, (int)position.Y + 125, 100, 100);
+            }
+            if (id == 2)
             {
                 return new Rectangle((int)position.X + 70, (int)position.Y + 125, 100, 100);
             }
@@ -282,7 +290,7 @@ namespace The_Last_Trial
 
         private void DrawHealth(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(health, new Rectangle((int)position.X + 76, (int)position.Y + objet.Height + 15, life, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
+            spriteBatch.Draw(health, new Rectangle((int)position.X + 76, (int)position.Y + objet.Height + 15, life * 100 / lifeMax, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
             spriteBatch.Draw(health, new Rectangle((int)position.X + 75, (int)position.Y + objet.Height + 15, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
 

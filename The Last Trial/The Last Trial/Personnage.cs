@@ -101,10 +101,10 @@ namespace The_Last_Trial
                     perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 350f), 1, 1);
 
                 if (GameState.G_Player() > 1)
-                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, 2);
+                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, 3);
 
                 if (GameState.G_Player() > 2)
-                    perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(360f, 550f), 3, 3);
+                    perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(360f, 550f), 3, 2);
 
                 if (GameState.G_Player() > 3)
                     perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(390f, 650f), 4, 4);
@@ -174,7 +174,7 @@ namespace The_Last_Trial
             if (imgState > 100)
                 sb.DrawString(overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
 
-            if (G_IsAlive())
+            
                 F_DrawHealth(sb);
         }
 

@@ -47,7 +47,7 @@ namespace The_Last_Trial
                 }
             }
             catch (NullReferenceException) { }
-            return (-screenPos.X >= MaxX - screenWidth && Keyboard.GetState().IsKeyDown(Keys.Enter) && !mobAlive);
+            return ((-screenPos.X >= MaxX - screenWidth && Keyboard.GetState().IsKeyDown(Keys.Enter) && !mobAlive) || (Keyboard.GetState().IsKeyDown(Keys.Enter) && Keyboard.GetState().IsKeyDown(Keys.F1)));
         }
 
         #endregion
@@ -80,11 +80,11 @@ namespace The_Last_Trial
                 pnj[0] = new PNJ(new Vector2(800, 500), 42, "Hi. Good luck, have fun !");
                 pnj[1] = new PNJ(new Vector2(3900, 500), 42, "Sorry Mario, your princess\n is in another castle...");
 
-                return 5;
+                return 6;
             }
             if (id == 2)
             {
-                MaxX = 2 * 1024;
+                MaxX = 4 * 1024;
                 collision = new Rectangle[2];
                 collision[0] = new Rectangle(0, 288, MaxX, PIXEL);
                 collision[1] = new Rectangle(0, 800, MaxX, PIXEL);
@@ -98,7 +98,7 @@ namespace The_Last_Trial
                 firstHide = false;
                 parallax = false;
 
-                return 1;
+                return 6;
             }
             return 0;
         }
@@ -125,10 +125,16 @@ namespace The_Last_Trial
                 monster[2] = new Monster(new Vector2(2000f, 350f), 1);
                 monster[3] = new Monster(new Vector2(2500f, 300f), 1);
                 monster[4] = new Monster(new Vector2(2600f, 400f), 1);
+                monster[5] = new Monster(new Vector2(3500f, 350f), 2);
             }
             if (id == 2)
             { 
                 monster[0] = new Monster(new Vector2(1220f, 400f), 1);
+                monster[1] = new Monster(new Vector2(1300f, 500f), 1);
+                monster[2] = new Monster(new Vector2(1500f, 350f), 1);
+                monster[3] = new Monster(new Vector2(1800f, 300f), 1);
+                monster[4] = new Monster(new Vector2(2000f, 400f), 1);
+                monster[5] = new Monster(new Vector2(2500f, 350f), 2);
             }
             return monster;
         }
@@ -151,7 +157,7 @@ namespace The_Last_Trial
             float deltaX = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             currentScreen = (int)(-screenPos.X) / 1024;
-
+            
             first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst));
             first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
             first[2] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 2));
@@ -196,11 +202,11 @@ namespace The_Last_Trial
                             scrollable = false;
                         }
                     }
+                }
 
-                    if (parallax)
-                    {
-                        offsetY += p.G_Position().Y;
-                    }
+                if (parallax)
+                {
+                    offsetY += p.G_Position().Y;
                 }
             }
             if (parallax)
