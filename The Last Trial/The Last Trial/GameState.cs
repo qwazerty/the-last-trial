@@ -11,11 +11,11 @@ namespace The_Last_Trial
         private Launcher lauch;
 
         private static int nbPlayer, nbMonster, state, level;
+        private static bool newLevel;
 
         private static Personnage[] perso;
         private static Monster[] monster;
         private static PNJ[] pnj;
-        private static Menu menu;
 
         public static int G_Player() { return nbPlayer; }
         public static int G_Monster() { return nbMonster; }
@@ -32,56 +32,55 @@ namespace The_Last_Trial
 
         protected override void Initialize()
         {
-            Load();
+            LoadingMenu.Init(Content);
+            Menu.Init(Content);
+            state = 0;
+            level = 1;
+            nbPlayer = 0;
+            newLevel = false;
             lauch = new Launcher();
             game = new Game1();
             spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
         }
 
-        private void Load()
-        {
-            menu = new Menu(Content);
-            state = 0;
-            level = 1;
-            nbPlayer = 0;
-        }
-
         protected override void Update(GameTime gameTime)
         {
             if (state == 0)
             {
-                if (level != 1)
+                if (newLevel)
                 {
-                    lauch.LoadNewMap(gameTime, Content, perso, ref monster, ref pnj, ref nbMonster);
+                    lauch.LoadNewMap(gameTime, Content, graphics, spriteBatch, perso, ref monster, ref pnj, ref nbMonster);
                     state = 1;
+                    newLevel = false;
                 }
-                else if (lauch.Update(gameTime, Content, ref perso, ref monster, ref pnj, ref nbPlayer, ref nbMonster))
+                else if (lauch.Update(gameTime, Content, graphics, spriteBatch, ref perso, ref monster, ref pnj, ref nbPlayer, ref nbMonster))
                 {
                     state = 1;
                 }
             }
             else if (state == 1)
             {
+                game.Update(gameTime, graphics, Content, perso, monster, pnj);
                 if (Map.G_EndLevel(monster))
                 {
                     level++;
                     state = 0;
+                    newLevel = true;
                 }
-                game.Update(gameTime, graphics, Content, perso, monster, pnj);
             }
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            if (state == 0)
+            if (state == 0 && !newLevel)
             {
-                lauch.Draw(gameTime, menu, perso, monster, pnj, spriteBatch, graphics);
+                lauch.Draw(spriteBatch, graphics);
             }
             else if (state == 1)
             {
-                game.Draw(gameTime, spriteBatch, graphics, perso, monster, pnj, menu);
+                game.Draw(gameTime, spriteBatch, graphics, perso, monster, pnj);
             }
             base.Draw(gameTime);
         }

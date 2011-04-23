@@ -74,7 +74,7 @@ namespace The_Last_Trial
         private void S_Xp(int xp_)
         {
             this.xp += xp_;
-            if (this.xp >= xpMax)
+            while (this.xp >= xpMax)
             {
                 this.xp = this.xp - xpMax;
                 xpMax *= 2;
@@ -252,7 +252,6 @@ namespace The_Last_Trial
                     tempsAttaque[0] = tempsActuel;
                 }
             }
-            // CODE SALE !
             else if (classe == 1)
             {
                 if (tempsActuel > tempsAttaque[0] + 0.4)
@@ -265,47 +264,65 @@ namespace The_Last_Trial
                 }
                 else if (tempsActuel > tempsAttaque[0] + 0.3)
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -23;
-                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -13;
-                    if (oldImage / 10 == 7)
-                        imgState = -43;
-                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -33;
+                    if (imgState % 10 == -2)
+                        imgState--;
+                    else if (imgState > 0)
+                    {
+                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                            imgState = -23;
+                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                            imgState = -13;
+                        else if (oldImage / 10 == 7)
+                            imgState = -43;
+                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                            imgState = -33;
+                    }
                 }
                 else if (tempsActuel > tempsAttaque[0] + 0.2)
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -22;
-                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -12;
-                    if (oldImage / 10 == 7)
-                        imgState = -42;
-                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -32;
+                    if (imgState % 10 == -1)
+                        imgState--;
+                    else if (imgState > 0)
+                    {
+                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                            imgState = -22;
+                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                            imgState = -12;
+                        else if (oldImage / 10 == 7)
+                            imgState = -42;
+                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                            imgState = -32;
+                    }
                 }
                 else if (tempsActuel > tempsAttaque[0] + 0.1)
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -21;
-                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -11;
-                    if (oldImage / 10 == 7)
-                        imgState = -41;
-                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -31;
+                    if (imgState % 10 == 0)
+                        imgState--;
+                    else if (imgState > 0)
+                    {
+                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                            imgState = -21;
+                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                            imgState = -11;
+                        else if (oldImage / 10 == 7)
+                            imgState = -41;
+                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                            imgState = -31;
+                    }
                 }
                 else if (tempsActuel > tempsAttaque[0])
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -20;
-                    if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -10;
-                    if (oldImage / 10 == 7)
-                        imgState = -40;
-                    if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -30;
+                    if (imgState > 0)
+                    {
+                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                            imgState = -20;
+                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                            imgState = -10;
+                        else if (oldImage / 10 == 7)
+                            imgState = -40;
+                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                            imgState = -30;
+                    }
                 }
 
                 if (imgState < 0)

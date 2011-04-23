@@ -282,6 +282,112 @@ namespace The_Last_Trial
                     tempsAttaque[0] = tempsActuel;
                 }
             }
+            else if (tempsActuel > tempsAttaque[0] + 0.9)
+            {
+                if (imgState % 10 == -5)
+                {
+                    imgState = oldImage / 10 * 10;
+                }
+            }
+            else if (tempsActuel > tempsAttaque[0] + 0.6)
+            {
+                if (imgState % 10 == -4)
+                    imgState--;
+                else if (imgState > 0)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -55;
+                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -65;
+                    else if (oldImage / 10 == 7)
+                        imgState = -75;
+                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -85;
+                }
+            }
+            else if (tempsActuel > tempsAttaque[0] + 0.5)
+            {
+                if (imgState % 10 == -3)
+                    imgState--;
+                else if (imgState > 0)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -54;
+                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -64;
+                    else if (oldImage / 10 == 7)
+                        imgState = -74;
+                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -84;
+                }
+            }
+            else if (tempsActuel > tempsAttaque[0] + 0.4)
+            {
+                if (imgState % 10 == -2)
+                    imgState--;
+                else if (imgState > 0)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -53;
+                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -63;
+                    else if (oldImage / 10 == 7)
+                        imgState = -73;
+                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -83;
+                }
+            }
+            else if (tempsActuel > tempsAttaque[0] + 0.2)
+            {
+                if (imgState % 10 == -1)
+                    imgState--;
+                else if (imgState > 0)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -52;
+                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -62;
+                    else if (oldImage / 10 == 7)
+                        imgState = -72;
+                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -82;
+                }
+            }
+            else if (tempsActuel > tempsAttaque[0] + 0.1)
+            {
+                if (imgState % 10 == 0)
+                    imgState--;
+                else if (imgState > 0)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -51;
+                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -61;
+                    else if (oldImage / 10 == 7)
+                        imgState = -71;
+                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -81;
+                }
+            }
+            else if (tempsActuel > tempsAttaque[0])
+            {
+                if (imgState > 0)
+                {
+                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                        imgState = -50;
+                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
+                        imgState = -60;
+                    else if (oldImage / 10 == 7)
+                        imgState = -70;
+                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                        imgState = -80;
+                }
+            }
+
+            if (imgState < 0)
+            {
+                speed = Vector2.Zero;
+            }
         }
 
         #endregion
