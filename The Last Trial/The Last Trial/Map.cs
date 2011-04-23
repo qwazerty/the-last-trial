@@ -11,7 +11,7 @@ namespace The_Last_Trial
         #region VAR
         private const int PIXEL = 32;
 
-        private static int id, screenHeight, screenWidth, MaxX, scroll, currentScreen;
+        private static int id, MaxX, scroll, currentScreen;
         private static Texture2D[] first, middle, back;
         private static Vector2 screenPos, speed;
         private static Vector2 originBack, originMiddle, originFirst;
@@ -47,7 +47,7 @@ namespace The_Last_Trial
                 }
             }
             catch (NullReferenceException) { }
-            return ((-screenPos.X >= MaxX - screenWidth && Keyboard.GetState().IsKeyDown(Keys.Enter) && !mobAlive) || (Keyboard.GetState().IsKeyDown(Keys.Enter) && Keyboard.GetState().IsKeyDown(Keys.F1)));
+            return ((-screenPos.X >= MaxX - Program.width && Keyboard.GetState().IsKeyDown(Keys.Enter) && !mobAlive) || (Keyboard.GetState().IsKeyDown(Keys.Enter) && Keyboard.GetState().IsKeyDown(Keys.F1)));
         }
 
         #endregion
@@ -145,9 +145,6 @@ namespace The_Last_Trial
             screenPos = new Vector2(0, 0);
             speed = new Vector2(0f, 0f);
 
-            screenHeight = 800;
-            screenWidth = 1200;
-
         }
 
         #endregion
@@ -178,7 +175,7 @@ namespace The_Last_Trial
             {
                 if (p.G_IsAlive())
                 {
-                    if (p.G_Position().X > screenWidth * 0.75 && (-screenPos.X < MaxX - screenWidth))
+                    if (p.G_Position().X > Program.width * 0.75 && (-screenPos.X < MaxX - Program.width))
                     {
                         if (scroll >= 0)
                         {
@@ -190,7 +187,7 @@ namespace The_Last_Trial
                             scrollable = false;
                         }
                     }
-                    else if (p.G_Position().X < screenWidth * 0.22 && (screenPos.X < 0))
+                    else if (p.G_Position().X < Program.width * 0.22 && (screenPos.X < 0))
                     {
                         if (scroll <= 0)
                         {
@@ -212,7 +209,7 @@ namespace The_Last_Trial
             if (parallax)
             {
                 offsetY /= (GameState.G_Player() * 5);
-                offsetY -= back[0].Height - (screenHeight - first[0].Height - middle[0].Height);
+                offsetY -= back[0].Height - (Program.height - first[0].Height - middle[0].Height);
             }
             if (scrollable && G_Scroll())
             {

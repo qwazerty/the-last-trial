@@ -25,8 +25,9 @@ namespace The_Last_Trial
         public GameState()
         {
             graphics = new GraphicsDeviceManager(this);
-            this.graphics.PreferredBackBufferWidth = 1200;
-            this.graphics.PreferredBackBufferHeight = 800;
+            this.graphics.PreferredBackBufferWidth = Program.width;
+            this.graphics.PreferredBackBufferHeight = Program.height;
+            this.graphics.IsFullScreen = Program.fullscreen;
             Content.RootDirectory = "Content";
         }
 
@@ -61,6 +62,7 @@ namespace The_Last_Trial
             }
             else if (state == 1)
             {
+                this.graphics.PreferredBackBufferHeight = 1000;
                 game.Update(gameTime, graphics, Content, perso, monster, pnj);
                 if (Map.G_EndLevel(monster))
                 {

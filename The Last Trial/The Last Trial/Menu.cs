@@ -98,8 +98,8 @@ namespace The_Last_Trial
                     pause = false;
                 }
                 else if (currentCursor == 1)
-                { 
-                    
+                {
+                    Program.Restart();
                 }
                 else if (currentCursor == 2)
                 {
