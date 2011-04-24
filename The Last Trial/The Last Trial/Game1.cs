@@ -13,7 +13,7 @@ namespace The_Last_Trial
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, Personnage[] perso, Monster[] monster, PNJ[] pnj)
         {
-            Menu.Draw(perso, monster, pnj, spriteBatch, graphics);
+            Menu.Draw(perso, monster, pnj, spriteBatch, graphics, gameTime);
         }
     }
 }

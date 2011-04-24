@@ -10,6 +10,7 @@ namespace The_Last_Trial
     {
         #region VAR
 
+        private static Objet[] portrait;
         private Keys[] key;
         private int classe, power, powerMax, xp, xpMax, level;
         private double[] tempsAttaque = new double[2];
@@ -90,24 +91,32 @@ namespace The_Last_Trial
 
         public static void Load(Personnage[] perso, ContentManager Content)
         {
-            //DEBUT SETUP
-            //string str = "";
-            //string line;
-            //StreamReader sr = new StreamReader("setup");
-            //line = sr.ReadLine();
             if (GameState.G_Level() == 1)
             {
+                Personnage.portrait = new Objet[GameState.G_Player()];
                 if (GameState.G_Player() > 0)
+                {
                     perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 350f), 1, 1);
+                    portrait[0] = new Objet(new Vector2(15, 10), Content.Load<Texture2D>("ui/1"));
+                }
 
                 if (GameState.G_Player() > 1)
+                {
                     perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, 3);
+                    portrait[1] = new Objet(new Vector2(Program.width - 95, 10), Content.Load<Texture2D>("ui/3"));
+                }
 
                 if (GameState.G_Player() > 2)
+                {
                     perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(360f, 550f), 3, 2);
+                    portrait[2] = new Objet(new Vector2(15, 115), Content.Load<Texture2D>("ui/2"));
+                }
 
                 if (GameState.G_Player() > 3)
+                {
                     perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(390f, 650f), 4, 4);
+                    portrait[3] = new Objet(new Vector2(Program.width - 95, 115), Content.Load<Texture2D>("ui/4"));
+                }
             }
             foreach (Personnage p in perso)
                 p.F_Load(Content);
@@ -239,7 +248,7 @@ namespace The_Last_Trial
                         if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            m.S_Degat(42 + random.Next(10) + 10 * level);
+                            m.S_Degat(42 + random.Next(10) + 10 * level, gameTime);
                             if (m.G_Killed())
                             {
                                 S_Xp(m.G_MaxLife());
@@ -385,7 +394,7 @@ namespace The_Last_Trial
 
                         if (m_target && monster[i].G_IsAlive() && m_target_ovrkl[i] != null)
                         {
-                            monster[i].S_Degat(1337);
+                            monster[i].S_Degat(1337, gameTime);
                         }
                     }
 
@@ -522,54 +531,64 @@ namespace The_Last_Trial
                 spriteBatch.Draw(health, new Rectangle(110, 42, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
                 spriteBatch.Draw(health, new Rectangle(110, 62, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
                 spriteBatch.Draw(health, new Rectangle(110, 82, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
-                spriteBatch.DrawString(textFont, "Ilean", new Vector2(112, 6), Color.White);
-                spriteBatch.DrawString(textFont, "Ilean", new Vector2(113, 7), Color.Black);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(240, 6), Color.White);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(241, 7), Color.Black);
+                portrait[0].Draw(spriteBatch);
+                spriteBatch.DrawString(textFont, "Ilean", new Vector2(113, 7), Color.White);
+                spriteBatch.DrawString(textFont, "Ilean", new Vector2(112, 6), Color.Black);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(241, 7), Color.White);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(240, 6), Color.Black);
             }
             else if (id == 2)
             {
-                spriteBatch.Draw(ui2, new Rectangle(938, 10, ui2.Width, ui2.Height), Color.White);
-                spriteBatch.Draw(health, new Rectangle(946, 42, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
-                spriteBatch.Draw(health, new Rectangle(946, 62, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
-                spriteBatch.Draw(health, new Rectangle(946, 82, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
-                spriteBatch.DrawString(textFont, "Waydjinn", new Vector2(935, 6), Color.White);
-                spriteBatch.DrawString(textFont, "Waydjinn", new Vector2(936, 7), Color.Black);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(1066, 6), Color.White);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(1067, 7), Color.Black);
+                spriteBatch.Draw(ui2, new Rectangle(Program.width - 262, 10, ui2.Width, ui2.Height), Color.White);
+                spriteBatch.Draw(health, new Rectangle(Program.width - 254, 42, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
+                spriteBatch.Draw(health, new Rectangle(Program.width - 254, 62, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
+                spriteBatch.Draw(health, new Rectangle(Program.width - 254, 82, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+                portrait[1].Draw(spriteBatch);
+                spriteBatch.DrawString(textFont, "Waydjinn", new Vector2(Program.width - 264, 7), Color.White);
+                spriteBatch.DrawString(textFont, "Waydjinn", new Vector2(Program.width - 265, 6), Color.Black);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(Program.width - 133, 7), Color.White);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(Program.width - 134, 6), Color.Black);
             }
             else if (id == 3)
             {
-                spriteBatch.Draw(ui1, new Rectangle(10, 700, ui1.Width, ui1.Height), Color.White);
-                spriteBatch.Draw(health, new Rectangle(110, 742, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
-                spriteBatch.Draw(health, new Rectangle(110, 762, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
-                spriteBatch.Draw(health, new Rectangle(110, 782, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+                spriteBatch.Draw(ui1, new Rectangle(10, 110, ui1.Width, ui1.Height), Color.White);
+                spriteBatch.Draw(health, new Rectangle(110, 142, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
+                spriteBatch.Draw(health, new Rectangle(110, 162, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
+                spriteBatch.Draw(health, new Rectangle(110, 182, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+                portrait[2].Draw(spriteBatch);
+                spriteBatch.DrawString(textFont, "Flint", new Vector2(113, 107), Color.White);
+                spriteBatch.DrawString(textFont, "Flint", new Vector2(112, 106), Color.Black);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(241, 107), Color.White);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(240, 106), Color.Black);
             }
             else if (id == 4)
             {
-                spriteBatch.Draw(ui2, new Rectangle(938, 700, ui2.Width, ui2.Height), Color.White);
-                spriteBatch.Draw(health, new Rectangle(946, 742, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
-                spriteBatch.Draw(health, new Rectangle(946, 762, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
-                spriteBatch.Draw(health, new Rectangle(946, 782, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+                spriteBatch.Draw(ui2, new Rectangle(Program.width - 262, 110, ui2.Width, ui2.Height), Color.White);
+                spriteBatch.Draw(health, new Rectangle(Program.width - 254, 142, (int)(life * 146 / lifeMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Red);
+                spriteBatch.Draw(health, new Rectangle(Program.width - 254, 162, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
+                spriteBatch.Draw(health, new Rectangle(Program.width - 254, 182, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
+                portrait[3].Draw(spriteBatch);
+                spriteBatch.DrawString(textFont, "Qwazerty", new Vector2(Program.width - 264, 107), Color.White);
+                spriteBatch.DrawString(textFont, "Qwazerty", new Vector2(Program.width - 265, 106), Color.Black);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(Program.width - 133, 107), Color.White);
+                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(Program.width - 134, 106), Color.Black);
             }
 
         }
 
-        public void F_DrawDegats(SpriteBatch sb)
+        public void F_DrawDegats(SpriteBatch sb, GameTime gameTime)
         {
-            if (degats != 0)
+            if (tempsDegats + 0.5 > gameTime.TotalGameTime.TotalSeconds)
             {
-                initLife = life - degats;
-                oldDegats = degats;
-                degats = 0;
+                if (id == 1)
+                    sb.DrawString(gameFont, degats.ToString(), new Vector2(50, 70), Color.Red);
+                else if (id == 2)
+                    sb.DrawString(gameFont, degats.ToString(), new Vector2(Program.width - 50, 70), Color.Red);
+                else if (id == 3)
+                    sb.DrawString(gameFont, degats.ToString(), new Vector2(50, 170), Color.Red);
+                else if (id == 4)
+                    sb.DrawString(gameFont, degats.ToString(), new Vector2(Program.width - 50, 170), Color.Red);
             }
-            if (initLife < life && G_IsAlive())
-            {
-                sb.DrawString(gameFont, oldDegats.ToString(), new Vector2(position.X + 10, position.Y - 30), Color.Red);
-                life -= 3;
-            }
-            else
-                oldDegats = 0;
         }
 
         #endregion

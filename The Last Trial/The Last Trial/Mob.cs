@@ -11,7 +11,7 @@ namespace The_Last_Trial
         #region VAR
         protected int id, imgState, life, lifeMax, initLife, oldDegats;
         protected Vector2 speed;
-        protected double tempsImage, tempsActuel;
+        protected double tempsImage, tempsActuel, tempsDegats;
         protected int degats = 0;
         private static int[] array;
 
@@ -34,8 +34,8 @@ namespace The_Last_Trial
 
         public static void Load(ContentManager Content)
         {
-            ui1 = Content.Load<Texture2D>("ui/1");
-            ui2 = Content.Load<Texture2D>("ui/2");
+            ui1 = Content.Load<Texture2D>("ui/L");
+            ui2 = Content.Load<Texture2D>("ui/R");
             health = Content.Load<Texture2D>("mob/health");
             overKill = Content.Load<SpriteFont>("font/overkillfont");
             gameFont = Content.Load<SpriteFont>("font/gamefont");
@@ -43,7 +43,7 @@ namespace The_Last_Trial
             array = new int[GameState.G_Player() + GameState.G_Monster()];
         }
 
-        public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch sb)
+        public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch sb, GameTime gameTime)
         {
             Vector2[] sort = new Vector2[GameState.G_Player() + GameState.G_Monster()];
             for (int k = 0; k < GameState.G_Player(); k++)
@@ -88,12 +88,12 @@ namespace The_Last_Trial
 
             foreach (Monster m in monster)
             {
-                m.F_DrawDegats(sb);
+                m.F_DrawDegats(sb, gameTime);
             }
 
             foreach (Personnage p in perso)
             {
-                p.F_DrawDegats(sb);
+                p.F_DrawDegats(sb, gameTime);
             }
         }
 
@@ -105,9 +105,11 @@ namespace The_Last_Trial
             base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
         }
 
-        public void S_Degat(int degat)
+        public void S_Degat(int degat, GameTime gameTime)
         {
             life -= degat;
+            this.degats = degat;
+            tempsDegats = gameTime.TotalGameTime.TotalSeconds;
         }
 
         protected void F_UpdateImage(GameTime gameTime)

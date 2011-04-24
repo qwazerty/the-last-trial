@@ -9,8 +9,8 @@ namespace The_Last_Trial
         /// The main entry point for the application.
         /// </summary>
         public static GameState gs;
-        public static int width, height;
-        public static bool fullscreen;
+        public static int width, height, volume;
+        public static bool fullscreen, musique;
         
         static void Main(string[] args)
         {
@@ -26,10 +26,13 @@ namespace The_Last_Trial
                 fs = new FileStream("setup", FileMode.Create);
                 StreamWriter sw = new StreamWriter(fs);
                 sw.WriteLine("resolution=1200x800");
+                sw.WriteLine("fullscreen=off");
                 sw.WriteLine("musique=on");
+                sw.WriteLine("volume=100");
                 sw.Close();
                 fs.Close();
-                return;
+                fs = new FileStream("setup", FileMode.Open);
+                sr = new StreamReader(fs);
             } 
             string str = sr.ReadLine();
             str = str.Substring(11);
@@ -47,13 +50,19 @@ namespace The_Last_Trial
                 height += str[i];
                 i++;
             } 
-            string fullscreen = sr.ReadLine();
-            fullscreen = fullscreen.Substring(11);
+            str = sr.ReadLine();
+            str = str.Substring(11);
+            Program.fullscreen = (str == "on");
+            str = sr.ReadLine();
+            str = str.Substring(8);
+            Program.musique = (str == "on");
+            str = sr.ReadLine();
+            str = str.Substring(7);
+            volume = int.Parse(str);
             sr.Close();
             fs.Close();
             Program.width = int.Parse(width);
             Program.height = int.Parse(height);
-            Program.fullscreen = (fullscreen == "on");
             gs = new GameState();
             gs.Run();
         }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
 
 namespace The_Last_Trial
 {
@@ -154,8 +155,14 @@ namespace The_Last_Trial
             float deltaX = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             currentScreen = (int)(-screenPos.X) / 1024;
-            
-            first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst));
+            try
+            {
+                first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst));
+            }
+            catch (FileNotFoundException)
+            {
+                Program.Restart();
+            }
             first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
             first[2] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 2));
 

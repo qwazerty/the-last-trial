@@ -110,7 +110,7 @@ namespace The_Last_Trial
             oldState = newState;
         }
 
-        public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics)
+        public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(Color.Pink);
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
@@ -121,7 +121,7 @@ namespace The_Last_Trial
             {
                 Map.DrawFirst(spriteBatch);
             }
-            Mob.Draw(perso, monster, pnj, spriteBatch);
+            Mob.Draw(perso, monster, pnj, spriteBatch, gameTime);
             if (Map.G_FirstHide())
             {
                 Map.DrawFirst(spriteBatch);

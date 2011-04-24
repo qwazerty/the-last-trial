@@ -36,7 +36,7 @@ namespace The_Last_Trial
 
         public bool G_Killed()
         {
-            return life - degats <= 0;
+            return life <= 0;
         }
 
         public int G_MaxLife()
@@ -273,7 +273,7 @@ namespace The_Last_Trial
                     if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
                     {
                         attaque = true;
-                        p.S_Degat(5 + random.Next(5));
+                        p.S_Degat(5 + random.Next(5), gameTime);
                     }
                 }
                 if (attaque)
@@ -400,21 +400,12 @@ namespace The_Last_Trial
             spriteBatch.Draw(health, new Rectangle((int)position.X + 75, (int)position.Y + objet.Height + 15, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
 
-        public void F_DrawDegats(SpriteBatch sb)
+        public void F_DrawDegats(SpriteBatch sb, GameTime gameTime)
         {
-            if (degats != 0)
+            if (tempsDegats + 0.5 > gameTime.TotalGameTime.TotalSeconds)
             {
-                initLife = life - degats;
-                oldDegats = degats;
-                degats = 0;
+                sb.DrawString(gameFont, degats.ToString(), new Vector2(position.X + 100, position.Y + 40), Color.Red);
             }
-            if (initLife < life && G_IsAlive())
-            {
-                sb.DrawString(gameFont, oldDegats.ToString(), new Vector2(position.X + 100, position.Y + 40), Color.Red);
-                life -= 3;
-            }
-            else
-                oldDegats = 0;
         }
 
         #endregion
