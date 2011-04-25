@@ -42,7 +42,7 @@ namespace The_Last_Trial
             this.level = 0;
             this.tempsRegen = 0;
 
-            if (id == 2)
+            if (classe == 3)
             {
                 powerMax = 1000;
             }
@@ -84,6 +84,14 @@ namespace The_Last_Trial
                 initLife = lifeMax;
             }
         }
+
+        private void S_Life(int newLife)
+        {
+            life += newLife;
+            if (life > lifeMax)
+                life = lifeMax;
+        }
+           
 
         #endregion
         
@@ -151,7 +159,22 @@ namespace The_Last_Trial
             {
                 F_Deplacer();
                 F_Attaque(monster, gameTime);
-                F_OverKill(monster, perso, gameTime);
+                if (classe == 1)
+                {
+                    
+                }
+                else if (classe == 2)
+                {
+
+                }
+                else if (classe == 3)
+                {
+                    F_Healing(perso, gameTime);
+                }
+                else
+                {
+                    F_OverKill(monster, perso, gameTime);
+                }
                 foreach (Rectangle collision in Map.G_Collision())
                 {
                     F_Collision_Objets(collision, gameTime);
@@ -365,7 +388,7 @@ namespace The_Last_Trial
 
             Monster[] m_target_ovrkl = new Monster[GameState.G_Monster()];
             Personnage[] p_target_ovrkl = new Personnage[GameState.G_Player()];
-            //bool p_target = false;
+            bool p_target = false;
             bool m_target = false;
 
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -379,10 +402,10 @@ namespace The_Last_Trial
                         m_target_ovrkl[i] = null;
                     }
 
-                    //for (int i = 0; i < Game1.G_Player(); i++)
-                    //{
-                    //    p_target_ovrkl[i] = null;
-                    //}
+                    for (int i = 0; i < GameState.G_Player(); i++)
+                    {
+                        p_target_ovrkl[i] = null;
+                    }
 
                     for (int i = 0; i < GameState.G_Monster(); i++)
                     {
@@ -399,14 +422,23 @@ namespace The_Last_Trial
                         }
                     }
 
-                    //for (int i = 0; i < Game1.G_Player(); i++)
-                    //{
-                    //    if (F_DetectAllies(perso) != null)
-                    //    {
-                    //        p_target_ovrkl[i] = F_DetectAllies(perso);
-                    //        p_target = true;
-                    //    }
-                    //}
+                    for (int i = 0; i < GameState.G_Player(); i++)
+                    {
+                        if (i != id - 1)
+                        {
+                            p_target_ovrkl[i] = F_DetectAllies(perso);
+                            foreach (Personnage p in p_target_ovrkl)
+                            {
+                                if (p != null)
+                                    p_target = true;
+                            }
+
+                            if (p_target && perso[i].G_IsAlive() && p_target_ovrkl[i] != null)
+                            {
+                                perso[i].S_Degat(1337, gameTime);
+                            }
+                        }
+                    }
 
                     Son.Play(4);
                     imgState = 101;
@@ -432,12 +464,26 @@ namespace The_Last_Trial
             }
         }
 
+        private void F_Healing(Personnage[] perso, GameTime gameTime)
+        {
+            tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
+            if (tempsActuel > tempsAttaque[1] + 3)
+            {
+                if (newState.IsKeyDown(key[5]) && power >= 250)
+                {
+                    power -= 250;
+                    F_DetectAllies(perso).S_Life(50);
+                    tempsAttaque[1] = tempsActuel;
+                }
+            }
+        }
+
         private Personnage F_DetectAllies(Personnage[] perso)
         {
             Personnage p_ = null;
             foreach (Personnage p in perso)
             {
-                if (p.G_Rectangle().Intersects(new Rectangle((int)position.X - 200, (int)position.Y - 200, 400 + objet.Width, 400 + objet.Height)))
+                if (p.G_Rectangle().Intersects(new Rectangle((int)position.X - 100, (int)position.Y - 100, 200 + objet.Width, 200 + objet.Height)))
                     p_ = p;
             }
             return p_;
