@@ -225,7 +225,7 @@ namespace The_Last_Trial
                     {
                         state = 0;
                         currentCursor = 0;
-                        menuObject[1].S_PosX(42);
+                        menuObject[1].S_PosX(0);
                         menuObject[2].S_PosX(300);
                         speedX = 0;
                     }
@@ -444,6 +444,11 @@ namespace The_Last_Trial
                     fs.Close();
 
                     Program.Restart();
+
+                    //this.graphics.PreferredBackBufferWidth = Program.width;
+                    //this.graphics.PreferredBackBufferHeight = Program.height;
+                    //this.graphics.IsFullScreen = Program.fullscreen;
+                    //this.graphics.ApplyChanges();
                 }
             }
             #endregion

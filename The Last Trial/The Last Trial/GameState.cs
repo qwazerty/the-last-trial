@@ -28,6 +28,7 @@ namespace The_Last_Trial
             this.graphics.PreferredBackBufferWidth = Program.width;
             this.graphics.PreferredBackBufferHeight = Program.height;
             this.graphics.IsFullScreen = Program.fullscreen;
+            this.graphics.ApplyChanges();
             Content.RootDirectory = "Content";
         }
 

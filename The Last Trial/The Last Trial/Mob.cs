@@ -9,7 +9,7 @@ namespace The_Last_Trial
     public abstract class Mob : Objet
     {
         #region VAR
-        protected int id, imgState, life, lifeMax, initLife, oldDegats;
+        protected int id, imgState, life, lifeMax, oldDegats;
         protected Vector2 speed;
         protected double tempsImage, tempsActuel, tempsDegats;
         protected int degats = 0;
@@ -79,7 +79,7 @@ namespace The_Last_Trial
             foreach (int i in array)
             {
                 if (i < GameState.G_Player())
-                    perso[i].F_Draw(sb);
+                    perso[i].F_Draw(sb, gameTime);
                 else
                     monster[i - GameState.G_Player()].F_Draw(sb);
             }

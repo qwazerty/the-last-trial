@@ -14,7 +14,7 @@ namespace The_Last_Trial
         private Keys[] key;
         private int classe, power, powerMax, xp, xpMax, level;
         private double[] tempsAttaque = new double[2];
-        private double tempsRegen;
+        private double tempsRegen, tempsLevelUp;
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -34,13 +34,13 @@ namespace The_Last_Trial
             this.key = key;
             this.position = position;
             this.imgState = 20;
-            this.initLife = 100;
-            this.life = this.initLife;
+            this.life = 100;
             this.lifeMax = this.life;
             this.xp = 0;
             this.xpMax = 142;
             this.level = 0;
             this.tempsRegen = 0;
+            this.tempsLevelUp = 0;
 
             if (classe == 3)
             {
@@ -72,7 +72,7 @@ namespace The_Last_Trial
             return G_Rectangle().Intersects(pnj.G_Interact());
         }
 
-        private void S_Xp(int xp_)
+        private void S_Xp(int xp_, GameTime gameTime)
         {
             this.xp += xp_;
             while (this.xp >= xpMax)
@@ -81,7 +81,7 @@ namespace The_Last_Trial
                 xpMax *= 2;
                 level++;
                 life = lifeMax;
-                initLife = lifeMax;
+                tempsLevelUp = gameTime.TotalRealTime.TotalSeconds;            
             }
         }
 
@@ -146,7 +146,6 @@ namespace The_Last_Trial
             position = new Vector2(270 + 30 * id, 250 + 100 * id);
             this.imgState = 20;
             objet = Content.Load<Texture2D>("perso/" + classe + "/" + imgState);
-            this.life = this.initLife;
             for (int i = 0; i <= 1; i++)
             {
                 tempsAttaque[i] = -5;
@@ -193,7 +192,7 @@ namespace The_Last_Trial
             S_Deplacement(gameTime);
         }
 
-        public void F_Draw(SpriteBatch sb)
+        public void F_Draw(SpriteBatch sb, GameTime gameTime)
         {
             // CODE SALE
             if (imgState < 0 && classe == 1)
@@ -205,9 +204,12 @@ namespace The_Last_Trial
 
             if (imgState > 100)
                 sb.DrawString(overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
-
+            if (tempsLevelUp + 1 > gameTime.TotalRealTime.TotalSeconds)
+            {
+                sb.DrawString(overKill, "Level Up", new Vector2(position.X - 100, position.Y - 80), Color.DarkOrange);
+            }
             
-                F_DrawHealth(sb);
+            F_DrawHealth(sb);
         }
 
         #endregion
@@ -274,7 +276,7 @@ namespace The_Last_Trial
                             m.S_Degat(42 + random.Next(10) + 10 * level, gameTime);
                             if (m.G_Killed())
                             {
-                                S_Xp(m.G_MaxLife());
+                                S_Xp(m.G_MaxLife(), gameTime);
                             }
                         }
                     }
@@ -419,6 +421,10 @@ namespace The_Last_Trial
                         if (m_target && monster[i].G_IsAlive() && m_target_ovrkl[i] != null)
                         {
                             monster[i].S_Degat(1337, gameTime);
+                            if (monster[i].G_Killed())
+                            {
+                                S_Xp(monster[i].G_MaxLife(), gameTime);
+                            }
                         }
                     }
 
@@ -501,6 +507,8 @@ namespace The_Last_Trial
 
         #endregion
 
+        #region Deplacement
+
         private void F_Deplacer()
         {
             newState = Keyboard.GetState();
@@ -554,6 +562,8 @@ namespace The_Last_Trial
 
             oldState = newState;
         }
+
+        #endregion
 
         #region UI
 

@@ -22,7 +22,6 @@ namespace The_Last_Trial
             this.spawn = new Rectangle((int)init.X - 200, (int)init.Y - 200, 400, 400);
             this.position = init;
             this.life = 100 + (500 * (id - 1));
-            this.initLife = this.life;
             this.lifeMax = this.life;
             tempsRandom = 0;
             tempsAttaque[0] = -5;
@@ -85,7 +84,6 @@ namespace The_Last_Trial
         public void S_Resu()
         {
             life = 100;
-            initLife = 100;
             imgState = 40;
         }
 
