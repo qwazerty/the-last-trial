@@ -21,7 +21,7 @@ namespace The_Last_Trial
             this.id = id;
             this.spawn = new Rectangle((int)init.X - 200, (int)init.Y - 200, 400, 400);
             this.position = init;
-            this.life = 100 + (500 * (id - 1));
+            this.life = (100 + 500 * (id - 1)) * GameState.G_Level() * GameState.G_Player();
             this.lifeMax = this.life;
             tempsRandom = 0;
             tempsAttaque[0] = -5;
@@ -83,7 +83,7 @@ namespace The_Last_Trial
 
         public void S_Resu()
         {
-            life = 100;
+            life = lifeMax;
             imgState = 40;
         }
 
@@ -278,7 +278,7 @@ namespace The_Last_Trial
                     if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
                     {
                         attaque = true;
-                        p.S_Degat(5 + random.Next(5), gameTime);
+                        p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.G_Level(), gameTime);
                     }
                 }
                 if (attaque)

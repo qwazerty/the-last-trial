@@ -12,9 +12,9 @@ namespace The_Last_Trial
 
         private static Objet[] portrait;
         private Keys[] key;
-        private int classe, xp, xpMax, level, esquive;
+        private int classe, xp, xpMax, level;
         private double[] tempsAttaque = new double[2];
-        private double tempsRegen, tempsLevelUp, power, powerMax, force, mana;
+        private double tempsRegen, tempsLevelUp, power, powerMax, force, mana, esquive;
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -46,13 +46,13 @@ namespace The_Last_Trial
             {
                 force = 0.8;
                 mana = 1.5;
-                esquive = 2;
+                esquive = 5;
             }
 
             if (classe == 2)
             {
                 force = 1;
-                mana = 1;
+                mana = 0.5;
                 esquive = 1;
             }
 
@@ -98,12 +98,12 @@ namespace The_Last_Trial
             this.xp += xp_;
             while (this.xp >= xpMax)
             {
+                S_Stats();
                 this.xp = this.xp - xpMax;
                 xpMax *= 2;
                 level++;
                 life = lifeMax;
                 tempsLevelUp = gameTime.TotalRealTime.TotalSeconds;
-                S_Stats();
             }
         }
 
@@ -121,10 +121,21 @@ namespace The_Last_Trial
             {
                 mana += 0.2;
                 powerMax = 1000 * mana;
+                lifeMax += 30;
+                esquive += 0.2;
             }
             if (classe == 2)
             {
-
+                force += 0.1;
+                lifeMax += 50;
+                mana += 0.1;
+            }
+            if (classe == 1)
+            {
+                force += 0.05;
+                esquive += 0.5;
+                mana += 0.1;
+                lifeMax += 25;
             }
         }
 
@@ -161,13 +172,13 @@ namespace The_Last_Trial
 
                 if (GameState.G_Player() > 1)
                 {
-                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, LoadingMenu.G_PersoClasse()[1]);
+                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, LoadingMenu.G_PersoClasse()[1]);
                     portrait[1] = new Objet(new Vector2(Program.width - 95, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[1]));
                 }
 
                 if (GameState.G_Player() > 2)
                 {
-                    perso[2] = new Personnage(new Keys[] { Keys.NumPad5, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(360f, 550f), 3, LoadingMenu.G_PersoClasse()[2]);
+                    perso[2] = new Personnage(new Keys[] { Keys.NumPad5, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.NumPad7 }, new Vector2(360f, 550f), 3, LoadingMenu.G_PersoClasse()[2]);
                     portrait[2] = new Objet(new Vector2(15, 115), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[2]));
                 }
 
@@ -524,12 +535,15 @@ namespace The_Last_Trial
         private void F_Healing(Personnage[] perso, GameTime gameTime)
         {
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-            if (tempsActuel > tempsAttaque[1] + 3)
+            if (tempsActuel > tempsAttaque[1] + 0.5)
             {
-                if (newState.IsKeyDown(key[5]) && power >= 250)
+                if (newState.IsKeyDown(key[5]) && power >= 500)
                 {
-                    power -= 250;
-                    F_DetectAllies(perso).S_Life(50);
+                    power -= 500;
+                    foreach (Personnage p in perso)
+                    {
+                        p.S_Life(50);
+                    }
                     tempsAttaque[1] = tempsActuel;
                 }
             }
@@ -623,7 +637,7 @@ namespace The_Last_Trial
             if (tempsRegen + 0.05 < gameTime.TotalGameTime.TotalSeconds)
             {
                 tempsRegen = gameTime.TotalGameTime.TotalSeconds;
-                power += 2;
+                power += 2 * mana;
                 if (power > powerMax)
                 {
                     power = powerMax;

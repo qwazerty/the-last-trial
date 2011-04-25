@@ -142,23 +142,23 @@ namespace The_Last_Trial
         private static bool GameOver(Personnage[] perso, ContentManager Content)
         {
             bool continuer = false;
-            foreach (Personnage p in perso)
-            {
-                if (p.G_IsAlive())
-                {
-                    continuer = true;
-                }
-            }
-            if (!continuer)
-            {
-                oldState = Keyboard.GetState();
-                menuObject[0] = new Objet(new Vector2(500, 400));
-                menuObject[0].S_Texture(Content.Load<Texture2D>("menu/new"));
-                menuObject[1] = new Objet(new Vector2(486, 560));
-                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit"));
-                menuObject[2] = new Objet(new Vector2(150, 400));
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/epee"));
-            }
+            //foreach (Personnage p in perso)
+            //{
+            //    if (p.G_IsAlive())
+            //    {
+            //        continuer = true;
+            //    }
+            //}
+            //if (!continuer)
+            //{
+            //    oldState = Keyboard.GetState();
+            //    menuObject[0] = new Objet(new Vector2(500, 400));
+            //    menuObject[0].S_Texture(Content.Load<Texture2D>("menu/new"));
+            //    menuObject[1] = new Objet(new Vector2(486, 560));
+            //    menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit"));
+            //    menuObject[2] = new Objet(new Vector2(150, 400));
+            //    menuObject[2].S_Texture(Content.Load<Texture2D>("menu/epee"));
+            //}
 
             return continuer;
         }
