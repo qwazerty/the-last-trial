@@ -45,7 +45,7 @@ namespace The_Last_Trial
             spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
         }
-
+        
         protected override void Update(GameTime gameTime)
         {
             if (state == 0)

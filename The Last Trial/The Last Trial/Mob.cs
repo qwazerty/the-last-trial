@@ -105,12 +105,7 @@ namespace The_Last_Trial
             base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
         }
 
-        public void S_Degat(int degat, GameTime gameTime)
-        {
-            life -= degat;
-            this.degats = degat;
-            tempsDegats = gameTime.TotalGameTime.TotalSeconds;
-        }
+        
 
         protected void F_UpdateImage(GameTime gameTime)
         {

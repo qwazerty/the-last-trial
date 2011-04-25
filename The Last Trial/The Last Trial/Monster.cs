@@ -87,6 +87,13 @@ namespace The_Last_Trial
             imgState = 40;
         }
 
+        public void S_Degat(int degat, GameTime gameTime)
+        {
+            life -= degat;
+            this.degats = degat;
+            tempsDegats = gameTime.TotalGameTime.TotalSeconds;
+        }
+
         #endregion
 
         #region Static Load & Update

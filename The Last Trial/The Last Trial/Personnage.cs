@@ -128,6 +128,21 @@ namespace The_Last_Trial
             }
         }
 
+        public void S_Degat(int degat, GameTime gameTime)
+        {
+            if (random.NextDouble() * 20 > esquive)
+            {
+                life -= degat;
+                this.degats = degat;
+                tempsDegats = gameTime.TotalGameTime.TotalSeconds;
+            }
+            else
+            {
+                this.degats = 0;
+                tempsDegats = gameTime.TotalGameTime.TotalSeconds;
+            }
+        }
+
 
         #endregion
 

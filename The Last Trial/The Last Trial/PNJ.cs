@@ -27,6 +27,7 @@ namespace The_Last_Trial
 
             return new Rectangle(0, 0, 0, 0);
         }
+
         #endregion
 
         #region Static Load, Update & Draw
