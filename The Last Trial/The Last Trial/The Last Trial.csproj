@@ -12,7 +12,8 @@
     <XnaFrameworkVersion>v3.1</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaCrossPlatformGroupID>82b9b570-411f-4895-a02c-ff8a8376f7bc</XnaCrossPlatformGroupID>
-    <ApplicationIcon>Game.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
     <Thumbnail>
     </Thumbnail>
     <PublishUrl>publish\</PublishUrl>
@@ -106,9 +107,6 @@
     <Compile Include="Son.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Game.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <NestedContentProject Include="Content\Content.contentproj">
       <Project>9c60dc7a-ebd1-48b2-9215-52bbe4702c2f</Project>
       <Visible>False</Visible>
@@ -140,6 +138,9 @@
       <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Game.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

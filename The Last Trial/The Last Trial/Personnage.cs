@@ -12,9 +12,9 @@ namespace The_Last_Trial
 
         private static Objet[] portrait;
         private Keys[] key;
-        private int classe, power, powerMax, xp, xpMax, level;
+        private int classe, xp, xpMax, level, esquive;
         private double[] tempsAttaque = new double[2];
-        private double tempsRegen, tempsLevelUp;
+        private double tempsRegen, tempsLevelUp, power, powerMax, force, mana;
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -38,18 +38,39 @@ namespace The_Last_Trial
             this.lifeMax = this.life;
             this.xp = 0;
             this.xpMax = 142;
-            this.level = 0;
+            this.level = 1;
             this.tempsRegen = 0;
             this.tempsLevelUp = 0;
 
+            if (classe == 1)
+            {
+                force = 0.8;
+                mana = 1.5;
+                esquive = 2;
+            }
+
+            if (classe == 2)
+            {
+                force = 1;
+                mana = 1;
+                esquive = 1;
+            }
+
             if (classe == 3)
             {
-                powerMax = 1000;
+                force = 0.5;
+                mana = 2;
+                esquive = 1;
             }
-            else
+
+            if (classe == 4)
             {
-                powerMax = 500;
+                force = 0.5;
+                mana = 2;
+                esquive = 1;
             }
+
+            powerMax = 500;
             power = powerMax;
 
             for (int i = 0; i <= 1; i++)
@@ -81,7 +102,8 @@ namespace The_Last_Trial
                 xpMax *= 2;
                 level++;
                 life = lifeMax;
-                tempsLevelUp = gameTime.TotalRealTime.TotalSeconds;            
+                tempsLevelUp = gameTime.TotalRealTime.TotalSeconds;
+                S_Stats();
             }
         }
 
@@ -91,10 +113,24 @@ namespace The_Last_Trial
             if (life > lifeMax)
                 life = lifeMax;
         }
-           
+
+        private void S_Stats()
+        {
+            
+            if(classe == 3 || classe == 4)
+            {
+                mana += 0.2;
+                powerMax = 1000 * mana;
+            }
+            if (classe == 2)
+            {
+
+            }
+        }
+
 
         #endregion
-        
+
         #region Static Load & Update
 
         public static void Load(Personnage[] perso, ContentManager Content)
@@ -116,7 +152,7 @@ namespace The_Last_Trial
 
                 if (GameState.G_Player() > 2)
                 {
-                    perso[2] = new Personnage(new Keys[] { Keys.NumPad2, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(360f, 550f), 3, LoadingMenu.G_PersoClasse()[2]);
+                    perso[2] = new Personnage(new Keys[] { Keys.NumPad5, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.D2 }, new Vector2(360f, 550f), 3, LoadingMenu.G_PersoClasse()[2]);
                     portrait[2] = new Objet(new Vector2(15, 115), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[2]));
                 }
 
@@ -273,7 +309,7 @@ namespace The_Last_Trial
                         if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            m.S_Degat(42 + random.Next(10) + 10 * level, gameTime);
+                            m.S_Degat((int)((42 + random.Next(10) + 10 * level) * force), gameTime);
                             if (m.G_Killed())
                             {
                                 S_Xp(m.G_MaxLife(), gameTime);
