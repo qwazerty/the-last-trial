@@ -10,13 +10,19 @@ namespace The_Last_Trial
 {
     public class LoadingMenu
     {
-        private static int state, currentCursor, nbPlayer;
+        private static int state, currentCursor, nbPlayer, temp;
         private static int[] setup = new int[4];
         private static float speedX;
         private static KeyboardState oldState, newState;
         private static SpriteFont menuFont;
         private static Objet[] menuObject = new Objet[7];
         private static Objet background;
+        private static int[] persoClasse;
+
+        public static int[] G_PersoClasse()
+        {
+            return persoClasse;
+        }
 
         public static void Init(ContentManager Content)
         {
@@ -75,12 +81,10 @@ namespace The_Last_Trial
             newState = Keyboard.GetState();
 
             #region Raccourcis
-            if (newState.IsKeyDown(Keys.F10))
-            {
-                //MENU
-            }
             if (newState.IsKeyDown(Keys.F11))
             {
+                persoClasse = new int[1];
+                persoClasse[0] = 1;
                 menuObject[2].S_Texture(Content.Load<Texture2D>("menu/back"));
                 menuObject[2].S_Position(new Vector2(150, 400));
                 menuObject[3].S_Position(new Vector2(150, 560));
@@ -88,6 +92,9 @@ namespace The_Last_Trial
             }
             if (newState.IsKeyDown(Keys.F12))
             {
+                persoClasse = new int[2];
+                persoClasse[0] = 1;
+                persoClasse[1] = 3;
                 menuObject[2].S_Texture(Content.Load<Texture2D>("menu/back"));
                 menuObject[2].S_Position(new Vector2(150, 400));
                 menuObject[3].S_Position(new Vector2(150, 560));
@@ -179,8 +186,9 @@ namespace The_Last_Trial
                     cursor[1] = "";
                     cursor[2] = "_";
                 }
-
-                menuObject[2].S_PosX(42);
+                menuObject[2] = new Objet(new Vector2(42, 350));
+                menuObject[3] = new Objet(new Vector2(300, 475));
+                menuObject[4] = new Objet(new Vector2(300, 600));
                 menuObject[2].S_Texture(Content.Load<Texture2D>("menu/player" + cursor[0]));
                 menuObject[3].S_Texture(Content.Load<Texture2D>("menu/back" + cursor[1]));
                 menuObject[4].S_Texture(Content.Load<Texture2D>("menu/quit" + cursor[2]));
@@ -209,8 +217,9 @@ namespace The_Last_Trial
                 {
                     if (currentCursor == 0)
                     {
-                        state = -42;
-                        return nbPlayer;
+                        persoClasse = new int[nbPlayer];
+                        state = 5;
+                        temp = 0;
                     }
                     else if (currentCursor == 1)
                     {
@@ -265,6 +274,7 @@ namespace The_Last_Trial
                     else if (currentCursor == 1)
                     {
                         state = 4;
+                        currentCursor = 0;
                     }
                 }
             }
@@ -437,13 +447,77 @@ namespace The_Last_Trial
                 }
             }
             #endregion
+            #region Selection Classe
+            else if (state >= 5 && state <= 8)
+            {
+                string str = "";
+                if (temp == 1)
+                {
+                    str = "_";
+                }
+                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/back" + str));
+                menuObject[1].S_Position(new Vector2(300, 650));
+                menuObject[2].S_Texture(Content.Load<Texture2D>("perso/1/10"));
+                menuObject[2].S_Position(new Vector2(100, 500));
+                menuObject[3].S_Texture(Content.Load<Texture2D>("perso/2/10"));
+                menuObject[3].S_Position(new Vector2(300, 500));
+                menuObject[4].S_Texture(Content.Load<Texture2D>("perso/3/10"));
+                menuObject[4].S_Position(new Vector2(500, 500));
+                menuObject[5].S_Texture(Content.Load<Texture2D>("perso/4/10"));
+                menuObject[5].S_Position(new Vector2(700, 500));
+                menuObject[6].S_Texture(Content.Load<Texture2D>("menu/selection"));
+                menuObject[6].S_Position(new Vector2(92 + (200 * currentCursor), 480));
+
+                if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
+                {
+                    temp--;
+                    if (temp == -1)
+                        temp = 1;
+
+                }
+                if (newState.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down))
+                {
+                    temp = (temp + 1) % 2;
+                }
+                if (newState.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+                {
+                    if (temp == 0)
+                        currentCursor = (currentCursor + 1) % 4;
+                }
+                if (newState.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
+                {
+                    if (temp == 0)
+                    {
+                        currentCursor--;
+                        if (currentCursor == -1)
+                            currentCursor = 3;
+                    }
+                }
+                if (newState.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+                {
+                    if (temp == 0)
+                    {
+                        persoClasse[state - 5] = currentCursor + 1;
+                        state++;
+                        if (state - 5 == nbPlayer)
+                        {
+                            return nbPlayer;
+                        }
+                    }
+                    else
+                    {
+                        state = 1;
+                        menuObject[1] = new Objet(new Vector2(0, 350), Content.Load<Texture2D>("menu/epee"));
+                    }
+                }
+            }
+            #endregion
 
             else if (state == 9)
             {
                 Program.gs.Exit();
             }
-
-            else if (state >= 10)
+            else if (state == 10 || state == 20 || state == 90)
             {
                 menuObject[1].S_PosX(menuObject[1].G_Position().X + speedX / 2);
                 if (menuObject[1].G_Position().X > Program.width || menuObject[1].G_Position().X < 0)
@@ -476,7 +550,9 @@ namespace The_Last_Trial
             menuObject[2].Draw(sb);
             menuObject[3].Draw(sb);
             if (state != 2 && state != 3 && state != 4)
+            {
                 menuObject[4].Draw(sb);
+            }
 
             if (state == 0 || state >= 10)
             {
@@ -494,7 +570,17 @@ namespace The_Last_Trial
             if (state == 4)
             {
                 menuObject[5].Draw(sb);
-                sb.DrawString(menuFont, setup[3].ToString(), new Vector2(630, 500), Color.Black);
+                sb.DrawString(menuFont, setup[3].ToString(), new Vector2(630, 500), Color.DarkKhaki);
+            }
+            if (state >= 5 && state <= 8)
+            {
+                menuObject[5].Draw(sb);
+                if (temp == 0)
+                {
+                    menuObject[6].Draw(sb);
+                }
+                sb.DrawString(menuFont, "Perso " + (state - 4) + ", choississez une classe", new Vector2(200, 350), Color.DarkKhaki);
+                menuObject[1].Draw(sb);
             }
             sb.End();
         }

@@ -85,7 +85,7 @@ namespace The_Last_Trial
             }
             if (id == 2)
             {
-                MaxX = 4 * 1024;
+                MaxX = 3 * 1024;
                 collision = new Rectangle[2];
                 collision[0] = new Rectangle(0, 288, MaxX, PIXEL);
                 collision[1] = new Rectangle(0, 800, MaxX, PIXEL);
@@ -98,6 +98,8 @@ namespace The_Last_Trial
                 speedFirst = 1;
                 firstHide = false;
                 parallax = false;
+
+                pnj[0] = new PNJ(new Vector2(2876, 500), 42, "This is the end of this world...");
 
                 return 6;
             }
@@ -112,7 +114,7 @@ namespace The_Last_Trial
             }
             if (id == 2)
             {
-                return 0;
+                return 1;
             }
             return 0;
         }
@@ -157,75 +159,75 @@ namespace The_Last_Trial
             currentScreen = (int)(-screenPos.X) / 1024;
             try
             {
-                first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst));
+                first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst)); first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
+                first[2] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 2));
+
+                middle[0] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle));
+                middle[1] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 1));
+                middle[2] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 2));
+
+                back[0] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack));
+                back[1] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 1));
+                back[2] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 2));
+
+                offsetY = 0;
+                scroll = 0;
+                scrollable = true;
+                speed = new Vector2(0f, 0f);
+                foreach (Personnage p in perso)
+                {
+                    if (p.G_IsAlive())
+                    {
+                        if (p.G_Position().X > Program.width * 0.75 && (-screenPos.X < MaxX - Program.width))
+                        {
+                            if (scroll >= 0)
+                            {
+                                scroll = 1;
+                                speed = new Vector2(150f, 0f);
+                            }
+                            else
+                            {
+                                scrollable = false;
+                            }
+                        }
+                        else if (p.G_Position().X < Program.width * 0.22 && (screenPos.X < 0))
+                        {
+                            if (scroll <= 0)
+                            {
+                                scroll = -1;
+                                speed = new Vector2(-150f, 0f);
+                            }
+                            else
+                            {
+                                scrollable = false;
+                            }
+                        }
+                    }
+
+                    if (parallax)
+                    {
+                        offsetY += p.G_Position().Y;
+                    }
+                }
+                if (parallax)
+                {
+                    offsetY /= (GameState.G_Player() * 5);
+                    offsetY -= back[0].Height - (Program.height - first[0].Height - middle[0].Height);
+                }
+                if (scrollable && G_Scroll())
+                {
+                    screenPos.X -= (deltaX) * speed.X;
+                }
+                else
+                {
+                    speed = new Vector2(0f, 0f);
+                }
             }
-            catch (FileNotFoundException)
+            catch (ContentLoadException)
             {
                 Program.Restart();
             }
-            first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
-            first[2] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 2));
-
-            middle[0] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle));
-            middle[1] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 1));
-            middle[2] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 2));
-
-            back[0] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack));
-            back[1] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 1));
-            back[2] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 2));
-
-            offsetY = 0;
-            scroll = 0;
-            scrollable = true; 
-            speed = new Vector2(0f, 0f);
-            foreach (Personnage p in perso)
-            {
-                if (p.G_IsAlive())
-                {
-                    if (p.G_Position().X > Program.width * 0.75 && (-screenPos.X < MaxX - Program.width))
-                    {
-                        if (scroll >= 0)
-                        {
-                            scroll = 1;
-                            speed = new Vector2(150f, 0f);
-                        }
-                        else
-                        {
-                            scrollable = false;
-                        }
-                    }
-                    else if (p.G_Position().X < Program.width * 0.22 && (screenPos.X < 0))
-                    {
-                        if (scroll <= 0)
-                        {
-                            scroll = -1;
-                            speed = new Vector2(-150f, 0f);
-                        }
-                        else
-                        {
-                            scrollable = false;
-                        }
-                    }
-                }
-
-                if (parallax)
-                {
-                    offsetY += p.G_Position().Y;
-                }
-            }
-            if (parallax)
-            {
-                offsetY /= (GameState.G_Player() * 5);
-                offsetY -= back[0].Height - (Program.height - first[0].Height - middle[0].Height);
-            }
-            if (scrollable && G_Scroll())
-            {
-                screenPos.X -= (deltaX) * speed.X;
-            }
-            else
-            {
-                speed = new Vector2(0f, 0f);
-            }
+            
         }
 
         #region Draw
