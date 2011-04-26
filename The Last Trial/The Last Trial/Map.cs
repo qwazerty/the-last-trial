@@ -78,7 +78,7 @@ namespace The_Last_Trial
                 firstHide = true;
                 parallax = true;
 
-                pnj[0] = new PNJ(new Vector2(800, 500), 42, "Hi. Good luck, have fun !");
+                pnj[0] = new PNJ(new Vector2(600, 600), 42, "Hi. Good luck, have fun !");
                 pnj[1] = new PNJ(new Vector2(3900, 500), 42, "Sorry Mario, your princess\n is in another castle...");
 
                 return 6;

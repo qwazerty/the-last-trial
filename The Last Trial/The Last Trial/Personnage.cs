@@ -133,7 +133,7 @@ namespace The_Last_Trial
             if (classe == 1)
             {
                 force += 0.05;
-                esquive += 0.5;
+                esquive += 1;
                 mana += 0.1;
                 lifeMax += 25;
             }
@@ -172,7 +172,7 @@ namespace The_Last_Trial
 
                 if (GameState.G_Player() > 1)
                 {
-                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.W, Keys.A, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, LoadingMenu.G_PersoClasse()[1]);
+                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, LoadingMenu.G_PersoClasse()[1]);
                     portrait[1] = new Objet(new Vector2(Program.width - 95, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[1]));
                 }
 

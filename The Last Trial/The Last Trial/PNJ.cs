@@ -63,7 +63,7 @@ namespace The_Last_Trial
 
         private void F_Load(ContentManager content)
         {
-            objet = content.Load<Texture2D>("perso/" + 2 + "/" + 40);
+            objet = content.Load<Texture2D>("pnj/1");
         }
 
         private void F_Update(Personnage[] perso, GameTime gameTime)
