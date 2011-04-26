@@ -8,6 +8,13 @@ namespace The_Last_Trial
         private static SoundEffect[] mySound = new SoundEffect[5];
         private static SoundEffectInstance instance;
 
+        public static void InitLoopSound(int i)
+        {
+            instance = mySound[i].CreateInstance();
+            instance.IsLooped = true;
+            instance.Volume = ((float)Program.volume / 100f);
+        }
+
         public static void Load(ContentManager Content)
         {
             mySound[0] = Content.Load<SoundEffect>("sound/soundTrack/1");
@@ -22,12 +29,19 @@ namespace The_Last_Trial
             mySound[i].Play();
         }
 
-        public static void PlayLoop(int i)
+        public static void InstancePlay()
         {
-            instance = mySound[i].CreateInstance();
-            instance.IsLooped = true;
-            instance.Volume = ((float)Program.volume/100f);
             instance.Play();
+        }
+
+        public static void InstanceVolume()
+        {
+            instance.Volume = ((float)Program.volume / 100f);
+        }
+
+        public static void InstanceStop()
+        {
+            instance.Stop();
         }
     }
 }

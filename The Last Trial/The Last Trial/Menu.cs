@@ -13,7 +13,7 @@ namespace The_Last_Trial
         private static int currentCursor;
         private static KeyboardState oldState, newState;
         private static SpriteFont menuFont;
-        private static Objet[] menuObject = new Objet[4];
+        private static Objet[] menuObject = new Objet[5];
 
         #region Init, Update & Draw
 
@@ -24,7 +24,9 @@ namespace The_Last_Trial
             menuObject[1] = new Objet(new Vector2(300, 350), Content.Load<Texture2D>("menu/reprendre"));
             menuObject[2] = new Objet(new Vector2(300, 475), Content.Load<Texture2D>("menu/back"));
             menuObject[3] = new Objet(new Vector2(300, 600), Content.Load<Texture2D>("menu/quit"));
+            menuObject[4] = new Objet(new Vector2(0, 0), Content.Load<Texture2D>("load/gameOver"));
             currentCursor = 0;
+            pause = false;
             oldState = Keyboard.GetState();
 
         }
@@ -41,8 +43,9 @@ namespace The_Last_Trial
                 Monster.Update(monster, gameTime, perso, Content);
                 Personnage.Update(perso, gameTime, monster, graphics, Content); 
                 PNJ.Update(pnj, perso, gameTime, graphics, Content);
-                Map.Update(gameTime, perso, Content);
                 Monster.Resu(monster);
+                if (!Map.Update(gameTime, perso, Content))
+                    return false;
 
                 pause = (newState.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape));
                 oldState = newState;
@@ -99,7 +102,7 @@ namespace The_Last_Trial
                 }
                 else if (currentCursor == 1)
                 {
-                    Program.Restart();
+                    GameState.Restart(Content);
                 }
                 else if (currentCursor == 2)
                 {
@@ -115,24 +118,60 @@ namespace The_Last_Trial
             graphics.GraphicsDevice.Clear(Color.Pink);
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
 
-            Map.DrawBack(spriteBatch);
-            Map.DrawMiddle(spriteBatch);
-            if (!Map.G_FirstHide())
+            try 
             {
-                Map.DrawFirst(spriteBatch);
+                Map.DrawBack(spriteBatch);
+                Map.DrawMiddle(spriteBatch);
+                if (!Map.G_FirstHide())
+                {
+                    Map.DrawFirst(spriteBatch);
+                }
+                Mob.Draw(perso, monster, pnj, spriteBatch, gameTime);
+                if (Map.G_FirstHide())
+                {
+                    Map.DrawFirst(spriteBatch);
+                }
+                if (pause)
+                {
+                    menuObject[0].Draw(spriteBatch);
+                    menuObject[1].Draw(spriteBatch);
+                    menuObject[2].Draw(spriteBatch);
+                    menuObject[3].Draw(spriteBatch);
+                }
             }
-            Mob.Draw(perso, monster, pnj, spriteBatch, gameTime);
-            if (Map.G_FirstHide())
+            catch (ArgumentNullException) { }
+
+            spriteBatch.End();
+        }
+
+        public static void DrawGameOver(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, GameTime gameTime)
+        {
+            graphics.GraphicsDevice.Clear(Color.Pink);
+            spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
+
+            try
             {
-                Map.DrawFirst(spriteBatch);
+                Map.DrawBack(spriteBatch);
+                Map.DrawMiddle(spriteBatch);
+                if (!Map.G_FirstHide())
+                {
+                    Map.DrawFirst(spriteBatch);
+                }
+                Mob.Draw(perso, monster, pnj, spriteBatch, gameTime);
+                if (Map.G_FirstHide())
+                {
+                    Map.DrawFirst(spriteBatch);
+                }
+                if (pause)
+                {
+                    menuObject[0].Draw(spriteBatch);
+                    menuObject[1].Draw(spriteBatch);
+                    menuObject[2].Draw(spriteBatch);
+                    menuObject[3].Draw(spriteBatch);
+                }
             }
-            if (pause)
-            {
-                menuObject[0].Draw(spriteBatch);
-                menuObject[1].Draw(spriteBatch);
-                menuObject[2].Draw(spriteBatch);
-                menuObject[3].Draw(spriteBatch);
-            }
+            catch (ArgumentNullException) { }
+            menuObject[4].Draw(spriteBatch);
 
             spriteBatch.End();
         }
@@ -142,23 +181,23 @@ namespace The_Last_Trial
         private static bool GameOver(Personnage[] perso, ContentManager Content)
         {
             bool continuer = false;
-            //foreach (Personnage p in perso)
-            //{
-            //    if (p.G_IsAlive())
-            //    {
-            //        continuer = true;
-            //    }
-            //}
-            //if (!continuer)
-            //{
-            //    oldState = Keyboard.GetState();
-            //    menuObject[0] = new Objet(new Vector2(500, 400));
-            //    menuObject[0].S_Texture(Content.Load<Texture2D>("menu/new"));
-            //    menuObject[1] = new Objet(new Vector2(486, 560));
-            //    menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit"));
-            //    menuObject[2] = new Objet(new Vector2(150, 400));
-            //    menuObject[2].S_Texture(Content.Load<Texture2D>("menu/epee"));
-            //}
+            foreach (Personnage p in perso)
+            {
+                if (p.G_IsAlive())
+                {
+                    continuer = true;
+                }
+            }
+            if (!continuer)
+            {
+                oldState = Keyboard.GetState();
+                menuObject[0] = new Objet(new Vector2(500, 400));
+                menuObject[0].S_Texture(Content.Load<Texture2D>("menu/new"));
+                menuObject[1] = new Objet(new Vector2(486, 560));
+                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit"));
+                menuObject[2] = new Objet(new Vector2(150, 400));
+                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/epee"));
+            }
 
             return continuer;
         }

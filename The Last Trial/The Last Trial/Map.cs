@@ -152,7 +152,7 @@ namespace The_Last_Trial
 
         #endregion
 
-        public static void Update(GameTime gameTime, Personnage[] perso, ContentManager Content)
+        public static bool Update(GameTime gameTime, Personnage[] perso, ContentManager Content)
         {
             float deltaX = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -225,8 +225,9 @@ namespace The_Last_Trial
             }
             catch (ContentLoadException)
             {
-                Program.Restart();
+                return false;
             }
+            return true;
             
         }
 

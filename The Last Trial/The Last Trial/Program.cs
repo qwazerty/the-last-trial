@@ -63,14 +63,8 @@ namespace The_Last_Trial
             fs.Close();
             Program.width = int.Parse(width);
             Program.height = int.Parse(height);
-            gs = new GameState();
+            gs = new GameState(); 
             gs.Run();
-        }
-
-        public static void Restart()
-        {
-            gs.Exit();
-            System.Diagnostics.Process P = System.Diagnostics.Process.Start("The Last Trial.exe");
         }
     }
 }

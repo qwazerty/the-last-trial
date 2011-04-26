@@ -266,10 +266,9 @@ namespace The_Last_Trial
 
             if (imgState > 100)
                 sb.DrawString(overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
+            
             if (tempsLevelUp + 1 > gameTime.TotalRealTime.TotalSeconds)
-            {
                 sb.DrawString(overKill, "Level Up", new Vector2(position.X - 100, position.Y - 80), Color.DarkOrange);
-            }
             
             F_DrawHealth(sb);
         }
@@ -323,7 +322,12 @@ namespace The_Last_Trial
         {
             newState = Keyboard.GetState();
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-            if (tempsActuel > tempsAttaque[0] + 0.5)
+            float time;
+            if (classe == 1)
+                time = 0.35f;
+            else
+                time = 0.5f;
+            if (tempsActuel > tempsAttaque[0] + time)
             {
                 if (newState.IsKeyDown(key[4]) && power >= 100)
                 {
@@ -350,7 +354,7 @@ namespace The_Last_Trial
             }
             else if (classe == 1)
             {
-                if (tempsActuel > tempsAttaque[0] + 0.4)
+                if (tempsActuel > tempsAttaque[0] + 0.3)
                 {
                     if (imgState % 10 == -3)
                     {
@@ -358,7 +362,7 @@ namespace The_Last_Trial
                         imgState = oldImage / 10 * 10;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.3)
+                else if (tempsActuel > tempsAttaque[0] + 0.22)
                 {
                     if (imgState % 10 == -2)
                         imgState--;
@@ -374,7 +378,7 @@ namespace The_Last_Trial
                             imgState = -33;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.2)
+                else if (tempsActuel > tempsAttaque[0] + 0.14)
                 {
                     if (imgState % 10 == -1)
                         imgState--;
@@ -390,7 +394,7 @@ namespace The_Last_Trial
                             imgState = -32;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.1)
+                else if (tempsActuel > tempsAttaque[0] + 0.08)
                 {
                     if (imgState % 10 == 0)
                         imgState--;
@@ -702,14 +706,16 @@ namespace The_Last_Trial
         {
             if (tempsDegats + 0.5 > gameTime.TotalGameTime.TotalSeconds)
             {
-                if (id == 1)
-                    sb.DrawString(gameFont, degats.ToString(), new Vector2(50, 70), Color.Red);
-                else if (id == 2)
-                    sb.DrawString(gameFont, degats.ToString(), new Vector2(Program.width - 50, 70), Color.Red);
-                else if (id == 3)
-                    sb.DrawString(gameFont, degats.ToString(), new Vector2(50, 170), Color.Red);
-                else if (id == 4)
-                    sb.DrawString(gameFont, degats.ToString(), new Vector2(Program.width - 50, 170), Color.Red);
+                if (degats == 0)
+                {
+                    sb.DrawString(gameFont, "Miss", new Vector2(position.X + 10, position.Y - 18), Color.Black);
+                    sb.DrawString(gameFont, "Miss", new Vector2(position.X + 8, position.Y - 20), Color.Orange);
+                }
+                else
+                {
+                    sb.DrawString(gameFont, degats.ToString(), new Vector2(position.X + 25, position.Y - 18), Color.Black);
+                    sb.DrawString(gameFont, degats.ToString(), new Vector2(position.X + 23, position.Y - 20), Color.White);
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace The_Last_Trial
 {
@@ -7,11 +8,11 @@ namespace The_Last_Trial
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private Game1 game;
-        private Launcher lauch;
+        private static Game1 game;
+        private static Launcher lauch;
 
         private static int nbPlayer, nbMonster, state, level;
-        private static bool newLevel;
+        private static bool newLevel, applyChanges;
 
         private static Personnage[] perso;
         private static Monster[] monster;
@@ -34,16 +35,30 @@ namespace The_Last_Trial
 
         protected override void Initialize()
         {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            lauch = new Launcher();
+            Son.Load(Content);
+            Son.InitLoopSound(0);
+            Restart(Content);
+            base.Initialize();
+        }
+
+        public static void Restart(ContentManager Content)
+        {
+            game = new Game1();
+            Son.InstanceStop();
+            if (Program.musique)
+            {
+                Son.InitLoopSound(0);
+                Son.InstancePlay();
+            }
             LoadingMenu.Init(Content);
             Menu.Init(Content);
             state = 0;
             level = 1;
             nbPlayer = 0;
             newLevel = false;
-            lauch = new Launcher();
-            game = new Game1();
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            base.Initialize();
+            applyChanges = true;
         }
         
         protected override void Update(GameTime gameTime)
@@ -77,13 +92,21 @@ namespace The_Last_Trial
 
         protected override void Draw(GameTime gameTime)
         {
+            if (applyChanges)
+            {
+                this.graphics.PreferredBackBufferWidth = Program.width;
+                this.graphics.PreferredBackBufferHeight = Program.height;
+                this.graphics.IsFullScreen = Program.fullscreen;
+                this.graphics.ApplyChanges();
+                applyChanges = false;
+            }
             if (state == 0 && !newLevel)
             {
                 lauch.Draw(spriteBatch, graphics);
             }
             else if (state == 1)
             {
-                game.Draw(gameTime, spriteBatch, graphics, perso, monster, pnj);
+                game.Draw(gameTime, spriteBatch, graphics, Content, perso, monster, pnj);
             }
             base.Draw(gameTime);
         }
