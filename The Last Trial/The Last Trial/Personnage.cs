@@ -44,7 +44,7 @@ namespace The_Last_Trial
 
             if (classe == 1)
             {
-                force = 0.8;
+                force = 0.7;
                 mana = 1.5;
                 esquive = 5;
             }
@@ -212,6 +212,8 @@ namespace The_Last_Trial
             {
                 tempsAttaque[i] = -5;
             }
+            this.life = this.lifeMax;
+            this.power = this.powerMax;
         }
 
         private void F_Update(Personnage[] perso, Monster[] monster, ContentManager Content, GameTime gameTime, GraphicsDeviceManager graphics)
@@ -324,7 +326,7 @@ namespace The_Last_Trial
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
             float time;
             if (classe == 1)
-                time = 0.35f;
+                time = 0.4f;
             else
                 time = 0.5f;
             if (tempsActuel > tempsAttaque[0] + time)
@@ -354,7 +356,7 @@ namespace The_Last_Trial
             }
             else if (classe == 1)
             {
-                if (tempsActuel > tempsAttaque[0] + 0.3)
+                if (tempsActuel > tempsAttaque[0] + 0.35)
                 {
                     if (imgState % 10 == -3)
                     {
@@ -362,7 +364,7 @@ namespace The_Last_Trial
                         imgState = oldImage / 10 * 10;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.22)
+                else if (tempsActuel > tempsAttaque[0] + 0.25)
                 {
                     if (imgState % 10 == -2)
                         imgState--;
@@ -378,7 +380,7 @@ namespace The_Last_Trial
                             imgState = -33;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.14)
+                else if (tempsActuel > tempsAttaque[0] + 0.16)
                 {
                     if (imgState % 10 == -1)
                         imgState--;
@@ -394,7 +396,7 @@ namespace The_Last_Trial
                             imgState = -32;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.08)
+                else if (tempsActuel > tempsAttaque[0] + 0.07)
                 {
                     if (imgState % 10 == 0)
                         imgState--;
@@ -486,7 +488,7 @@ namespace The_Last_Trial
 
                         if (m_target && monster[i].G_IsAlive() && m_target_ovrkl[i] != null)
                         {
-                            monster[i].S_Degat(1337, gameTime);
+                            monster[i].S_Degat((int)((50 + level * 15) * mana), gameTime);
                             if (monster[i].G_Killed())
                             {
                                 S_Xp(monster[i].G_MaxLife(), gameTime);
@@ -498,7 +500,7 @@ namespace The_Last_Trial
                     {
                         if (i != id - 1)
                         {
-                            p_target_ovrkl[i] = F_DetectAllies(perso);
+                            p_target_ovrkl[i] = F_DetectAllies(perso[i]);
                             foreach (Personnage p in p_target_ovrkl)
                             {
                                 if (p != null)
@@ -507,7 +509,7 @@ namespace The_Last_Trial
 
                             if (p_target && perso[i].G_IsAlive() && p_target_ovrkl[i] != null)
                             {
-                                perso[i].S_Degat(1337, gameTime);
+                                perso[i].S_Degat((int)((level * 3) * mana), gameTime);
                             }
                         }
                     }
@@ -553,14 +555,13 @@ namespace The_Last_Trial
             }
         }
 
-        private Personnage F_DetectAllies(Personnage[] perso)
+        private Personnage F_DetectAllies(Personnage p)
         {
             Personnage p_ = null;
-            foreach (Personnage p in perso)
-            {
-                if (p.G_Rectangle().Intersects(new Rectangle((int)position.X - 100, (int)position.Y - 100, 200 + objet.Width, 200 + objet.Height)))
-                    p_ = p;
-            }
+
+            if (p.G_Rectangle().Intersects(new Rectangle((int)position.X - 50, (int)position.Y - 50, 100 + (int)objet.Width, 100 + (int)objet.Height)))
+                p_ = p;
+
             return p_;
         }
 

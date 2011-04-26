@@ -105,13 +105,15 @@ namespace The_Last_Trial
             base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
         }
 
-        
-
         protected void F_UpdateImage(GameTime gameTime)
         {
             if (life <= 0)
             {
                 imgState = 0;
+            }
+            else if (imgState == 0 && life > 0)
+            {
+                imgState = 20;
             }
             else
             {

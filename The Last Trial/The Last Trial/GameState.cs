@@ -67,6 +67,9 @@ namespace The_Last_Trial
             {
                 if (newLevel)
                 {
+                    foreach (Personnage p in perso)
+                    { 
+                    }
                     lauch.LoadNewMap(gameTime, Content, graphics, spriteBatch, perso, ref monster, ref pnj, ref nbMonster);
                     state = 1;
                     newLevel = false;
