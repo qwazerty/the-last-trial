@@ -20,6 +20,7 @@ namespace The_Last_Trial
         private static Rectangle[] collision;
         private static float offsetY;
         private static bool scrollable, firstHide, parallax;
+        private static double tempsTriggerBoss;
         #endregion
 
         /***********\
@@ -147,6 +148,7 @@ namespace The_Last_Trial
             currentScreen = 0;
             screenPos = new Vector2(0, 0);
             speed = new Vector2(0f, 0f);
+            tempsTriggerBoss = -10;
 
         }
 
@@ -222,6 +224,11 @@ namespace The_Last_Trial
                 {
                     speed = new Vector2(0f, 0f);
                 }
+
+                if (tempsTriggerBoss == -10 && screenPos.X <= -MaxX + 2000)
+                {
+                    tempsTriggerBoss = gameTime.TotalGameTime.TotalSeconds;
+                }
             }
             catch (ContentLoadException)
             {
@@ -261,6 +268,12 @@ namespace The_Last_Trial
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
             spriteBatch.Draw(first[2], new Vector2(screenPos.X / speedFirst + 1024 * (currentScreen + 2), screenPos.Y), null,
                  Color.White, 0, originFirst, 1, SpriteEffects.None, 0f);
+        }
+
+        public static void DrawBossTrigger(SpriteBatch spriteBatch, GameTime gameTime)
+        { 
+            if (tempsTriggerBoss + 3 > gameTime.TotalRealTime.TotalSeconds)
+                spriteBatch.DrawString(Mob.bossFont, "BOSS", new Vector2(500 + Mob.random.Next(150), 300 + Mob.random.Next(150)), Color.DarkRed);
         }
 
         #endregion

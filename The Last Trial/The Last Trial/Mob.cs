@@ -16,11 +16,11 @@ namespace The_Last_Trial
         private static int[] array;
 
         protected int rand;
-        protected static Random random = new Random();
         protected static Texture2D health, ui1, ui2;
-        protected static SpriteFont gameFont, overKill, textFont;
         protected KeyboardState newState, oldState;
         protected int oldImage;
+        public static SpriteFont gameFont, overKill, textFont, bossFont;
+        public static Random random = new Random();
         #endregion
 
         protected Mob()
@@ -39,7 +39,8 @@ namespace The_Last_Trial
             health = Content.Load<Texture2D>("mob/health");
             overKill = Content.Load<SpriteFont>("font/overkillfont");
             gameFont = Content.Load<SpriteFont>("font/gamefont");
-            textFont = Content.Load<SpriteFont>("font/textfont");
+            textFont = Content.Load<SpriteFont>("font/textfont"); ;
+            bossFont = Content.Load<SpriteFont>("font/bossfont");
             array = new int[GameState.G_Player() + GameState.G_Monster()];
         }
 

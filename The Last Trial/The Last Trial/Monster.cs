@@ -409,6 +409,7 @@ namespace The_Last_Trial
         {
             if (tempsDegats + 0.5 > gameTime.TotalGameTime.TotalSeconds)
             {
+                sb.DrawString(gameFont, degats.ToString(), new Vector2(position.X + 102, position.Y + 42), Color.Black);
                 sb.DrawString(gameFont, degats.ToString(), new Vector2(position.X + 100, position.Y + 40), Color.Red);
             }
         }

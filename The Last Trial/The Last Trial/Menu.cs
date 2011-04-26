@@ -131,6 +131,7 @@ namespace The_Last_Trial
                 {
                     Map.DrawFirst(spriteBatch);
                 }
+                Map.DrawBossTrigger(spriteBatch, gameTime);
                 if (pause)
                 {
                     menuObject[0].Draw(spriteBatch);
