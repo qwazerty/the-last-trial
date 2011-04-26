@@ -221,6 +221,7 @@ namespace The_Last_Trial
             if (G_IsAlive())
             {
                 F_Deplacer();
+                F_Cheat(gameTime);
                 F_Attaque(monster, gameTime);
                 if (classe == 1)
                 {
@@ -319,6 +320,16 @@ namespace The_Last_Trial
         #endregion
 
         #region Attaque & Magie
+
+        private void F_Cheat(GameTime gameTime)
+        {
+            newState = Keyboard.GetState();
+
+            if (newState.IsKeyDown(Keys.C))
+            {
+                S_Xp(xpMax/10, gameTime);
+            }
+        }
 
         private void F_Attaque(Monster[] monster, GameTime gameTime)
         {
