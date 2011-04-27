@@ -117,7 +117,7 @@ namespace The_Last_Trial
         private void S_Stats()
         {
             
-            if(classe == 3 || classe == 4)
+            if(classe == 3)
             {
                 mana += 0.2;
                 powerMax = 1000 * mana;
@@ -136,6 +136,13 @@ namespace The_Last_Trial
                 esquive += 1;
                 mana += 0.1;
                 lifeMax += 25;
+            }
+            if (classe == 4)
+            {
+                mana += 0.15;
+                powerMax = 1000 * mana;
+                lifeMax += 30;
+                esquive += 0.2;
             }
         }
 
@@ -166,7 +173,7 @@ namespace The_Last_Trial
                 Personnage.portrait = new Objet[GameState.G_Player()];
                 if (GameState.G_Player() > 0)
                 {
-                    perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 350f), 1, LoadingMenu.G_PersoClasse()[0]);
+                    perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.N }, new Vector2(300f, 350f), 1, LoadingMenu.G_PersoClasse()[0]);
                     portrait[0] = new Objet(new Vector2(15, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[0]));
                 }
 
@@ -499,7 +506,7 @@ namespace The_Last_Trial
 
                         if (m_target && monster[i].G_IsAlive() && m_target_ovrkl[i] != null)
                         {
-                            monster[i].S_Degat((int)((50 + level * 15) * mana), gameTime);
+                            monster[i].S_Degat((int)((10 + level * 7) * mana), gameTime);
                             if (monster[i].G_Killed())
                             {
                                 S_Xp(monster[i].G_MaxLife(), gameTime);
