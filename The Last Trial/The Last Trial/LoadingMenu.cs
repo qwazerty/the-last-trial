@@ -607,7 +607,7 @@ namespace The_Last_Trial
                 {
                     menuObject[6].Draw(sb);
                 }
-                sb.DrawString(menuFont, "Perso " + (state - 4) + ", choississez une classe", new Vector2(200, 350), Color.DarkKhaki);
+                sb.DrawString(menuFont, "Joueur " + (state - 4) + ", choisissez une classe", new Vector2(200, 350), Color.DarkKhaki);
                 menuObject[1].Draw(sb);
             }
             sb.End();

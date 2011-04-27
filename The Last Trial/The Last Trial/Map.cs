@@ -79,8 +79,8 @@ namespace The_Last_Trial
                 firstHide = true;
                 parallax = true;
 
-                pnj[0] = new PNJ(new Vector2(600, 600), 42, "Hi. Good luck, have fun !");
-                pnj[1] = new PNJ(new Vector2(3900, 500), 42, "Sorry Mario, your princess\n is in another castle...");
+                pnj[0] = new PNJ(new Vector2(600, 600), 42, "Bon courage pour votre quete !");
+                pnj[1] = new PNJ(new Vector2(3900, 500), 42, "Felicitations, appuyez sur\n     Entree pour passer\n     au niveau suivant.");
 
                 return 6;
             }
@@ -100,7 +100,7 @@ namespace The_Last_Trial
                 firstHide = false;
                 parallax = false;
 
-                pnj[0] = new PNJ(new Vector2(2876, 500), 42, "This is the end of this world...");
+                pnj[0] = new PNJ(new Vector2(2876, 500), 42, "C'est la fin de ce monde...");
 
                 return 6;
             }

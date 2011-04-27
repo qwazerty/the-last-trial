@@ -77,7 +77,7 @@ namespace The_Last_Trial
             sb.Draw(objet, position, Color.White);
             if (parler)
             {
-                sb.DrawString(textFont, message, new Vector2(position.X - 170, position.Y - 60), Color.DeepPink);
+                sb.DrawString(textFont, message, new Vector2(position.X - 170, position.Y - 65), Color.DeepPink);
             }
         }
 
