@@ -41,31 +41,31 @@ namespace The_Last_Trial
             gameFont = Content.Load<SpriteFont>("font/gamefont");
             textFont = Content.Load<SpriteFont>("font/textfont"); ;
             bossFont = Content.Load<SpriteFont>("font/bossfont");
-            array = new int[GameState.G_Player() + GameState.G_Monster()];
+            array = new int[GameState.Player + GameState.Monster];
         }
 
         public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch sb, GameTime gameTime)
         {
-            Vector2[] sort = new Vector2[GameState.G_Player() + GameState.G_Monster()];
-            for (int k = 0; k < GameState.G_Player(); k++)
+            Vector2[] sort = new Vector2[GameState.Player + GameState.Monster];
+            for (int k = 0; k < GameState.Player; k++)
             {
                 sort[k].X = k;
                 sort[k].Y = perso[k].position.Y + 65;
                 if (! perso[k].G_IsAlive())
                     sort[k].Y -= 4242;
             }
-            for (int k = 0; k < GameState.G_Monster(); k++)
+            for (int k = 0; k < GameState.Monster; k++)
             {
-                sort[k + GameState.G_Player()].X = k + GameState.G_Player();
-                sort[k + GameState.G_Player()].Y = monster[k].position.Y + 155;
+                sort[k + GameState.Player].X = k + GameState.Player;
+                sort[k + GameState.Player].Y = monster[k].position.Y + 155;
                 if (!monster[k].G_IsAlive())
-                    sort[k + GameState.G_Player()].Y -= 4242;
+                    sort[k + GameState.Player].Y -= 4242;
             }
 
-            for (int i = 0; i < GameState.G_Player() + GameState.G_Monster(); i++)
+            for (int i = 0; i < GameState.Player + GameState.Monster; i++)
             {
                 int min = -1;
-                for (int k = 0; k < GameState.G_Player() + GameState.G_Monster(); k++)
+                for (int k = 0; k < GameState.Player + GameState.Monster; k++)
                 {
                     if ((sort[k].X != -1) && (min == -1 || sort[k].Y < sort[min].Y))
                     {
@@ -79,10 +79,10 @@ namespace The_Last_Trial
 
             foreach (int i in array)
             {
-                if (i < GameState.G_Player())
+                if (i < GameState.Player)
                     perso[i].F_Draw(sb, gameTime);
                 else
-                    monster[i - GameState.G_Player()].F_Draw(sb);
+                    monster[i - GameState.Player].F_Draw(sb);
             }
 
             PNJ.Draw(pnj, sb);

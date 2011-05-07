@@ -13,7 +13,7 @@ namespace The_Last_Trial
         private static int currentCursor;
         private static KeyboardState oldState, newState;
         private static SpriteFont menuFont;
-        private static Objet[] menuObject = new Objet[5];
+        private static Objet[] menuObject = new Objet[2];
 
         #region Init, Update & Draw
 
@@ -21,10 +21,7 @@ namespace The_Last_Trial
         {
             menuFont = Content.Load<SpriteFont>("font/menufont");
             menuObject[0] = new Objet(new Vector2(0, 0), Content.Load<Texture2D>("menu/1"));
-            menuObject[1] = new Objet(new Vector2(300, 350), Content.Load<Texture2D>("menu/reprendre"));
-            menuObject[2] = new Objet(new Vector2(300, 475), Content.Load<Texture2D>("menu/back"));
-            menuObject[3] = new Objet(new Vector2(300, 600), Content.Load<Texture2D>("menu/quit"));
-            menuObject[4] = new Objet(new Vector2(0, 0), Content.Load<Texture2D>("load/gameOver"));
+            menuObject[1] = new Objet(new Vector2(0, 0), Content.Load<Texture2D>("load/gameOver"));
             currentCursor = 0;
             pause = false;
             oldState = Keyboard.GetState();
@@ -56,29 +53,6 @@ namespace The_Last_Trial
         private static void UpdatePause(ContentManager Content)
         {
             newState = Keyboard.GetState();
-            string[] cursor = new string[3];
-            if (currentCursor == 0)
-            {
-                cursor[0] = "_";
-                cursor[1] = "";
-                cursor[2] = "";
-            }
-            else if (currentCursor == 1)
-            {
-                cursor[0] = "";
-                cursor[1] = "_";
-                cursor[2] = "";
-            }
-            else if (currentCursor == 2)
-            {
-                cursor[0] = "";
-                cursor[1] = "";
-                cursor[2] = "_";
-            }
-
-            menuObject[1].S_Texture(Content.Load<Texture2D>("menu/reprendre" + cursor[0]));
-            menuObject[2].S_Texture(Content.Load<Texture2D>("menu/back" + cursor[1]));
-            menuObject[3].S_Texture(Content.Load<Texture2D>("menu/quit" + cursor[2]));
 
             if (newState.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
             {
@@ -113,36 +87,57 @@ namespace The_Last_Trial
             oldState = newState;
         }
 
-        public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, GameTime gameTime)
+        public static void Draw(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch sb, GraphicsDeviceManager graphics, GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(Color.Pink);
-            spriteBatch.Begin(SpriteBlendMode.AlphaBlend);
+            sb.Begin(SpriteBlendMode.AlphaBlend);
 
             try 
             {
-                Map.DrawBack(spriteBatch);
-                Map.DrawMiddle(spriteBatch);
+                Map.DrawBack(sb);
+                Map.DrawMiddle(sb);
                 if (!Map.G_FirstHide())
                 {
-                    Map.DrawFirst(spriteBatch);
+                    Map.DrawFirst(sb);
                 }
-                Mob.Draw(perso, monster, pnj, spriteBatch, gameTime);
+                Mob.Draw(perso, monster, pnj, sb, gameTime);
                 if (Map.G_FirstHide())
                 {
-                    Map.DrawFirst(spriteBatch);
+                    Map.DrawFirst(sb);
                 }
-                Map.DrawBossTrigger(spriteBatch, gameTime);
+                Map.DrawBossTrigger(sb, gameTime);
                 if (pause)
                 {
-                    menuObject[0].Draw(spriteBatch);
-                    menuObject[1].Draw(spriteBatch);
-                    menuObject[2].Draw(spriteBatch);
-                    menuObject[3].Draw(spriteBatch);
+                    menuObject[0].Draw(sb);
+                    Color color = Color.DarkKhaki;
+                    if (currentCursor == 0)
+                    {
+                        color = Color.Gold;
+                    }
+                    sb.DrawString(menuFont, "Reprendre", new Vector2(350, 350), color);
+                    if (currentCursor == 1)
+                    {
+                        color = Color.Gold;
+                    }
+                    else
+                    {
+                        color = Color.DarkKhaki;
+                    }
+                    sb.DrawString(menuFont, "Menu Principal", new Vector2(350, 475), color);
+                    if (currentCursor == 2)
+                    {
+                        color = Color.Gold;
+                    }
+                    else
+                    {
+                        color = Color.DarkKhaki;
+                    }
+                    sb.DrawString(menuFont, "Quitter", new Vector2(350, 600), color);
                 }
             }
             catch (ArgumentNullException) { }
 
-            spriteBatch.End();
+            sb.End();
         }
 
         public static void DrawGameOver(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, GameTime gameTime)
@@ -163,16 +158,9 @@ namespace The_Last_Trial
                 {
                     Map.DrawFirst(spriteBatch);
                 }
-                if (pause)
-                {
-                    menuObject[0].Draw(spriteBatch);
-                    menuObject[1].Draw(spriteBatch);
-                    menuObject[2].Draw(spriteBatch);
-                    menuObject[3].Draw(spriteBatch);
-                }
             }
             catch (ArgumentNullException) { }
-            menuObject[4].Draw(spriteBatch);
+            menuObject[1].Draw(spriteBatch);
 
             spriteBatch.End();
         }
@@ -188,16 +176,6 @@ namespace The_Last_Trial
                 {
                     continuer = true;
                 }
-            }
-            if (!continuer)
-            {
-                oldState = Keyboard.GetState();
-                menuObject[0] = new Objet(new Vector2(500, 400));
-                menuObject[0].S_Texture(Content.Load<Texture2D>("menu/new"));
-                menuObject[1] = new Objet(new Vector2(486, 560));
-                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/quit"));
-                menuObject[2] = new Objet(new Vector2(150, 400));
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/epee"));
             }
 
             return continuer;

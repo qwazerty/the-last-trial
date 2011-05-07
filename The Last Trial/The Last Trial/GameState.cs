@@ -18,10 +18,9 @@ namespace The_Last_Trial
         private static Monster[] monster;
         private static PNJ[] pnj;
 
-        public static int G_Player() { return nbPlayer; }
-        public static int G_Monster() { return nbMonster; }
-        public static int G_State() { return state; }
-        public static int G_Level() { return level; }
+        public static int Player { get { return nbPlayer; } }
+        public static int Monster { get { return nbMonster; } }
+        public static int Level { get { return level; } }
 
         public GameState()
         {

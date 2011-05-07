@@ -180,7 +180,7 @@ namespace The_Last_Trial
                 {
                     if (p.G_IsAlive())
                     {
-                        if (p.G_Position().X > Program.width * 0.75 && (-screenPos.X < MaxX - Program.width))
+                        if (p.Position.X > Program.width * 0.75 && (-screenPos.X < MaxX - Program.width))
                         {
                             if (scroll >= 0)
                             {
@@ -192,7 +192,7 @@ namespace The_Last_Trial
                                 scrollable = false;
                             }
                         }
-                        else if (p.G_Position().X < Program.width * 0.22 && (screenPos.X < 0))
+                        else if (p.Position.X < Program.width * 0.22 && (screenPos.X < 0))
                         {
                             if (scroll <= 0)
                             {
@@ -208,12 +208,12 @@ namespace The_Last_Trial
 
                     if (parallax)
                     {
-                        offsetY += p.G_Position().Y;
+                        offsetY += p.Position.Y;
                     }
                 }
                 if (parallax)
                 {
-                    offsetY /= (GameState.G_Player() * 5);
+                    offsetY /= (GameState.Player * 5);
                     offsetY -= back[0].Height - (Program.height - first[0].Height - middle[0].Height);
                 }
                 if (scrollable && G_Scroll())

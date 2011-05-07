@@ -168,31 +168,31 @@ namespace The_Last_Trial
 
         public static void Load(Personnage[] perso, ContentManager Content)
         {
-            if (GameState.G_Level() == 1)
+            if (GameState.Level == 1)
             {
-                Personnage.portrait = new Objet[GameState.G_Player()];
-                if (GameState.G_Player() > 0)
+                Personnage.portrait = new Objet[GameState.Player];
+                if (GameState.Player > 0)
                 {
-                    perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.N }, new Vector2(300f, 350f), 1, LoadingMenu.G_PersoClasse()[0]);
-                    portrait[0] = new Objet(new Vector2(15, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[0]));
+                    perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.N }, new Vector2(300f, 350f), 1, LoadingMenu.PersoClasse[0]);
+                    portrait[0] = new Objet(new Vector2(15, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.PersoClasse[0]));
                 }
 
-                if (GameState.G_Player() > 1)
+                if (GameState.Player > 1)
                 {
-                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, LoadingMenu.G_PersoClasse()[1]);
-                    portrait[1] = new Objet(new Vector2(Program.width - 95, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[1]));
+                    perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, LoadingMenu.PersoClasse[1]);
+                    portrait[1] = new Objet(new Vector2(Program.width - 95, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.PersoClasse[1]));
                 }
 
-                if (GameState.G_Player() > 2)
+                if (GameState.Player > 2)
                 {
-                    perso[2] = new Personnage(new Keys[] { Keys.NumPad5, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.NumPad7 }, new Vector2(360f, 550f), 3, LoadingMenu.G_PersoClasse()[2]);
-                    portrait[2] = new Objet(new Vector2(15, 115), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[2]));
+                    perso[2] = new Personnage(new Keys[] { Keys.NumPad5, Keys.NumPad6, Keys.NumPad8, Keys.NumPad4, Keys.NumPad0, Keys.NumPad7 }, new Vector2(360f, 550f), 3, LoadingMenu.PersoClasse[2]);
+                    portrait[2] = new Objet(new Vector2(15, 115), Content.Load<Texture2D>("ui/" + LoadingMenu.PersoClasse[2]));
                 }
 
-                if (GameState.G_Player() > 3)
+                if (GameState.Player > 3)
                 {
-                    perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(390f, 650f), 4, LoadingMenu.G_PersoClasse()[3]);
-                    portrait[3] = new Objet(new Vector2(Program.width - 95, 115), Content.Load<Texture2D>("ui/" + LoadingMenu.G_PersoClasse()[3]));
+                    perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(390f, 650f), 4, LoadingMenu.PersoClasse[3]);
+                    portrait[3] = new Objet(new Vector2(Program.width - 95, 115), Content.Load<Texture2D>("ui/" + LoadingMenu.PersoClasse[3]));
                 }
             }
             foreach (Personnage p in perso)
@@ -474,8 +474,8 @@ namespace The_Last_Trial
         {
             newState = Keyboard.GetState();
 
-            Monster[] m_target_ovrkl = new Monster[GameState.G_Monster()];
-            Personnage[] p_target_ovrkl = new Personnage[GameState.G_Player()];
+            Monster[] m_target_ovrkl = new Monster[GameState.Monster];
+            Personnage[] p_target_ovrkl = new Personnage[GameState.Player];
             bool p_target = false;
             bool m_target = false;
 
@@ -485,17 +485,17 @@ namespace The_Last_Trial
                 if (newState.IsKeyDown(key[5]) && power >= 500)
                 {
                     power -= 500;
-                    for (int i = 0; i < GameState.G_Monster(); i++)
+                    for (int i = 0; i < GameState.Monster; i++)
                     {
                         m_target_ovrkl[i] = null;
                     }
 
-                    for (int i = 0; i < GameState.G_Player(); i++)
+                    for (int i = 0; i < GameState.Player; i++)
                     {
                         p_target_ovrkl[i] = null;
                     }
 
-                    for (int i = 0; i < GameState.G_Monster(); i++)
+                    for (int i = 0; i < GameState.Monster; i++)
                     {
                         m_target_ovrkl[i] = F_DetectMonsters(monster[i]);
                         foreach (Monster m in m_target_ovrkl)
@@ -514,7 +514,7 @@ namespace The_Last_Trial
                         }
                     }
 
-                    for (int i = 0; i < GameState.G_Player(); i++)
+                    for (int i = 0; i < GameState.Player; i++)
                     {
                         if (i != id - 1)
                         {

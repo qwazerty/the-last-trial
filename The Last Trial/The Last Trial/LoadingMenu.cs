@@ -15,24 +15,16 @@ namespace The_Last_Trial
         private static float speedX;
         private static KeyboardState oldState, newState;
         private static SpriteFont menuFont;
-        private static Objet[] menuObject = new Objet[7];
+        private static Objet[] menuObject = new Objet[6];
         private static Objet background;
         private static int[] persoClasse;
 
-        public static int[] G_PersoClasse()
-        {
-            return persoClasse;
-        }
+        public static int[] PersoClasse { get { return persoClasse; } }
 
         public static void Init(ContentManager Content)
         {
             menuObject[0] = new Objet(new Vector2(0, 0), Content.Load<Texture2D>("menu/1"));
-            menuObject[1] = new Objet(new Vector2(0, 350), Content.Load<Texture2D>("menu/epee"));
-            menuObject[2] = new Objet(new Vector2(300, 350), Content.Load<Texture2D>("menu/new"));
-            menuObject[3] = new Objet(new Vector2(300, 475), Content.Load<Texture2D>("menu/config"));
-            menuObject[4] = new Objet(new Vector2(300, 600), Content.Load<Texture2D>("menu/quit"));
-            menuObject[5] = new Objet(new Vector2(600, 350), Content.Load<Texture2D>("menu/on"));
-            menuObject[6] = new Objet(new Vector2(600, 475), Content.Load<Texture2D>("menu/on"));
+            menuObject[1] = new Objet(new Vector2(-42, 350), Content.Load<Texture2D>("menu/epee"));
             background = new Objet(new Vector2(0, 0), Content.Load<Texture2D>("load/1"));
             speedX = 0;
             state = (int)MenuState.Principal;
@@ -87,9 +79,6 @@ namespace The_Last_Trial
             {
                 persoClasse = new int[1];
                 persoClasse[0] = 1;
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/back"));
-                menuObject[2].S_Position(new Vector2(150, 400));
-                menuObject[3].S_Position(new Vector2(150, 560));
                 return 1;
             }
             if (newState.IsKeyDown(Keys.F12))
@@ -97,46 +86,24 @@ namespace The_Last_Trial
                 persoClasse = new int[2];
                 persoClasse[0] = 1;
                 persoClasse[1] = 3;
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/back"));
-                menuObject[2].S_Position(new Vector2(150, 400));
-                menuObject[3].S_Position(new Vector2(150, 560));
                 return 2;
             }
             #endregion
-            #region Menu principal
-            if (state == (int)MenuState.Principal)
+
+            if (state <= 4)
             {
-                float posX = menuObject[1].G_Position().X;
+                float posX = menuObject[1].Position.X;
                 if (posX > 42)
                     speedX -= 0.2f;
                 if (posX < 42)
                     speedX += 0.2f;
-                menuObject[1].S_PosX(posX + speedX/2);
-                string[] cursor = new string[3]; 
-                if (currentCursor == 0)
-                {
-                    cursor[0] = "_";
-                    cursor[1] = "";
-                    cursor[2] = "";
-                }
-                else if (currentCursor == 1)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "_";
-                    cursor[2] = "";
-                }
-                else if (currentCursor == 2)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "";
-                    cursor[2] = "_";
-                }
-
+                menuObject[1].S_PosX(posX + speedX / 2);
                 menuObject[1].S_PosY(350 + 125 * currentCursor);
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/new" + cursor[0]));
-                menuObject[3].S_Texture(Content.Load<Texture2D>("menu/config" + cursor[1]));
-                menuObject[4].S_Texture(Content.Load<Texture2D>("menu/quit" + cursor[2]));
+            }
 
+            #region Menu principal
+            if (state == (int)MenuState.Principal)
+            {
                 if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
                 {
                     currentCursor--;
@@ -169,28 +136,6 @@ namespace The_Last_Trial
             #region Nombre Perso
             else if (state == (int)MenuState.NombrePerso)
             {
-                string[] cursor = new string[3];
-                if (currentCursor == 0)
-                {
-                    cursor[0] = "_";
-                    cursor[1] = "";
-                    cursor[2] = "";
-                }
-                if (currentCursor == 1)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "_";
-                    cursor[2] = "";
-                }
-                else if (currentCursor == 2)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "";
-                    cursor[2] = "_";
-                }
-                menuObject[2] = new Objet(new Vector2(42, 350), Content.Load<Texture2D>("menu/player" + cursor[0]));
-                menuObject[3] = new Objet(new Vector2(300, 475), Content.Load<Texture2D>("menu/back" + cursor[1]));
-                menuObject[4] = new Objet(new Vector2(300, 600), Content.Load<Texture2D>("menu/quit" + cursor[2]));
 
                 if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
                 {
@@ -224,8 +169,7 @@ namespace The_Last_Trial
                     {
                         state = (int)MenuState.Principal;
                         currentCursor = 0;
-                        menuObject[1] = new Objet(new Vector2(0, 350), Content.Load<Texture2D>("menu/epee"));
-                        menuObject[2] = new Objet(new Vector2(300, 350), Content.Load<Texture2D>("menu/new"));
+                        menuObject[1].S_PosX(-42);
                         speedX = 0;
                     }
                     else if (currentCursor == 2)
@@ -238,31 +182,6 @@ namespace The_Last_Trial
             #region Setup
             else if (state == (int)MenuState.Setup)
             {
-                string[] cursor = new string[3];
-                if (currentCursor == 0)
-                {
-                    cursor[0] = "_";
-                    cursor[1] = "";
-                    cursor[2] = "";
-                }
-                else if (currentCursor == 1)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "_";
-                    cursor[2] = "";
-                }
-
-                else if (currentCursor == 2)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "";
-                    cursor[2] = "_";
-                }
-
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/video" + cursor[0]));
-                menuObject[3].S_Texture(Content.Load<Texture2D>("menu/audio" + cursor[1]));
-                menuObject[4].S_Texture(Content.Load<Texture2D>("menu/back" + cursor[2]));
-
                 if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
                 {
                     currentCursor--;
@@ -295,31 +214,6 @@ namespace The_Last_Trial
             }
             else if (state == (int)MenuState.SetupVideo)
             {
-                string[] cursor = new string[2];
-                if (currentCursor == 0)
-                {
-                    cursor[0] = "_";
-                    cursor[1] = "";
-                }
-                else if (currentCursor == 1)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "_";
-                }
-
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/resolution" + cursor[0]));
-                menuObject[3].S_Texture(Content.Load<Texture2D>("menu/fullscreen" + cursor[1]));
-                if (setup[0] == 0)
-                    menuObject[5].S_Texture(Content.Load<Texture2D>("menu/1000x800"));
-                else if (setup[0] == 1)
-                    menuObject[5].S_Texture(Content.Load<Texture2D>("menu/1200x800"));
-                else if (setup[0] == 2)
-                    menuObject[5].S_Texture(Content.Load<Texture2D>("menu/1400x800"));
-                if (setup[1] == 0)
-                    menuObject[6].S_Texture(Content.Load<Texture2D>("menu/off"));
-                else if (setup[1] == 1)
-                    menuObject[6].S_Texture(Content.Load<Texture2D>("menu/on"));
-
                 if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
                 {
                     currentCursor--;
@@ -356,25 +250,6 @@ namespace The_Last_Trial
             }
             else if (state == (int)MenuState.SetupAudio)
             {
-                string[] cursor = new string[2];
-                if (currentCursor == 0)
-                {
-                    cursor[0] = "_";
-                    cursor[1] = "";
-                }
-                else if (currentCursor == 1)
-                {
-                    cursor[0] = "";
-                    cursor[1] = "_";
-                }
-
-                menuObject[2].S_Texture(Content.Load<Texture2D>("menu/musique" + cursor[0]));
-                menuObject[3].S_Texture(Content.Load<Texture2D>("menu/volume" + cursor[1]));
-                if (setup[2] == 0)
-                    menuObject[5].S_Texture(Content.Load<Texture2D>("menu/off"));
-                else if (setup[2] == 1)
-                    menuObject[5].S_Texture(Content.Load<Texture2D>("menu/on"));
-
                 if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
                 {
                     currentCursor--;
@@ -427,23 +302,11 @@ namespace The_Last_Trial
             #region Selection Classe
             else if (state >= 5 && state <= 8)
             {
-                string str = "";
-                if (temp == 1)
-                {
-                    str = "_";
-                }
-                menuObject[1].S_Texture(Content.Load<Texture2D>("menu/back" + str));
-                menuObject[1].S_Position(new Vector2(300, 650));
-                menuObject[2].S_Texture(Content.Load<Texture2D>("perso/1/10"));
-                menuObject[2].S_Position(new Vector2(100, 500));
-                menuObject[3].S_Texture(Content.Load<Texture2D>("perso/2/10"));
-                menuObject[3].S_Position(new Vector2(300, 500));
-                menuObject[4].S_Texture(Content.Load<Texture2D>("perso/3/10"));
-                menuObject[4].S_Position(new Vector2(500, 500));
-                menuObject[5].S_Texture(Content.Load<Texture2D>("perso/4/10"));
-                menuObject[5].S_Position(new Vector2(700, 500));
-                menuObject[6].S_Texture(Content.Load<Texture2D>("menu/selection"));
-                menuObject[6].S_Position(new Vector2(92 + (200 * currentCursor), 480));
+                menuObject[1] = new Objet(new Vector2(100, 500), Content.Load<Texture2D>("perso/1/10"));
+                menuObject[2] = new Objet(new Vector2(300, 500), Content.Load<Texture2D>("perso/2/10"));
+                menuObject[3] = new Objet(new Vector2(500, 500), Content.Load<Texture2D>("perso/3/10"));
+                menuObject[4] = new Objet(new Vector2(700, 500), Content.Load<Texture2D>("perso/4/10"));
+                menuObject[5] = new Objet(new Vector2(92 + (200 * currentCursor), 480), Content.Load<Texture2D>("menu/selection"));
 
                 if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
                 {
@@ -490,17 +353,19 @@ namespace The_Last_Trial
             }
             #endregion
 
-            else if (state == 9)
+            else if (state == (int)MenuState.Exit)
             {
                 Program.gs.Exit();
             }
             else if (state == 10 || state == 20 || state == 90)
             {
-                menuObject[1].S_PosX(menuObject[1].G_Position().X + speedX / 2);
-                if (menuObject[1].G_Position().X > Program.width || menuObject[1].G_Position().X < 0)
+                menuObject[1].S_PosX(menuObject[1].Position.X + speedX / 2);
+                if (menuObject[1].Position.X > Program.width || menuObject[1].Position.X < 0)
                 {
                     state /= 10;
                     currentCursor = 0;
+                    menuObject[1].S_PosX(-42);
+                    speedX = 0;
                 }
             }
 
@@ -514,13 +379,13 @@ namespace The_Last_Trial
             StreamWriter sw = new StreamWriter(fs);
             if (setup[0] == 0)
             {
-                sw.WriteLine("resolution=1000x800");
+                sw.WriteLine("resolution=1024x800");
                 Program.width = 1000;
                 Program.height = 800;
             }
             else if (setup[0] == 1)
             {
-                sw.WriteLine("resolution=1200x800");
+                sw.WriteLine("resolution=1280x800");
                 Program.width = 1200;
                 Program.height = 800;
             }
@@ -574,41 +439,202 @@ namespace The_Last_Trial
             graphics.GraphicsDevice.Clear(Color.Pink);
             sb.Begin(SpriteBlendMode.AlphaBlend);
 
-            menuObject[0].Draw(sb); 
-            menuObject[2].Draw(sb);
-            menuObject[3].Draw(sb);
-
-            if (state != (int)MenuState.SetupAudio && state != (int)MenuState.SetupVideo)
-            {
-                menuObject[4].Draw(sb);
-            }
+            menuObject[0].Draw(sb);
             if (state == (int)MenuState.Principal || state >= 10)
             {
-                menuObject[1].Draw(sb);
-            }
-            if (state == (int)MenuState.NombrePerso)
-            {
-                sb.DrawString(menuFont, nbPlayer.ToString(), new Vector2(642, 370), Color.Black);
-            }
-            if (state == 3)
-            {
-                menuObject[5].Draw(sb);
-                menuObject[6].Draw(sb);
-            }
-            if (state == 4)
-            {
-                menuObject[5].Draw(sb);
-                sb.DrawString(menuFont, setup[3].ToString(), new Vector2(630, 500), Color.DarkKhaki);
-            }
-            if (state >= 5 && state <= 8)
-            {
-                menuObject[5].Draw(sb);
-                if (temp == 0)
+                Color color = Color.DarkKhaki;
+                if (currentCursor == 0)
                 {
-                    menuObject[6].Draw(sb);
+                    color = Color.Gold;
                 }
-                sb.DrawString(menuFont, "Joueur " + (state - 4) + ", choisissez une classe", new Vector2(200, 350), Color.DarkKhaki);
+                sb.DrawString(menuFont, "Nouvelle Partie", new Vector2(350, 350), color);
+                if (currentCursor == 1)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Configuration", new Vector2(350, 475), color);
+                if (currentCursor == 2)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Quitter", new Vector2(350, 600), color);
                 menuObject[1].Draw(sb);
+            }
+            else if (state == (int)MenuState.NombrePerso)
+            {
+                Color color = Color.DarkKhaki;
+                if (currentCursor == 0)
+                {
+                    color = Color.Gold;
+                }
+                sb.DrawString(menuFont, "Nombre de personnages : " + nbPlayer, new Vector2(350, 350), color);
+                if (currentCursor == 1)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Retour", new Vector2(350, 475), color);
+                if (currentCursor == 2)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Quitter", new Vector2(350, 600), color);
+                menuObject[1].Draw(sb);
+            }
+
+            else if (state == (int)MenuState.Setup)
+            {
+                Color color = Color.DarkKhaki;
+                if (currentCursor == 0)
+                {
+                    color = Color.Gold;
+                }
+                sb.DrawString(menuFont, "Video", new Vector2(350, 350), color);
+                if (currentCursor == 1)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Audio", new Vector2(350, 475), color);
+                if (currentCursor == 2)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Retour", new Vector2(350, 600), color);
+                menuObject[1].Draw(sb);
+            }
+            else if (state == (int)MenuState.SetupAudio)
+            {
+                Color color = Color.DarkKhaki;
+                if (currentCursor == 0)
+                {
+                    color = Color.Gold;
+                }
+                string str;
+                if (setup[2] == 0)
+                {
+                    str = "off";
+                }
+                else
+                {
+                    str = "on";
+                }
+                sb.DrawString(menuFont, "Musique : " + str, new Vector2(350, 350), color);
+                if (currentCursor == 1)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Volume : " + setup[3], new Vector2(350, 475), color);
+                //if (currentCursor == 2)
+                //{
+                //    color = Color.Gold;
+                //}
+                //else
+                //{
+                //    color = Color.DarkKhaki;
+                //}
+                //sb.DrawString(menuFont, "Retour", new Vector2(350, 600), color);
+                menuObject[1].Draw(sb);
+            }
+            else if (state == (int)MenuState.SetupVideo)
+            {
+                Color color = Color.DarkKhaki;
+                if (currentCursor == 0)
+                {
+                    color = Color.Gold;
+                }
+                string str;
+                if (setup[0] == 0)
+                {
+                    str = "1024*800";
+                }
+                else if (setup[0] == 1)
+                {
+                    str = "1280*800";
+                }
+                else
+                {
+                    str = "1400*800";
+                }
+                sb.DrawString(menuFont, "Resolution : " + str, new Vector2(350, 350), color);
+                if (currentCursor == 1)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                if (setup[1] == 0)
+                {
+                    str = "off";
+                }
+                else
+                {
+                    str = "on";
+                }
+                sb.DrawString(menuFont, "Plein Ecran : " + str, new Vector2(350, 475), color);
+                //if (currentCursor == 2)
+                //{
+                //    color = Color.Gold;
+                //}
+                //else
+                //{
+                //    color = Color.DarkKhaki;
+                //}
+                //sb.DrawString(menuFont, "Retour", new Vector2(350, 600), color);
+                menuObject[1].Draw(sb);
+            }
+            else if (state >= 5 && state <= 8) // Choix du personnage
+            {
+                Color color = Color.DarkKhaki;
+                try
+                {
+                    menuObject[1].Draw(sb);
+                    menuObject[2].Draw(sb);
+                    menuObject[3].Draw(sb);
+                    menuObject[4].Draw(sb);
+                    if (temp == 0)
+                        menuObject[5].Draw(sb);
+                }
+                catch (NullReferenceException) { }
+                sb.DrawString(menuFont, "Joueur " + (state - 4) + ", choisissez une classe", new Vector2(200, 342), color);
+
+                if (temp == 1)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, "Retour", new Vector2(300, 650), color);
             }
             sb.End();
         }

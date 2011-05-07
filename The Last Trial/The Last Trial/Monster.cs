@@ -21,7 +21,7 @@ namespace The_Last_Trial
             this.id = id;
             this.spawn = new Rectangle((int)init.X - 200, (int)init.Y - 200, 400, 400);
             this.position = init;
-            this.life = (100 + 500 * (id - 1)) * GameState.G_Level() * GameState.G_Player();
+            this.life = (100 + 500 * (id - 1)) * GameState.Level * GameState.Player;
             this.lifeMax = this.life;
             tempsRandom = 0;
             tempsAttaque[0] = -5;
@@ -200,14 +200,14 @@ namespace The_Last_Trial
             }
             else
             {
-                if (target.G_Position().X + 10 < position.X + 130)
+                if (target.Position.X + 10 < position.X + 130)
                     speed.X = -50f;
-                else if (target.G_Position().X - 10 > position.X + 130)
+                else if (target.Position.X - 10 > position.X + 130)
                     speed.X = 50f;
 
-                if (target.G_Position().Y + 10 < position.Y + 79)
+                if (target.Position.Y + 10 < position.Y + 79)
                     speed.Y = -50f;
-                else if (target.G_Position().Y - 10 > position.Y + 79)
+                else if (target.Position.Y - 10 > position.Y + 79)
                     speed.Y = 50f;
             }
 
@@ -278,7 +278,7 @@ namespace The_Last_Trial
                     if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
                     {
                         attaque = true;
-                        p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.G_Level(), gameTime);
+                        p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
                     }
                 }
                 if (attaque)
