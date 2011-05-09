@@ -14,7 +14,7 @@ namespace The_Last_Trial
         private Keys[] key;
         private int classe, xp, xpMax, level;
         private double[] tempsAttaque = new double[2];
-        private double tempsRegen, tempsLevelUp, power, powerMax, force, mana, esquive;
+        private double tempsRegenPower, tempsRegenLife, tempsLevelUp, power, powerMax, force, mana, esquive;
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -39,7 +39,8 @@ namespace The_Last_Trial
             this.xp = 0;
             this.xpMax = 142;
             this.level = 1;
-            this.tempsRegen = 0;
+            this.tempsRegenPower = 0;
+            this.tempsRegenLife = 0;
             this.tempsLevelUp = 0;
 
             if (classe == 1)
@@ -657,9 +658,18 @@ namespace The_Last_Trial
 
         private void F_UpdateRegen(GameTime gameTime)
         {
-            if (tempsRegen + 0.05 < gameTime.TotalGameTime.TotalSeconds)
+            if (tempsRegenLife + 1 < gameTime.TotalGameTime.TotalSeconds)
             {
-                tempsRegen = gameTime.TotalGameTime.TotalSeconds;
+                tempsRegenLife = gameTime.TotalGameTime.TotalSeconds;
+                life += (int)(lifeMax / 100);
+                if (life > lifeMax)
+                {
+                    life = lifeMax;
+                }
+            }
+            if (tempsRegenPower + 0.05 < gameTime.TotalGameTime.TotalSeconds)
+            {
+                tempsRegenPower = gameTime.TotalGameTime.TotalSeconds;
                 power += 2 * mana;
                 if (power > powerMax)
                 {

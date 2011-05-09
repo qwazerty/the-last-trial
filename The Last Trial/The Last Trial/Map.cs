@@ -81,6 +81,12 @@ namespace The_Last_Trial
 
                 pnj[0] = new PNJ(new Vector2(600, 600), 42, "Bon courage pour votre quete !");
                 pnj[1] = new PNJ(new Vector2(3900, 500), 42, "Felicitations, appuyez sur\n     Entree pour passer\n     au niveau suivant.");
+                Son.InstanceStop();
+                if (Program.musique)
+                {
+                    Son.InitLoopSound(5);
+                    Son.InstancePlay();
+                }
 
                 return 6;
             }
