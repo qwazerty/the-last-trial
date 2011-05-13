@@ -114,7 +114,7 @@ namespace The_Last_Trial
                     {
                         color = Color.Gold;
                     }
-                    sb.DrawString(menuFont, "Reprendre", new Vector2(350, 350), color);
+                    sb.DrawString(menuFont, LoadingMenu.Local[13], new Vector2(350, 350), color);
                     if (currentCursor == 1)
                     {
                         color = Color.Gold;
@@ -123,7 +123,7 @@ namespace The_Last_Trial
                     {
                         color = Color.DarkKhaki;
                     }
-                    sb.DrawString(menuFont, "Menu Principal", new Vector2(350, 475), color);
+                    sb.DrawString(menuFont, LoadingMenu.Local[14], new Vector2(350, 475), color);
                     if (currentCursor == 2)
                     {
                         color = Color.Gold;
@@ -132,7 +132,7 @@ namespace The_Last_Trial
                     {
                         color = Color.DarkKhaki;
                     }
-                    sb.DrawString(menuFont, "Quitter", new Vector2(350, 600), color);
+                    sb.DrawString(menuFont, LoadingMenu.Local[2], new Vector2(350, 600), color);
                 }
             }
             catch (ArgumentNullException) { }

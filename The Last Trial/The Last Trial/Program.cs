@@ -11,6 +11,7 @@ namespace The_Last_Trial
         public static GameState gs;
         public static int width, height, volume;
         public static bool fullscreen, musique;
+        public static string local;
         
         static void Main(string[] args)
         {
@@ -29,6 +30,7 @@ namespace The_Last_Trial
                 sw.WriteLine("fullscreen=off");
                 sw.WriteLine("musique=on");
                 sw.WriteLine("volume=100");
+                sw.WriteLine("local=fr");
                 sw.Close();
                 fs.Close();
                 fs = new FileStream("setup", FileMode.Open);
@@ -59,6 +61,9 @@ namespace The_Last_Trial
             str = sr.ReadLine();
             str = str.Substring(7);
             volume = int.Parse(str);
+            str = sr.ReadLine();
+            str = str.Substring(6);
+            Program.local = str;
             sr.Close();
             fs.Close();
             Program.width = int.Parse(width);

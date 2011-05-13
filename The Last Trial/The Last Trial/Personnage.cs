@@ -279,7 +279,7 @@ namespace The_Last_Trial
                 sb.DrawString(overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
             
             if (tempsLevelUp + 1 > gameTime.TotalRealTime.TotalSeconds)
-                sb.DrawString(overKill, "Level Up", new Vector2(position.X - 100, position.Y - 80), Color.DarkOrange);
+                sb.DrawString(overKill, LoadingMenu.Local[18], new Vector2(position.X - 100, position.Y - 80), Color.DarkOrange);
             
             F_DrawHealth(sb);
         }
@@ -737,8 +737,8 @@ namespace The_Last_Trial
             {
                 if (degats == 0)
                 {
-                    sb.DrawString(gameFont, "Miss", new Vector2(position.X + 10, position.Y - 18), Color.Black);
-                    sb.DrawString(gameFont, "Miss", new Vector2(position.X + 8, position.Y - 20), Color.Orange);
+                    sb.DrawString(gameFont, LoadingMenu.Local[19], new Vector2(position.X + 10, position.Y - 18), Color.Black);
+                    sb.DrawString(gameFont, LoadingMenu.Local[19], new Vector2(position.X + 8, position.Y - 20), Color.Orange);
                 }
                 else
                 {

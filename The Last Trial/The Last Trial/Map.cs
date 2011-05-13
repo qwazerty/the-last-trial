@@ -79,8 +79,8 @@ namespace The_Last_Trial
                 firstHide = true;
                 parallax = true;
 
-                pnj[0] = new PNJ(new Vector2(600, 600), 42, "Bon courage pour votre quete !");
-                pnj[1] = new PNJ(new Vector2(3900, 500), 42, "Felicitations, appuyez sur\n     Entree pour passer\n     au niveau suivant.");
+                pnj[0] = new PNJ(new Vector2(600, 600), 42, LoadingMenu.Local[15]);
+                pnj[1] = new PNJ(new Vector2(3900, 500), 42, LoadingMenu.Local[16]);
                 Son.InstanceStop();
                 if (Program.musique)
                 {
@@ -106,7 +106,7 @@ namespace The_Last_Trial
                 firstHide = false;
                 parallax = false;
 
-                pnj[0] = new PNJ(new Vector2(2876, 500), 42, "C'est la fin de ce monde...");
+                pnj[0] = new PNJ(new Vector2(2876, 500), 42, LoadingMenu.Local[17]);
 
                 return 6;
             }
@@ -278,7 +278,7 @@ namespace The_Last_Trial
 
         public static void DrawBossTrigger(SpriteBatch spriteBatch, GameTime gameTime)
         { 
-            if (tempsTriggerBoss + 3 > gameTime.TotalRealTime.TotalSeconds)
+            if (tempsTriggerBoss + 3 > gameTime.TotalGameTime.TotalSeconds)
                 spriteBatch.DrawString(Mob.bossFont, "BOSS", new Vector2(500 + Mob.random.Next(150), 300 + Mob.random.Next(150)), Color.DarkRed);
         }
 
