@@ -21,7 +21,7 @@ namespace The_Last_Trial
         public static int Player { get { return nbPlayer; } }
         public static int Monster { get { return nbMonster; } }
         public static int Level { get { return level; } }
-        public static int MaxLevel { get { return maxLevel; } }
+        public static int MaxLevel { get { return maxLevel; } set { maxLevel = value; } }
 
         public GameState()
         {
@@ -38,6 +38,7 @@ namespace The_Last_Trial
             spriteBatch = new SpriteBatch(GraphicsDevice);
             lauch = new Launcher();
             Son.Load(Content);
+            Son.InitLoopSound(0);
             Restart(Content);
             base.Initialize();
         }
@@ -78,7 +79,6 @@ namespace The_Last_Trial
             }
             else if (state == 1)
             {
-                this.graphics.PreferredBackBufferHeight = 1000;
                 game.Update(gameTime, graphics, Content, perso, monster, pnj);
                 if (Map.G_EndLevel(monster))
                 {
@@ -89,6 +89,7 @@ namespace The_Last_Trial
                     }
                     state = 0;
                     newLevel = true;
+                    SaveLoad.Save(perso);
                 }
             }
             base.Update(gameTime);

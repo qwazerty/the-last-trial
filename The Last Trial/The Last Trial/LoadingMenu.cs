@@ -99,7 +99,7 @@ namespace The_Last_Trial
 
         enum MenuState { Principal = 0, NombrePerso, Setup, SetupVideo, SetupAudio, 
             SelecClasse1, SelecClasse2, SelecClasse3, SelecClasse4, SetupLocal, LoadSave = 11, ChooseLevel = 12, Exit = 30, 
-            NombrePerso_ = 10, Setup_ = 20, LoadSave_ = 100, Exit_ = 300}
+            NombrePerso_ = 10, Setup_ = 20, LoadSave_ = 110, Exit_ = 300}
 
         public static int Update(Personnage[] perso, ContentManager Content)
         {
@@ -193,13 +193,19 @@ namespace The_Last_Trial
                 {
                     if (currentCursor == 0)
                     {
-                        state = (int)MenuState.Principal;
+                        return SaveLoad.Loading();
                     }
                     else if (currentCursor == 1)
                     {
                         state = (int)MenuState.Principal;
                     }
                 }
+            }
+            #endregion
+            #region ChooseLevel
+            else if (state == (int)MenuState.ChooseLevel)
+            { 
+                
             }
             #endregion
             #region Nombre Perso
@@ -482,7 +488,7 @@ namespace The_Last_Trial
             {
                 Program.gs.Exit();
             }
-            if (state == 10 || state == 20 || state == 100 || state == 300)
+            if (state == 10 || state == 20 || state == 110 || state == 300)
             {
                 menuObject[1].S_PosX(menuObject[1].Position.X + speedX / 2);
                 if (menuObject[1].Position.X > Program.width)
@@ -562,7 +568,9 @@ namespace The_Last_Trial
         public static void Load(Personnage[] perso, Monster[] monster, PNJ[] pnj, ContentManager Content, GameTime gameTime)
         {
             Mob.Load(Content);
+            SaveLoad.LoadClass(ref persoClasse, perso);
             Personnage.Load(perso, Content);
+            SaveLoad.LoadPerso(perso);
             Monster.Load(monster, Content);
             PNJ.Load(pnj, Content);
             Map.Load(Content);
@@ -575,7 +583,7 @@ namespace The_Last_Trial
             sb.Begin(SpriteBlendMode.AlphaBlend);
 
             menuObject[0].Draw(sb);
-            if (state == (int)MenuState.Principal || state >= 10)
+            if (state == (int)MenuState.Principal || state >= 20 || state == 10)
             {
                 Color color = Color.DarkKhaki;
                 if (currentCursor == 0)
@@ -791,6 +799,24 @@ namespace The_Last_Trial
                 }
                 sb.DrawString(menuFont, Local[3], new Vector2(350, 550), color);
                 menuObject[1].Draw(sb);
+            }
+            else if (state == (int)MenuState.LoadSave)
+            {
+                Color color = Color.DarkKhaki;
+                if (currentCursor == 0)
+                {
+                    color = Color.Gold;
+                }
+                sb.DrawString(menuFont, Local[21], new Vector2(350, 300), color);
+                if (currentCursor == 1)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(menuFont, Local[3], new Vector2(350, 425), color);
             }
             else if (state >= 5 && state <= 8) // Choix du personnage
             {

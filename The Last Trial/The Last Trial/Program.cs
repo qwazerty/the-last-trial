@@ -11,7 +11,7 @@ namespace The_Last_Trial
         public static GameState gs;
         public static int width, height, volume;
         public static bool fullscreen, musique;
-        public static string local;
+        public static string local, save;
         
         static void Main(string[] args)
         {
@@ -68,6 +68,7 @@ namespace The_Last_Trial
             fs.Close();
             Program.width = int.Parse(width);
             Program.height = int.Parse(height);
+            Program.save = "partie1";
             gs = new GameState(); 
             gs.Run();
         }

@@ -15,6 +15,7 @@ namespace The_Last_Trial
         private int classe, xp, xpMax, level;
         private double[] tempsAttaque = new double[2];
         private double tempsRegenPower, tempsRegenLife, tempsLevelUp, power, powerMax, force, mana, esquive;
+        private string name;
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -37,7 +38,7 @@ namespace The_Last_Trial
             this.life = 100;
             this.lifeMax = this.life;
             this.xp = 0;
-            this.xpMax = 142;
+            this.xpMax = 100;
             this.level = 1;
             this.tempsRegenPower = 0;
             this.tempsRegenLife = 0;
@@ -84,6 +85,21 @@ namespace The_Last_Trial
 
         #region GET & SET
 
+        public void S_Nom(string name)
+        {
+            this.name = name;
+        }
+
+        public string G_Nom()
+        {
+            return name;
+        }
+
+        public int G_Class()
+        {
+            return classe;
+        }
+
         public Rectangle G_Rectangle()
         {
             return new Rectangle((int)position.X, (int)position.Y + 66, 60, 33);
@@ -94,17 +110,40 @@ namespace The_Last_Trial
             return G_Rectangle().Intersects(pnj.G_Interact());
         }
 
-        private void S_Xp(int xp_, GameTime gameTime)
+        public int G_Xp()
+        {
+            int x = 0;
+            for (int i = 1; i < level; i++)
+            {
+                x += i * 100;
+            }
+            return xp + x;
+        }
+
+        public void S_Xp(int xp_, GameTime gameTime)
         {
             this.xp += xp_;
             while (this.xp >= xpMax)
             {
                 S_Stats();
                 this.xp = this.xp - xpMax;
-                xpMax *= 2;
                 level++;
+                xpMax = 100 * level;
                 life = lifeMax;
                 tempsLevelUp = gameTime.TotalRealTime.TotalSeconds;
+            }
+        }
+
+        public void S_Xp(int xp_)
+        {
+            this.xp = xp_;
+            while (this.xp >= xpMax)
+            {
+                S_Stats();
+                this.xp = this.xp - xpMax;
+                level++;
+                xpMax = 100 * level;
+                life = lifeMax;
             }
         }
 
@@ -117,7 +156,6 @@ namespace The_Last_Trial
 
         private void S_Stats()
         {
-            
             if(classe == 3)
             {
                 mana += 0.2;
@@ -161,7 +199,6 @@ namespace The_Last_Trial
                 tempsDegats = gameTime.TotalGameTime.TotalSeconds;
             }
         }
-
 
         #endregion
 
