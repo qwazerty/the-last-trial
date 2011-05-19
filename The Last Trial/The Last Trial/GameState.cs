@@ -11,7 +11,7 @@ namespace The_Last_Trial
         private static Game1 game;
         private static Launcher lauch;
 
-        private static int nbPlayer, nbMonster, state, level;
+        private static int nbPlayer, nbMonster, state, level, maxLevel;
         private static bool newLevel, applyChanges;
 
         private static Personnage[] perso;
@@ -21,6 +21,7 @@ namespace The_Last_Trial
         public static int Player { get { return nbPlayer; } }
         public static int Monster { get { return nbMonster; } }
         public static int Level { get { return level; } }
+        public static int MaxLevel { get { return maxLevel; } }
 
         public GameState()
         {
@@ -37,7 +38,6 @@ namespace The_Last_Trial
             spriteBatch = new SpriteBatch(GraphicsDevice);
             lauch = new Launcher();
             Son.Load(Content);
-            Son.InitLoopSound(0);
             Restart(Content);
             base.Initialize();
         }
@@ -55,6 +55,7 @@ namespace The_Last_Trial
             Menu.Init(Content);
             state = 0;
             level = 1;
+            maxLevel = 1;
             nbPlayer = 0;
             newLevel = false;
             applyChanges = true;
@@ -66,9 +67,6 @@ namespace The_Last_Trial
             {
                 if (newLevel)
                 {
-                    foreach (Personnage p in perso)
-                    { 
-                    }
                     lauch.LoadNewMap(gameTime, Content, graphics, spriteBatch, perso, ref monster, ref pnj, ref nbMonster);
                     state = 1;
                     newLevel = false;
@@ -85,6 +83,10 @@ namespace The_Last_Trial
                 if (Map.G_EndLevel(monster))
                 {
                     level++;
+                    if (level > maxLevel)
+                    {
+                        maxLevel = level;
+                    }
                     state = 0;
                     newLevel = true;
                 }
