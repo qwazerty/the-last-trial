@@ -167,7 +167,8 @@ namespace The_Last_Trial
             currentScreen = (int)(-screenPos.X) / 1024;
             try
             {
-                first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst)); first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
+                first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst)); 
+                first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
                 first[2] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 2));
 
                 middle[0] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle));

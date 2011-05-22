@@ -33,7 +33,7 @@ namespace The_Last_Trial
             nbPlayer = 1;
             currentCursor = 0;
             menuFont = Content.Load<SpriteFont>("font/menufont");
-            local = new string[24];
+            local = new string[Program.MAXLOCAL];
             oldState = Keyboard.GetState();
 
             InitSetup();
@@ -89,7 +89,7 @@ namespace The_Last_Trial
             StreamReader sr;
             fs = new FileStream("local_" + Program.local + ".tlt", FileMode.Open);
             sr = new StreamReader(fs);
-            for (int i = 0; i <= 23; i++)
+            for (int i = 0; i <= Program.MAXLOCAL - 1; i++)
             {
                 local[i] = sr.ReadLine();
             }
@@ -472,6 +472,7 @@ namespace The_Last_Trial
                         state++;
                         if (state - 5 == nbPlayer)
                         {
+                            SaveLoad.NewGame(nbPlayer);
                             return nbPlayer;
                         }
                     }
@@ -807,7 +808,7 @@ namespace The_Last_Trial
                 {
                     color = Color.Gold;
                 }
-                sb.DrawString(menuFont, Local[21], new Vector2(350, 300), color);
+                sb.DrawString(menuFont, Local[24], new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;

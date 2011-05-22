@@ -33,13 +33,30 @@ namespace The_Last_Trial
             {
                 sw.WriteLine("perso=" + perso.G_Nom());
                 sw.WriteLine("classe=" + perso.G_Class());
-                sw.WriteLine("xp=" + perso.G_Xp());
+                sw.WriteLine("xp=" + perso.G_Xp().ToString());
             }
 
             sw.Close();
             fs.Close();
         }
 
+        public static void NewGame(int x)
+        {
+            FileStream fs = new FileStream("Save/" + Program.save + ".save", FileMode.Truncate);
+            StreamWriter sw = new StreamWriter(fs);
+            sw.WriteLine("levelMap=1");
+            sw.WriteLine("nombrePerso=" + x);
+
+            for (int i = 0; i < x; i++)
+            {
+                sw.WriteLine("perso=Perso" + (i + 1));
+                sw.WriteLine("classe=" + LoadingMenu.PersoClasse[i]);
+                sw.WriteLine("xp=0");
+            }
+
+            sw.Close();
+            fs.Close();
+        }
 
         public static void LoadPerso(Personnage[] perso) 
         {

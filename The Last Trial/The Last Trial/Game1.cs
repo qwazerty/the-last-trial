@@ -7,8 +7,8 @@ namespace The_Last_Trial
 {
     public class Game1
     {
-        private bool continuer = true;
-        public void Update(GameTime gameTime, GraphicsDeviceManager graphics, ContentManager Content, Personnage[] perso, Monster[] monster, PNJ[] pnj)
+        private static  bool continuer = true;
+        public static void Update(GameTime gameTime, GraphicsDeviceManager graphics, ContentManager Content, Personnage[] perso, Monster[] monster, PNJ[] pnj)
         {
             if (continuer)
             {
@@ -16,7 +16,7 @@ namespace The_Last_Trial
             }
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, ContentManager Content, Personnage[] perso, Monster[] monster, PNJ[] pnj)
+        public static void Draw(GameTime gameTime, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, ContentManager Content, Personnage[] perso, Monster[] monster, PNJ[] pnj)
         {
             if (continuer)
             {

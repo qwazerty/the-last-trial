@@ -8,8 +8,6 @@ namespace The_Last_Trial
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private static Game1 game;
-        private static Launcher lauch;
 
         private static int nbPlayer, nbMonster, state, level, maxLevel;
         private static bool newLevel, applyChanges;
@@ -36,7 +34,6 @@ namespace The_Last_Trial
         protected override void Initialize()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            lauch = new Launcher();
             Son.Load(Content);
             Son.InitLoopSound(0);
             Restart(Content);
@@ -45,7 +42,6 @@ namespace The_Last_Trial
 
         public static void Restart(ContentManager Content)
         {
-            game = new Game1();
             Son.InstanceStop();
             if (Program.musique)
             {
@@ -68,18 +64,18 @@ namespace The_Last_Trial
             {
                 if (newLevel)
                 {
-                    lauch.LoadNewMap(gameTime, Content, graphics, spriteBatch, perso, ref monster, ref pnj, ref nbMonster);
+                    Launcher.LoadNewMap(gameTime, Content, graphics, spriteBatch, ref perso, ref monster, ref pnj, ref nbMonster);
                     state = 1;
                     newLevel = false;
                 }
-                else if (lauch.Update(gameTime, Content, graphics, spriteBatch, ref perso, ref monster, ref pnj, ref nbPlayer, ref nbMonster))
+                else if (Launcher.Update(gameTime, Content, graphics, spriteBatch, ref perso, ref monster, ref pnj, ref nbPlayer, ref nbMonster))
                 {
                     state = 1;
                 }
             }
             else if (state == 1)
             {
-                game.Update(gameTime, graphics, Content, perso, monster, pnj);
+                Game1.Update(gameTime, graphics, Content, perso, monster, pnj);
                 if (Map.G_EndLevel(monster))
                 {
                     level++;
@@ -107,11 +103,11 @@ namespace The_Last_Trial
             }
             if (state == 0 && !newLevel)
             {
-                lauch.Draw(spriteBatch, graphics);
+                Launcher.Draw(spriteBatch, graphics);
             }
             else if (state == 1)
             {
-                game.Draw(gameTime, spriteBatch, graphics, Content, perso, monster, pnj);
+                Game1.Draw(gameTime, spriteBatch, graphics, Content, perso, monster, pnj);
             }
             base.Draw(gameTime);
         }
