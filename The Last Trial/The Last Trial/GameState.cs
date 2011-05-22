@@ -18,7 +18,7 @@ namespace The_Last_Trial
 
         public static int Player { get { return nbPlayer; } }
         public static int Monster { get { return nbMonster; } }
-        public static int Level { get { return level; } }
+        public static int Level { get { return level; } set { level = maxLevel; } }
         public static int MaxLevel { get { return maxLevel; } set { maxLevel = value; } }
 
         public GameState()

@@ -12,7 +12,7 @@ namespace The_Last_Trial
         #region VAR
         private const int PIXEL = 32;
 
-        private static int id, MaxX, scroll, currentScreen;
+        private static int MaxX, scroll, currentScreen;
         private static Texture2D[] first, middle, back;
         private static Vector2 screenPos, speed;
         private static Vector2 originBack, originMiddle, originFirst;
@@ -56,14 +56,13 @@ namespace The_Last_Trial
 
         #region Init & Load
 
-        public static int Init(int id, Monster[] monster, PNJ[] pnj)
+        public static int Init(Monster[] monster, PNJ[] pnj)
         {
-            Map.id = id;
             first = new Texture2D[3];
             middle = new Texture2D[3];
             back = new Texture2D[3];
 
-            if (id == 1)
+            if (GameState.Level == 1)
             {
                 MaxX = 4 * 1024;
                 collision = new Rectangle[2];
@@ -90,7 +89,7 @@ namespace The_Last_Trial
 
                 return 6;
             }
-            if (id == 2)
+            if (GameState.Level == 2)
             {
                 MaxX = 3 * 1024;
                 collision = new Rectangle[2];
@@ -113,13 +112,13 @@ namespace The_Last_Trial
             return 0;
         }
 
-        public static int InitPNJ(int id)
+        public static int InitPNJ()
         {
-            if (id == 1)
+            if (GameState.Level == 1)
             {
                 return 2;
             }
-            if (id == 2)
+            if (GameState.Level == 2)
             {
                 return 1;
             }
@@ -128,7 +127,7 @@ namespace The_Last_Trial
 
         public static Monster[] LoadMonster(Monster[] monster)
         {
-            if (id == 1)
+            if (GameState.Level == 1)
             {
                 monster[0] = new Monster(new Vector2(1220f, 400f), 1);
                 monster[1] = new Monster(new Vector2(1600f, 300f), 1);
@@ -137,7 +136,7 @@ namespace The_Last_Trial
                 monster[4] = new Monster(new Vector2(2600f, 400f), 1);
                 monster[5] = new Monster(new Vector2(3500f, 350f), 2);
             }
-            if (id == 2)
+            if (GameState.Level == 2)
             { 
                 monster[0] = new Monster(new Vector2(1220f, 400f), 1);
                 monster[1] = new Monster(new Vector2(1300f, 500f), 1);
@@ -167,17 +166,17 @@ namespace The_Last_Trial
             currentScreen = (int)(-screenPos.X) / 1024;
             try
             {
-                first[0] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst)); 
-                first[1] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 1));
-                first[2] = Content.Load<Texture2D>("map/" + id + "/1-" + (currentScreen / speedFirst + 2));
+                first[0] = Content.Load<Texture2D>("map/" + GameState.Level + "/1-" + (currentScreen / speedFirst));
+                first[1] = Content.Load<Texture2D>("map/" + GameState.Level + "/1-" + (currentScreen / speedFirst + 1));
+                first[2] = Content.Load<Texture2D>("map/" + GameState.Level + "/1-" + (currentScreen / speedFirst + 2));
 
-                middle[0] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle));
-                middle[1] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 1));
-                middle[2] = Content.Load<Texture2D>("map/" + id + "/2-" + (currentScreen / speedMiddle + 2));
+                middle[0] = Content.Load<Texture2D>("map/" + GameState.Level + "/2-" + (currentScreen / speedMiddle));
+                middle[1] = Content.Load<Texture2D>("map/" + GameState.Level + "/2-" + (currentScreen / speedMiddle + 1));
+                middle[2] = Content.Load<Texture2D>("map/" + GameState.Level + "/2-" + (currentScreen / speedMiddle + 2));
 
-                back[0] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack));
-                back[1] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 1));
-                back[2] = Content.Load<Texture2D>("map/" + id + "/3-" + (currentScreen / speedBack + 2));
+                back[0] = Content.Load<Texture2D>("map/" + GameState.Level + "/3-" + (currentScreen / speedBack));
+                back[1] = Content.Load<Texture2D>("map/" + GameState.Level + "/3-" + (currentScreen / speedBack + 1));
+                back[2] = Content.Load<Texture2D>("map/" + GameState.Level + "/3-" + (currentScreen / speedBack + 2));
 
                 offsetY = 0;
                 scroll = 0;
