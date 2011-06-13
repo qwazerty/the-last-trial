@@ -109,18 +109,34 @@ namespace The_Last_Trial
 
                 return 6;
             }
+            if (GameState.Level == 3)
+            {
+                MaxX = 3 * 1024;
+                collision = new Rectangle[2];
+                collision[0] = new Rectangle(0, 96, MaxX, PIXEL);
+                collision[1] = new Rectangle(0, 704, MaxX, PIXEL);
+
+                originBack = new Vector2(0f, 0f);
+                originMiddle = new Vector2(0f, -128f);
+                originFirst = new Vector2(0f, -640f);
+                speedBack = 1;
+                speedMiddle = 1;
+                speedFirst = 1;
+                firstHide = true;
+                parallax = false;
+
+                return 6;
+            }
             return 0;
         }
 
         public static int InitPNJ()
         {
-            if (GameState.Level == 1)
+            switch (GameState.Level)
             {
-                return 2;
-            }
-            if (GameState.Level == 2)
-            {
-                return 1;
+                case 1: return 2;
+                case 2: return 1;
+                case 3: return 0;
             }
             return 0;
         }
@@ -138,6 +154,15 @@ namespace The_Last_Trial
             }
             if (GameState.Level == 2)
             { 
+                monster[0] = new Monster(new Vector2(1220f, 400f), 1);
+                monster[1] = new Monster(new Vector2(1300f, 500f), 1);
+                monster[2] = new Monster(new Vector2(1500f, 350f), 1);
+                monster[3] = new Monster(new Vector2(1800f, 300f), 1);
+                monster[4] = new Monster(new Vector2(2000f, 400f), 1);
+                monster[5] = new Monster(new Vector2(2500f, 350f), 2);
+            }
+            if (GameState.Level == 3)
+            {
                 monster[0] = new Monster(new Vector2(1220f, 400f), 1);
                 monster[1] = new Monster(new Vector2(1300f, 500f), 1);
                 monster[2] = new Monster(new Vector2(1500f, 350f), 1);
@@ -279,7 +304,7 @@ namespace The_Last_Trial
         public static void DrawBossTrigger(SpriteBatch spriteBatch, GameTime gameTime)
         { 
             if (tempsTriggerBoss + 3 > gameTime.TotalGameTime.TotalSeconds)
-                spriteBatch.DrawString(Mob.bossFont, "BOSS", new Vector2(500 + Mob.random.Next(150), 300 + Mob.random.Next(150)), Color.DarkRed);
+                spriteBatch.DrawString(GameState.bossFont, "BOSS", new Vector2(500 + Mob.random.Next(150), 300 + Mob.random.Next(150)), Color.DarkRed);
         }
 
         #endregion
@@ -288,9 +313,16 @@ namespace The_Last_Trial
         {
             switch (id)
             { 
-                case 1: return "Muraille du chateau";
-                case 2: return "Clairiere";
-                case 3: return "Foret sauvage";
+                case 1: return "Chateau";
+                case 2: return "Plaine";
+                case 3: return "Sombre Foret";
+                case 4: return "Grotte";
+                case 5: return "Repaire de Xanatras";
+                case 6: return "Prison";
+                case 7: return "Ville";
+                case 8: return "Montagne";
+                case 9: return "Manoir";
+                case 10: return "Trone de Krissbool";
             }
             return "";
         }

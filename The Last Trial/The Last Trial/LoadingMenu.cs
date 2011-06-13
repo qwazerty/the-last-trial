@@ -14,7 +14,6 @@ namespace The_Last_Trial
         private static int[] setup = new int[5];
         private static float speedX;
         private static KeyboardState oldState, newState;
-        private static SpriteFont menuFont;
         private static Objet[] menuObject = new Objet[6];
         private static Objet background;
         private static int[] persoClasse;
@@ -34,7 +33,6 @@ namespace The_Last_Trial
             state = (int)MenuState.Principal;
             nbPlayer = 1;
             currentCursor = 0;
-            menuFont = Content.Load<SpriteFont>("font/menufont");
             local = new string[Program.MAXLOCAL];
             oldState = Keyboard.GetState();
 
@@ -230,11 +228,15 @@ namespace The_Last_Trial
                     fs.Close();
                     if (currentCursor == 0)
                     {
+                        menuObject[1] = new Objet(new Vector2(230, 270), Content.Load<Texture2D>("menu/levelSelector"));
+                        menuObject[2] = new Objet(new Vector2(233, 0), Content.Load<Texture2D>("menu/_"));
                         Program.save = save[temp];
-                        return SaveLoad.Loading();
+                        state = (int)MenuState.ChooseLevel;
+                        temp = SaveLoad.Loading();
                     }
                     else if (currentCursor == 1)
                     {
+                        currentCursor = 0;
                         state = (int)MenuState.Principal;
                     }
                 }
@@ -242,8 +244,56 @@ namespace The_Last_Trial
             #endregion
             #region ChooseLevel
             else if (state == (int)MenuState.ChooseLevel)
-            { 
-                
+            {
+                if (newState.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
+                {
+                    currentCursor--;
+                    if (currentCursor == -1)
+                        currentCursor = 11;
+                }
+                if (newState.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down))
+                {
+                    currentCursor = (currentCursor + 1) % 12;
+                }
+                if (newState.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
+                {
+                    currentCursor -= 6;
+                    if (currentCursor < 0)
+                    {
+                        currentCursor += 12;
+                    }
+                }
+                if (newState.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+                {
+                    currentCursor += 6;
+                    if (currentCursor > 11)
+                    {
+                        currentCursor -= 12;
+                    }
+                }
+                if (newState.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+                {
+                    sr.Close();
+                    fs.Close();
+                    if (currentCursor == 5 || currentCursor == 11)
+                    {
+                        currentCursor = 0;
+                        state = (int)MenuState.Principal;
+                        menuObject[1] = new Objet(new Vector2(0, 350), Content.Load<Texture2D>("menu/epee"));
+                    }
+                    else 
+                    {
+                        if (currentCursor < 5)
+                        {
+                            GameState.Level = currentCursor + 1;
+                        }
+                        else
+                        {
+                            GameState.Level = currentCursor;
+                        }
+                        return temp;
+                    }
+                }
             }
             #endregion
             #region Nombre Perso
@@ -522,7 +572,7 @@ namespace The_Last_Trial
                 }
             }
             #endregion
-
+            #region Other
             else if (state == (int)MenuState.Exit)
             {
                 Program.gs.Exit();
@@ -538,7 +588,7 @@ namespace The_Last_Trial
                     speedX = 0;
                 }
             }
-
+            #endregion
             oldState = newState;
             return 0;
         }
@@ -622,6 +672,7 @@ namespace The_Last_Trial
             sb.Begin(SpriteBlendMode.AlphaBlend);
 
             menuObject[0].Draw(sb);
+            #region LOL
             if (state == (int)MenuState.Principal || state >= 20 || state == 10)
             {
                 Color color = Color.DarkKhaki;
@@ -629,7 +680,7 @@ namespace The_Last_Trial
                 {
                     color = Color.Gold;
                 }
-                sb.DrawString(menuFont, Local[0], new Vector2(350, 300), color);
+                sb.DrawString(GameState.menuFont, Local[0], new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;
@@ -638,7 +689,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[23], new Vector2(350, 425), color);
+                sb.DrawString(GameState.menuFont, Local[23], new Vector2(350, 425), color);
                 if (currentCursor == 2)
                 {
                     color = Color.Gold;
@@ -647,7 +698,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[1], new Vector2(350, 550), color);
+                sb.DrawString(GameState.menuFont, Local[1], new Vector2(350, 550), color);
                 if (currentCursor == 3)
                 {
                     color = Color.Gold;
@@ -656,7 +707,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[2], new Vector2(350, 675), color);
+                sb.DrawString(GameState.menuFont, Local[2], new Vector2(350, 675), color);
                 menuObject[1].Draw(sb);
             }
             else if (state == (int)MenuState.NombrePerso)
@@ -666,7 +717,7 @@ namespace The_Last_Trial
                 {
                     color = Color.Gold;
                 }
-                sb.DrawString(menuFont, Local[4] + " : " + nbPlayer, new Vector2(350, 300), color);
+                sb.DrawString(GameState.menuFont, Local[4] + " : " + nbPlayer, new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;
@@ -675,7 +726,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[3], new Vector2(350, 425), color);
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 425), color);
                 if (currentCursor == 2)
                 {
                     color = Color.Gold;
@@ -684,7 +735,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[2], new Vector2(350, 550), color);
+                sb.DrawString(GameState.menuFont, Local[2], new Vector2(350, 550), color);
                 menuObject[1].Draw(sb);
             }
 
@@ -695,7 +746,7 @@ namespace The_Last_Trial
                 {
                     color = Color.Gold;
                 }
-                sb.DrawString(menuFont, Local[5], new Vector2(350, 300), color);
+                sb.DrawString(GameState.menuFont, Local[5], new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;
@@ -704,7 +755,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[6], new Vector2(350, 425), color);
+                sb.DrawString(GameState.menuFont, Local[6], new Vector2(350, 425), color);
                 if (currentCursor == 2)
                 {
                     color = Color.Gold;
@@ -713,7 +764,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[20], new Vector2(350, 550), color);
+                sb.DrawString(GameState.menuFont, Local[20], new Vector2(350, 550), color);
                 if (currentCursor == 3)
                 {
                     color = Color.Gold;
@@ -722,7 +773,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[3], new Vector2(350, 675), color);
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 675), color);
                 menuObject[1].Draw(sb);
             }
             else if (state == (int)MenuState.SetupAudio)
@@ -741,7 +792,7 @@ namespace The_Last_Trial
                 {
                     str = "on";
                 }
-                sb.DrawString(menuFont, Local[7] + " : " + str, new Vector2(350, 300), color);
+                sb.DrawString(GameState.menuFont, Local[7] + " : " + str, new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;
@@ -750,7 +801,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[8] + " : " + setup[3], new Vector2(350, 425), color);
+                sb.DrawString(GameState.menuFont, Local[8] + " : " + setup[3], new Vector2(350, 425), color);
                 if (currentCursor == 2)
                 {
                     color = Color.Gold;
@@ -759,7 +810,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[3], new Vector2(350, 550), color);
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 550), color);
                 menuObject[1].Draw(sb);
             }
             else if (state == (int)MenuState.SetupVideo)
@@ -782,7 +833,7 @@ namespace The_Last_Trial
                 {
                     str = "1400*800";
                 }
-                sb.DrawString(menuFont, Local[9] + " : " + str, new Vector2(350, 300), color);
+                sb.DrawString(GameState.menuFont, Local[9] + " : " + str, new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;
@@ -799,7 +850,7 @@ namespace The_Last_Trial
                 {
                     str = "on";
                 }
-                sb.DrawString(menuFont, Local[10] + " : " + str, new Vector2(350, 425), color);
+                sb.DrawString(GameState.menuFont, Local[10] + " : " + str, new Vector2(350, 425), color);
                 if (currentCursor == 2)
                 {
                     color = Color.Gold;
@@ -808,7 +859,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[3], new Vector2(350, 550), color);
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 550), color);
                 menuObject[1].Draw(sb);
             }
             else if (state == (int)MenuState.SetupLocal)
@@ -818,7 +869,7 @@ namespace The_Last_Trial
                 {
                     color = Color.Gold;
                 }
-                sb.DrawString(menuFont, Local[21], new Vector2(350, 300), color);
+                sb.DrawString(GameState.menuFont, Local[21], new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;
@@ -827,7 +878,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[22], new Vector2(350, 425), color);
+                sb.DrawString(GameState.menuFont, Local[22], new Vector2(350, 425), color);
                 if (currentCursor == 2)
                 {
                     color = Color.Gold;
@@ -836,7 +887,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[3], new Vector2(350, 550), color);
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 550), color);
                 menuObject[1].Draw(sb);
             }
             else if (state == (int)MenuState.LoadSave)
@@ -846,7 +897,7 @@ namespace The_Last_Trial
                 {
                     color = Color.Gold;
                 }
-                sb.DrawString(menuFont, save[temp], new Vector2(350, 300), color);
+                sb.DrawString(GameState.menuFont, save[temp], new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;
@@ -855,7 +906,42 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[3], new Vector2(350, 425), color);
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 425), color);
+            }
+            #endregion
+            else if (state == (int)MenuState.ChooseLevel)
+            {
+                Color color;
+                menuObject[1].Draw(sb);
+                int page = 0;
+                if (currentCursor > 5)
+                    page = 1;
+                for (int i = 1; i < 6; i++)
+                {
+                    if (currentCursor + 1 == i + (page * 6))
+                    {
+                        color = Color.Gold;
+                    }
+                    else
+                    {
+                        color = Color.DarkKhaki;
+                    }
+                    if (i + (page * 5) > GameState.MaxLevel)
+                    {
+                        menuObject[2].S_PosY(272 + (75 * (i - 1)));
+                        menuObject[2].Draw(sb);
+                    }
+                    sb.DrawString(GameState.gameFont, Map.G_LevelName(i + (page * 5)), new Vector2(800, 220 + 75 * i), color);
+                } 
+                if (currentCursor == 5 || currentCursor == 11)
+                {
+                    color = Color.Gold;
+                }
+                else
+                {
+                    color = Color.DarkKhaki;
+                }
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 700), color);
             }
             else if (state >= 5 && state <= 8) // Choix du personnage
             {
@@ -870,7 +956,7 @@ namespace The_Last_Trial
                         menuObject[5].Draw(sb);
                 }
                 catch (NullReferenceException) { }
-                sb.DrawString(menuFont, Local[11] + " " + (state - 4) + ", " + Local[12], new Vector2(200, 342), color);
+                sb.DrawString(GameState.menuFont, Local[11] + " " + (state - 4) + ", " + Local[12], new Vector2(200, 342), color);
 
                 if (temp == 1)
                 {
@@ -880,7 +966,7 @@ namespace The_Last_Trial
                 {
                     color = Color.DarkKhaki;
                 }
-                sb.DrawString(menuFont, Local[3], new Vector2(300, 650), color);
+                sb.DrawString(GameState.menuFont, Local[3], new Vector2(300, 650), color);
             }
             sb.End();
         }

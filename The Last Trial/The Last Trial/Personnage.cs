@@ -311,10 +311,10 @@ namespace The_Last_Trial
                 sb.Draw(objet, new Vector2((int)position.X - 240, (int)position.Y - 210), Color.White);
 
             if (imgState > 100)
-                sb.DrawString(overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
+                sb.DrawString(GameState.overKill, "OVERKILL", new Vector2(position.X - 100, position.Y - 120), Color.Firebrick);
             
             if (tempsLevelUp + 1 > gameTime.TotalRealTime.TotalSeconds)
-                sb.DrawString(overKill, LoadingMenu.Local[18], new Vector2(position.X - 100, position.Y - 80), Color.DarkOrange);
+                sb.DrawString(GameState.overKill, LoadingMenu.Local[18], new Vector2(position.X - 100, position.Y - 80), Color.DarkOrange);
             
             F_DrawHealth(sb);
         }
@@ -731,10 +731,10 @@ namespace The_Last_Trial
                 spriteBatch.Draw(health, new Rectangle(110, y + 52, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
                 spriteBatch.Draw(health, new Rectangle(110, y + 72, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
                 portrait[id - 1].Draw(spriteBatch);
-                spriteBatch.DrawString(textFont, name, new Vector2(113, y - 3), Color.White);
-                spriteBatch.DrawString(textFont, name, new Vector2(112, y - 4), Color.Black);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(241, y - 3), Color.White);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(240, y - 4), Color.Black);
+                spriteBatch.DrawString(GameState.textFont, name, new Vector2(113, y - 3), Color.White);
+                spriteBatch.DrawString(GameState.textFont, name, new Vector2(112, y - 4), Color.Black);
+                spriteBatch.DrawString(GameState.textFont, level.ToString(), new Vector2(241, y - 3), Color.White);
+                spriteBatch.DrawString(GameState.textFont, level.ToString(), new Vector2(240, y - 4), Color.Black);
             }
             else
             {
@@ -743,10 +743,10 @@ namespace The_Last_Trial
                 spriteBatch.Draw(health, new Rectangle(Program.width - 254, y + 52, (int)(power * 146 / powerMax), 8), new Rectangle(0, 12, health.Width, 12), Color.Blue);
                 spriteBatch.Draw(health, new Rectangle(Program.width - 254, y + 72, (int)(xp * 146 / xpMax), 2), new Rectangle(0, 12, health.Width, 2), Color.Green);
                 portrait[id - 1].Draw(spriteBatch);
-                spriteBatch.DrawString(textFont, name, new Vector2(Program.width - 264, y - 3), Color.White);
-                spriteBatch.DrawString(textFont, name, new Vector2(Program.width - 265, y - 4), Color.Black);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(Program.width - 133, y - 3), Color.White);
-                spriteBatch.DrawString(textFont, level.ToString(), new Vector2(Program.width - 134, y - 4), Color.Black);
+                spriteBatch.DrawString(GameState.textFont, name, new Vector2(Program.width - 264, y - 3), Color.White);
+                spriteBatch.DrawString(GameState.textFont, name, new Vector2(Program.width - 265, y - 4), Color.Black);
+                spriteBatch.DrawString(GameState.textFont, level.ToString(), new Vector2(Program.width - 133, y - 3), Color.White);
+                spriteBatch.DrawString(GameState.textFont, level.ToString(), new Vector2(Program.width - 134, y - 4), Color.Black);
             }
 
         }
@@ -757,13 +757,13 @@ namespace The_Last_Trial
             {
                 if (degats == 0)
                 {
-                    sb.DrawString(gameFont, LoadingMenu.Local[19], new Vector2(position.X + 10, position.Y - 18), Color.Black);
-                    sb.DrawString(gameFont, LoadingMenu.Local[19], new Vector2(position.X + 8, position.Y - 20), Color.Orange);
+                    sb.DrawString(GameState.gameFont, LoadingMenu.Local[19], new Vector2(position.X + 10, position.Y - 18), Color.Black);
+                    sb.DrawString(GameState.gameFont, LoadingMenu.Local[19], new Vector2(position.X + 8, position.Y - 20), Color.Orange);
                 }
                 else
                 {
-                    sb.DrawString(gameFont, degats.ToString(), new Vector2(position.X + 25, position.Y - 18), Color.Black);
-                    sb.DrawString(gameFont, degats.ToString(), new Vector2(position.X + 23, position.Y - 20), Color.White);
+                    sb.DrawString(GameState.gameFont, degats.ToString(), new Vector2(position.X + 25, position.Y - 18), Color.Black);
+                    sb.DrawString(GameState.gameFont, degats.ToString(), new Vector2(position.X + 23, position.Y - 20), Color.White);
                 }
             }
         }

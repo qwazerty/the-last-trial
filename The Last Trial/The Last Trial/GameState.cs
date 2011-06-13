@@ -18,8 +18,9 @@ namespace The_Last_Trial
 
         public static int Player { get { return nbPlayer; } }
         public static int Monster { get { return nbMonster; } }
-        public static int Level { get { return level; } set { level = maxLevel; } }
+        public static int Level { get { return level; } set { level = value; } }
         public static int MaxLevel { get { return maxLevel; } set { maxLevel = value; } }
+        public static SpriteFont gameFont, overKill, textFont, bossFont, menuFont;
 
         public GameState()
         {
@@ -37,6 +38,11 @@ namespace The_Last_Trial
             Son.Load(Content);
             Son.InitLoopSound(0);
             Restart(Content);
+            menuFont = Content.Load<SpriteFont>("font/menufont");
+            overKill = Content.Load<SpriteFont>("font/overkillfont");
+            gameFont = Content.Load<SpriteFont>("font/gamefont");
+            textFont = Content.Load<SpriteFont>("font/textfont");
+            bossFont = Content.Load<SpriteFont>("font/bossfont");
             base.Initialize();
         }
 

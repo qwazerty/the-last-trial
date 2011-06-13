@@ -28,7 +28,7 @@ namespace The_Last_Trial
             StreamWriter sw = new StreamWriter(fs);
             sw.WriteLine("levelMap=" + GameState.MaxLevel);
             sw.WriteLine("nombrePerso=" + GameState.Player);
-
+                
             foreach (Personnage perso in p)
             {
                 sw.WriteLine("perso=" + perso.G_Nom());

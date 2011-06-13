@@ -20,9 +20,6 @@ namespace The_Last_Trial
 
         public static void LoadNewMap(GameTime gameTime, ContentManager Content, GraphicsDeviceManager graphics, SpriteBatch sb, ref Personnage[] perso, ref Monster[] monster, ref PNJ[] pnj, ref int nbMonster)
         {
-            // TEMP LOAD
-            GameState.Level = GameState.MaxLevel;
-
             pnj = new PNJ[Map.InitPNJ()];
             perso = new Personnage[GameState.Player];
             nbMonster = Map.Init(monster, pnj);
