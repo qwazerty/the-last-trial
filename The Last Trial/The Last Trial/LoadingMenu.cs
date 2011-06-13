@@ -18,7 +18,9 @@ namespace The_Last_Trial
         private static Objet[] menuObject = new Objet[6];
         private static Objet background;
         private static int[] persoClasse;
-        private static string[] local;
+        private static string[] local, save;
+        private static FileStream fs;
+        private static StreamReader sr;
 
         public static int[] PersoClasse { get { return persoClasse; } }
         public static string[] Local { get { return local; } }
@@ -87,7 +89,7 @@ namespace The_Last_Trial
             // LOCAL PART
             FileStream fs;
             StreamReader sr;
-            fs = new FileStream("local_" + Program.local + ".tlt", FileMode.Open);
+            fs = new FileStream("Config/local_" + Program.local + ".tlt", FileMode.Open);
             sr = new StreamReader(fs);
             for (int i = 0; i <= Program.MAXLOCAL - 1; i++)
             {
@@ -161,7 +163,22 @@ namespace The_Last_Trial
                     }
                     else if (currentCursor == 1)
                     {
-                        state = (int)MenuState.LoadSave_;
+                        temp = 0;
+                        fs = new FileStream("Config/save", FileMode.Open);
+                        sr = new StreamReader(fs);
+                        save = new string[int.Parse(sr.ReadLine())];
+                        for (int i = 0; i < save.GetLength(0); i++)
+                        {
+                            save[i] = sr.ReadLine();
+                        }
+                        sr.Close();
+                        fs.Close();
+                        if (save.GetLength(0) != 0)
+                        {
+                            fs = new FileStream("Save/" + save[0] + ".save", FileMode.Open);
+                            sr = new StreamReader(fs);
+                            state = (int)MenuState.LoadSave_;
+                        }
                     }
                     else if (currentCursor == 2)
                     {
@@ -189,10 +206,31 @@ namespace The_Last_Trial
                 {
                     currentCursor = (currentCursor + 1) % 2;
                 }
+                if (newState.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
+                {
+                    sr.Close();
+                    fs.Close();
+                    fs = new FileStream("Save/" + save[temp] + ".save", FileMode.Open);
+                    sr = new StreamReader(fs);
+                    temp--;
+                    if (temp == -1)
+                        temp = save.GetLength(0) - 1;
+                }
+                if (newState.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+                {
+                    sr.Close();
+                    fs.Close();
+                    fs = new FileStream("Save/" + save[temp] + ".save", FileMode.Open);
+                    sr = new StreamReader(fs);
+                    temp = (temp + 1) % save.GetLength(0);
+                }
                 if (newState.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
                 {
+                    sr.Close();
+                    fs.Close();
                     if (currentCursor == 0)
                     {
+                        Program.save = save[temp];
                         return SaveLoad.Loading();
                     }
                     else if (currentCursor == 1)
@@ -507,7 +545,7 @@ namespace The_Last_Trial
 
         private static void ApplyChanges(ContentManager Content)
         {
-            FileStream fs = new FileStream("setup", FileMode.Truncate);
+            FileStream fs = new FileStream("Config/setup", FileMode.Truncate);
             StreamWriter sw = new StreamWriter(fs);
             if (setup[0] == 0)
             {
@@ -808,7 +846,7 @@ namespace The_Last_Trial
                 {
                     color = Color.Gold;
                 }
-                sb.DrawString(menuFont, Local[24], new Vector2(350, 300), color);
+                sb.DrawString(menuFont, save[temp], new Vector2(350, 300), color);
                 if (currentCursor == 1)
                 {
                     color = Color.Gold;

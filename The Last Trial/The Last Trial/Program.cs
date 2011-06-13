@@ -18,25 +18,8 @@ namespace The_Last_Trial
         {
             FileStream fs;
             StreamReader sr;
-            try
-            {
-                fs = new FileStream("setup", FileMode.Open);
-                sr = new StreamReader(fs);
-            }
-            catch (FileNotFoundException)
-            {
-                fs = new FileStream("setup", FileMode.Create);
-                StreamWriter sw = new StreamWriter(fs);
-                sw.WriteLine("resolution=1200x800");
-                sw.WriteLine("fullscreen=off");
-                sw.WriteLine("musique=on");
-                sw.WriteLine("volume=100");
-                sw.WriteLine("local=fr");
-                sw.Close();
-                fs.Close();
-                fs = new FileStream("setup", FileMode.Open);
-                sr = new StreamReader(fs);
-            } 
+            fs = new FileStream("Config/setup", FileMode.Open);
+            sr = new StreamReader(fs);
             string str = sr.ReadLine();
             str = str.Substring(11);
             int i = 0;
@@ -69,10 +52,9 @@ namespace The_Last_Trial
             fs.Close();
             Program.width = int.Parse(width);
             Program.height = int.Parse(height);
-            Program.save = "partie1";
+            Program.save = "";
             gs = new GameState(); 
             gs.Run();
         }
     }
 }
-

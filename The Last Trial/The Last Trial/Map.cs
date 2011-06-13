@@ -283,5 +283,16 @@ namespace The_Last_Trial
         }
 
         #endregion
+
+        public static string G_LevelName(int id)
+        {
+            switch (id)
+            { 
+                case 1: return "Muraille du chateau";
+                case 2: return "Clairiere";
+                case 3: return "Foret sauvage";
+            }
+            return "";
+        }
     }
 }
