@@ -84,7 +84,7 @@ namespace The_Last_Trial
         public void S_Resu()
         {
             life = lifeMax;
-            imgState = 40;
+            //imgState = 40;
         }
 
         public void S_Degat(int degat, GameTime gameTime)

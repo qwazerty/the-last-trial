@@ -1,19 +1,30 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace The_Last_Trial
 {
     public class KeyboardConvert
     {
-        public static Keys GetKeyboard(string str)
+        static KeyboardState newState, oldState;
+
+        public static string GetKeyboard()
         {
-            switch (str)
+            newState = Keyboard.GetState();
+            string str = "";
+            while (true)
             {
-                case "Up": return Keys.Up;
-                case "Down": return Keys.Down;
-                case "Right": return Keys.Right;
-                case "Left": return Keys.Left;
+                try
+                {
+                    if (newState.GetPressedKeys()[0] != oldState.GetPressedKeys()[0])
+                    {
+                        str = newState.GetPressedKeys()[0].ToString();
+                        break;
+                    }
+                }
+                catch (IndexOutOfRangeException) { }
             }
-            return Keys.A;
+            oldState = newState;
+            return str;
         }
     }
 }

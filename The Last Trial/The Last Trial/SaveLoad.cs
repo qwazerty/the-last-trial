@@ -21,7 +21,6 @@ namespace The_Last_Trial
             return int.Parse(str);
         }
 
-
         public static void Save(Personnage[] p)
         {
             FileStream fs = new FileStream("Save/" + Program.save + ".save", FileMode.Truncate);
@@ -42,7 +41,7 @@ namespace The_Last_Trial
 
         public static void NewGame(int x)
         {
-            FileStream fs = new FileStream("Save/" + Program.save + ".save", FileMode.Truncate);
+            FileStream fs = new FileStream("Save/" + Program.save + ".save", FileMode.Create);
             StreamWriter sw = new StreamWriter(fs);
             sw.WriteLine("levelMap=1");
             sw.WriteLine("nombrePerso=" + x);

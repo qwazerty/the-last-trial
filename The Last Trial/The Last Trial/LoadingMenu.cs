@@ -110,7 +110,7 @@ namespace The_Last_Trial
              * 2 : Setup          *
              * 9 : Exit           *
             \**********************/
-
+            
             newState = Keyboard.GetState();
 
             #region Raccourcis
