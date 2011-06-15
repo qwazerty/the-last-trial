@@ -140,6 +140,22 @@ namespace The_Last_Trial
             sb.End();
         }
 
+        #endregion
+
+        private static bool GameOver(Personnage[] perso, ContentManager Content)
+        {
+            bool continuer = false;
+            foreach (Personnage p in perso)
+            {
+                if (p.G_IsAlive())
+                {
+                    continuer = true;
+                }
+            }
+
+            return continuer;
+        }
+
         public static void DrawGameOver(Personnage[] perso, Monster[] monster, PNJ[] pnj, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(Color.Pink);
@@ -163,22 +179,6 @@ namespace The_Last_Trial
             menuObject[1].Draw(spriteBatch);
 
             spriteBatch.End();
-        }
-
-        #endregion
-
-        private static bool GameOver(Personnage[] perso, ContentManager Content)
-        {
-            bool continuer = false;
-            foreach (Personnage p in perso)
-            {
-                if (p.G_IsAlive())
-                {
-                    continuer = true;
-                }
-            }
-
-            return continuer;
         }
     }
 }

@@ -1,5 +1,5 @@
 resolution=1400x800
 fullscreen=off
-musique=off
+musique=on
 volume=100
-local=en
+local=fr

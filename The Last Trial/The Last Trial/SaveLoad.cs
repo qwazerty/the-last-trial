@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace The_Last_Trial
 {
@@ -41,8 +42,32 @@ namespace The_Last_Trial
 
         public static void NewGame(int x)
         {
-            FileStream fs = new FileStream("Save/" + Program.save + ".save", FileMode.Create);
+            List<string> list = new List<string>();
+            FileStream fs = new FileStream("Config/save", FileMode.Open);
+            StreamReader sr = new StreamReader(fs);
+            while (sr.Peek() > 0)
+            {
+                list.Add(sr.ReadLine());
+            }
+            sr.Close();
+            fs.Close();
+
+            fs = new FileStream("Config/save", FileMode.Truncate);
             StreamWriter sw = new StreamWriter(fs);
+            sw.WriteLine(int.Parse(list[0]) + 1);
+            Program.save = "Game " + (int.Parse(list[0]) + 1);
+            list.RemoveAt(0);
+            while (list.Count != 0)
+            {
+                sw.WriteLine(list[0]);
+                list.RemoveAt(0);
+            }
+            sw.Write(Program.save);
+            sw.Close();
+            fs.Close();
+
+            fs = new FileStream("Save/" + Program.save + ".save", FileMode.Create);
+            sw = new StreamWriter(fs);
             sw.WriteLine("levelMap=1");
             sw.WriteLine("nombrePerso=" + x);
 

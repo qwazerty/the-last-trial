@@ -8,7 +8,8 @@ namespace The_Last_Trial
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        public const int MAXLOCAL = 25;
+
+        public const int MAXLOCAL = 24;
         public static GameState gs;
         public static int width, height, volume;
         public static bool fullscreen, musique;
