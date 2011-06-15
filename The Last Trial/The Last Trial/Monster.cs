@@ -84,7 +84,6 @@ namespace The_Last_Trial
         public void S_Resu()
         {
             life = lifeMax;
-            //imgState = 40;
         }
 
         public void S_Degat(int degat, GameTime gameTime)
@@ -132,7 +131,7 @@ namespace The_Last_Trial
 
         private void F_Load(ContentManager Content)
         {
-            base.objet = Content.Load<Texture2D>("mob/1/" + imgState);
+            base.objet = Content.Load<Texture2D>("mob/" + id + "/" + imgState);
         }
 
         private void F_Update(GameTime gameTime, Personnage[] perso, ContentManager content)
@@ -157,7 +156,15 @@ namespace The_Last_Trial
                 F_Attaque(perso, gameTime);
             }
 
-            F_UpdateImage(gameTime);
+            int maxImage;
+            switch (id)
+            {
+                case 1: maxImage = 7; break;
+                case 2: maxImage = 5; break;
+                default: maxImage = 0; break;
+            }
+            
+            F_UpdateImage(gameTime, maxImage);
             F_Load(content);
             S_Deplacement(gameTime);
         }
@@ -269,129 +276,120 @@ namespace The_Last_Trial
         {
             newState = Keyboard.GetState();
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-            if (tempsActuel > tempsAttaque[0] + 1)
+
+            if (id == 1)
             {
-                oldImage = imgState;
-                bool attaque = false;
-                foreach (Personnage p in perso)
+                if (tempsActuel > tempsAttaque[0] + 1)
                 {
-                    if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
+                    oldImage = imgState;
+                    bool attaque = false;
+                    foreach (Personnage p in perso)
                     {
-                        attaque = true;
-                        p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
+                        if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
+                        {
+                            attaque = true;
+                            p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
+                        }
+                    }
+                    if (attaque)
+                    {
+                        Son.Play(2);
+                        tempsAttaque[0] = tempsActuel;
                     }
                 }
-                if (attaque)
+                else if (tempsActuel > tempsAttaque[0] + 0.9)
                 {
-                    Son.Play(2);
-                    tempsAttaque[0] = tempsActuel;
+                    if (imgState % 10 == -5)
+                    {
+                        imgState = oldImage / 10 * 10;
+                    }
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.6)
+                {
+                    ImageTest(-5);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.5)
+                {
+                    ImageTest(-4);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.4)
+                {
+                    ImageTest(-3);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.2)
+                {
+                    ImageTest(-2);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.1)
+                {
+                    ImageTest(-1);
+                }
+                else if (tempsActuel > tempsAttaque[0])
+                {
+                    ImageTest(0);
                 }
             }
-            else if (tempsActuel > tempsAttaque[0] + 0.9)
+            else if (id == 2)
             {
-                if (imgState % 10 == -5)
+                if (tempsActuel > tempsAttaque[0] + 1)
                 {
-                    imgState = oldImage / 10 * 10;
+                    oldImage = imgState;
+                    bool attaque = false;
+                    foreach (Personnage p in perso)
+                    {
+                        if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
+                        {
+                            attaque = true;
+                            p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
+                        }
+                    }
+                    if (attaque)
+                    {
+                        Son.Play(2);
+                        tempsAttaque[0] = tempsActuel;
+                    }
                 }
-            }
-            else if (tempsActuel > tempsAttaque[0] + 0.6)
-            {
-                if (imgState % 10 == -4)
-                    imgState--;
-                else if (imgState > 0)
+                else if (tempsActuel > tempsAttaque[0] + 0.9)
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -55;
-                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -65;
-                    else if (oldImage / 10 == 7)
-                        imgState = -75;
-                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -85;
+                    if (imgState % 10 == -2)
+                    {
+                        imgState = oldImage / 10 * 10;
+                    }
                 }
-            }
-            else if (tempsActuel > tempsAttaque[0] + 0.5)
-            {
-                if (imgState % 10 == -3)
-                    imgState--;
-                else if (imgState > 0)
+                else if (tempsActuel > tempsAttaque[0] + 0.6)
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -54;
-                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -64;
-                    else if (oldImage / 10 == 7)
-                        imgState = -74;
-                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -84;
+                    ImageTest(-2);
                 }
-            }
-            else if (tempsActuel > tempsAttaque[0] + 0.4)
-            {
-                if (imgState % 10 == -2)
-                    imgState--;
-                else if (imgState > 0)
+                else if (tempsActuel > tempsAttaque[0] + 0.3)
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -53;
-                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -63;
-                    else if (oldImage / 10 == 7)
-                        imgState = -73;
-                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -83;
+                    ImageTest(-1);
                 }
-            }
-            else if (tempsActuel > tempsAttaque[0] + 0.2)
-            {
-                if (imgState % 10 == -1)
-                    imgState--;
-                else if (imgState > 0)
+                else if (tempsActuel > tempsAttaque[0])
                 {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -52;
-                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -62;
-                    else if (oldImage / 10 == 7)
-                        imgState = -72;
-                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -82;
-                }
-            }
-            else if (tempsActuel > tempsAttaque[0] + 0.1)
-            {
-                if (imgState % 10 == 0)
-                    imgState--;
-                else if (imgState > 0)
-                {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -51;
-                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -61;
-                    else if (oldImage / 10 == 7)
-                        imgState = -71;
-                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -81;
-                }
-            }
-            else if (tempsActuel > tempsAttaque[0])
-            {
-                if (imgState > 0)
-                {
-                    if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                        imgState = -50;
-                    else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                        imgState = -60;
-                    else if (oldImage / 10 == 7)
-                        imgState = -70;
-                    else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                        imgState = -80;
+                    ImageTest(0);
                 }
             }
 
             if (imgState < 0)
             {
                 speed = Vector2.Zero;
+            }
+        }
+
+        private void ImageTest(int image)
+        {
+            if (imgState % 10 == image + 1)
+                imgState--;
+            else if (imgState > 0)
+            {
+                if (oldImage / 10 == 1)
+                    imgState = -50 + image;
+                else if (oldImage / 10 == 2)
+                    imgState = -60 + image;
+                else if (oldImage / 10 == 3)
+                    imgState = -70 + image;
+                else if (oldImage / 10 == 4)
+                    imgState = -80 + image;
             }
         }
 
@@ -414,6 +412,51 @@ namespace The_Last_Trial
             }
         }
 
+        #endregion
+
+        #region ImageDeplacement
+
+        private void F_UpdateImage(GameTime gameTime, int maxImage)
+        {
+            if (life <= 0)
+            {
+                imgState = 0;
+            }
+            else if (imgState == 0 && life > 0)
+            {
+                imgState = 20;
+            }
+            else
+            {
+                // Affichage images direction normale
+                if ((imgState < 20 || imgState > 27) && ((speed.X > 0 && speed.Y == 0) || (speed.X > 0 && speed.Y > 0)))
+                    imgState = 20;
+
+                else if ((imgState < 40 || imgState > 47) && ((speed.X < 0 && speed.Y == 0) || (speed.X < 0 && speed.Y > 0)))
+                    imgState = 40;
+
+                else if ((imgState < 10 || imgState > 17) && ((speed.X == 0 && speed.Y > 0) || (speed.X > 0 && speed.Y < 0)))
+                    imgState = 10;
+
+                else if ((imgState < 30 || imgState > 37) && ((speed.X == 0 && speed.Y < 0) || (speed.X < 0 && speed.Y < 0)))
+                    imgState = 30;
+
+                // Update l'image de X0 à X7
+                if (speed != Vector2.Zero)
+                {
+                    double temps = gameTime.TotalGameTime.TotalSeconds;
+
+                    if (tempsImage < temps - 0.1)
+                    {
+                        imgState++;
+                        if (imgState % 10 > maxImage)
+                            imgState -= imgState % 10;
+
+                        tempsImage = temps;
+                    }
+                }
+            }
+        }
         #endregion
 
     }

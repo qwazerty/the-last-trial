@@ -150,15 +150,15 @@ namespace The_Last_Trial
                 monster[2] = new Monster(new Vector2(2000f, 350f), 1);
                 monster[3] = new Monster(new Vector2(2500f, 300f), 1);
                 monster[4] = new Monster(new Vector2(2600f, 400f), 1);
-                monster[5] = new Monster(new Vector2(3500f, 350f), 2);
+                monster[5] = new Monster(new Vector2(3500f, 350f), 1);
             }
             if (GameState.Level == 2)
             { 
-                monster[0] = new Monster(new Vector2(1220f, 400f), 1);
-                monster[1] = new Monster(new Vector2(1300f, 500f), 1);
-                monster[2] = new Monster(new Vector2(1500f, 350f), 1);
-                monster[3] = new Monster(new Vector2(1800f, 300f), 1);
-                monster[4] = new Monster(new Vector2(2000f, 400f), 1);
+                monster[0] = new Monster(new Vector2(1220f, 400f), 2);
+                monster[1] = new Monster(new Vector2(1300f, 500f), 2);
+                monster[2] = new Monster(new Vector2(1500f, 350f), 2);
+                monster[3] = new Monster(new Vector2(1800f, 300f), 2);
+                monster[4] = new Monster(new Vector2(2000f, 400f), 2);
                 monster[5] = new Monster(new Vector2(2500f, 350f), 2);
             }
             if (GameState.Level == 3)

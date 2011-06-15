@@ -101,59 +101,5 @@ namespace The_Last_Trial
             base.position += (speed - Map.G_Speed()) * (float)gt.ElapsedGameTime.TotalSeconds;
         }
 
-        protected void F_UpdateImage(GameTime gameTime)
-        {
-            if (life <= 0)
-            {
-                imgState = 0;
-            }
-            else if (imgState == 0 && life > 0)
-            {
-                imgState = 20;
-            }
-            else
-            {
-                // Affichage images direction normale
-                if (speed.X > 0 && speed.Y == 0 && (imgState < 20 || imgState > 27))
-                    imgState = 20;
-
-                else if (speed.X < 0 && speed.Y == 0 && (imgState < 40 || imgState > 47))
-                    imgState = 40;
-
-                else if (speed.X == 0 && speed.Y > 0 && (imgState < 10 || imgState > 17))
-                    imgState = 10;
-
-                else if (speed.X == 0 && speed.Y < 0 && (imgState < 30 || imgState > 37))
-                    imgState = 30;
-
-                // Affichage images direction diagonales
-                else if (speed.X > 0 && speed.Y > 0 && (imgState < 50 || imgState > 57))
-                    imgState = 50;
-
-                else if (speed.X > 0 && speed.Y < 0 && (imgState < 60 || imgState > 67))
-                    imgState = 60;
-
-                else if (speed.X < 0 && speed.Y > 0 && (imgState < 80 || imgState > 87))
-                    imgState = 80;
-
-                else if (speed.X < 0 && speed.Y < 0 && (imgState < 70 || imgState > 77))
-                    imgState = 70;
-
-                // Update l'image de X0 à X7
-                if (speed != Vector2.Zero)
-                {
-                    double temps = gameTime.TotalGameTime.TotalSeconds;
-
-                    if (tempsImage < temps - 0.1)
-                    {
-                        imgState++;
-                        if (imgState % 10 > 7)
-                            imgState -= imgState % 10;
-
-                        tempsImage = temps;
-                    }
-                }
-            }
-        }
     }
 }
