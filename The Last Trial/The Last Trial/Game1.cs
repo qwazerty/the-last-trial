@@ -7,7 +7,7 @@ namespace The_Last_Trial
 {
     public class Game1
     {
-        private static  bool continuer = true;
+        private static bool continuer;
         public static void Update(GameTime gameTime, GraphicsDeviceManager graphics, ContentManager Content, Personnage[] perso, Monster[] monster, PNJ[] pnj)
         {
             if (continuer)
@@ -33,6 +33,11 @@ namespace The_Last_Trial
                     GameState.Restart(Content);
                 }
             }
+        }
+
+        public static void Restart()
+        {
+            continuer = true;
         }
     }
 }

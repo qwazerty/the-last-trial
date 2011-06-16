@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using System.Runtime.InteropServices;
 using System;
 
 namespace The_Last_Trial
@@ -58,6 +57,7 @@ namespace The_Last_Trial
             }
             LoadingMenu.Init(Content);
             Menu.Init(Content);
+            Game1.Restart();
             state = 0;
             level = 1;
             maxLevel = 1;

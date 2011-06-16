@@ -7,29 +7,29 @@ namespace The_Last_Trial
 {
     public class Monster : Mob
     {
-
+        #region VAR
         // DECLARATION VARIABLES
         private double tempsRandom;
         private Personnage target;
         private Rectangle spawn;
-        private double[] tempsAttaque = new double[1];
+        private double tempsAttaque;
+        private int boss;
+        #endregion
 
-        // CONSTRUCTEUR
-        public Monster(Vector2 init, int id) : base()
+        #region Constructor
+        public Monster(Vector2 init, int id, int boss) : base()
         {
             this.target = null;
             this.id = id;
+            this.boss = boss;
             this.spawn = new Rectangle((int)init.X - 200, (int)init.Y - 200, 400, 400);
             this.position = init;
-            this.life = (100 + 500 * (id - 1)) * GameState.Level * GameState.Player;
+            this.life = (int)(200 * GameState.Level * GameState.Player * boss);
             this.lifeMax = this.life;
             tempsRandom = 0;
-            tempsAttaque[0] = -5;
-        }    
-
-        /***********\
-         * METHODE *
-        \***********/
+            tempsAttaque = -5;
+        }
+        #endregion
 
         #region GET & SET
 
@@ -51,7 +51,11 @@ namespace The_Last_Trial
             }
             if (id == 2)
             {
-                return new Rectangle((int)position.X + 115, (int)position.Y + 165, 20, 20);
+                return new Rectangle((int)position.X + 35, (int)position.Y + 45, objet.Width - 70, objet.Height - 70);
+            }
+            if (id == 3)
+            {
+                return new Rectangle((int)position.X + 35, (int)position.Y + 45, objet.Width - 70, objet.Height - 70);
             }
 
             return new Rectangle(0, 0, 0, 0);
@@ -65,7 +69,11 @@ namespace The_Last_Trial
             }
             if (id == 2)
             {
-                return new Rectangle((int)position.X + 70, (int)position.Y + 125, 100, 100);
+                return new Rectangle((int)position.X, (int)position.Y, objet.Width, objet.Height);
+            }
+            if (id == 3)
+            {
+                return new Rectangle((int)position.X, (int)position.Y, objet.Width, objet.Height);
             }
 
             return new Rectangle(0, 0, 0, 0);
@@ -73,7 +81,7 @@ namespace The_Last_Trial
 
         public Rectangle G_Aggro()
         {
-            return new Rectangle((int)position.X - 100, (int)position.Y + 100, objet.Width + 200, objet.Height + 270);
+            return new Rectangle((int)position.X - 100, (int)position.Y - 100, objet.Width + 200, objet.Height + 270);
         }
 
         public Rectangle G_Random()
@@ -84,6 +92,7 @@ namespace The_Last_Trial
         public void S_Resu()
         {
             life = lifeMax;
+            imgState = 41;
         }
 
         public void S_Degat(int degat, GameTime gameTime)
@@ -161,6 +170,7 @@ namespace The_Last_Trial
             {
                 case 1: maxImage = 7; break;
                 case 2: maxImage = 5; break;
+                case 3: maxImage = 5; break;
                 default: maxImage = 0; break;
             }
             
@@ -207,14 +217,22 @@ namespace The_Last_Trial
             }
             else
             {
-                if (target.Position.X + 10 < position.X + 130)
+                int x, y;
+                switch (id)
+                {
+                    case 1: x = 130; y = 79; break;
+                    case 2: x = 0; y = 10; break;
+                    default: x = 0; y = 0; break;
+                }
+
+                if (target.Position.X + 10 < position.X + x)
                     speed.X = -50f;
-                else if (target.Position.X - 10 > position.X + 130)
+                else if (target.Position.X - 10 > position.X + x)
                     speed.X = 50f;
 
-                if (target.Position.Y + 10 < position.Y + 79)
+                if (target.Position.Y + 10 < position.Y + y)
                     speed.Y = -50f;
-                else if (target.Position.Y - 10 > position.Y + 79)
+                else if (target.Position.Y - 10 > position.Y + y)
                     speed.Y = 50f;
             }
 
@@ -279,7 +297,7 @@ namespace The_Last_Trial
 
             if (id == 1)
             {
-                if (tempsActuel > tempsAttaque[0] + 1)
+                if (tempsActuel > tempsAttaque + 1)
                 {
                     oldImage = imgState;
                     bool attaque = false;
@@ -288,50 +306,50 @@ namespace The_Last_Trial
                         if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
+                            p.S_Degat((5 + random.Next(5)) * GameState.Level * GameState.Player * boss, gameTime);
                         }
                     }
                     if (attaque)
                     {
                         Son.Play(2);
-                        tempsAttaque[0] = tempsActuel;
+                        tempsAttaque = tempsActuel;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.9)
+                else if (tempsActuel > tempsAttaque + 0.9)
                 {
                     if (imgState % 10 == -5)
                     {
                         imgState = oldImage / 10 * 10;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.6)
+                else if (tempsActuel > tempsAttaque + 0.6)
                 {
                     ImageTest(-5);
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.5)
+                else if (tempsActuel > tempsAttaque + 0.5)
                 {
                     ImageTest(-4);
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.4)
+                else if (tempsActuel > tempsAttaque + 0.4)
                 {
                     ImageTest(-3);
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.2)
+                else if (tempsActuel > tempsAttaque + 0.2)
                 {
                     ImageTest(-2);
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.1)
+                else if (tempsActuel > tempsAttaque + 0.1)
                 {
                     ImageTest(-1);
                 }
-                else if (tempsActuel > tempsAttaque[0])
+                else if (tempsActuel > tempsAttaque)
                 {
                     ImageTest(0);
                 }
             }
             else if (id == 2)
             {
-                if (tempsActuel > tempsAttaque[0] + 1)
+                if (tempsActuel > tempsAttaque + 1)
                 {
                     oldImage = imgState;
                     bool attaque = false;
@@ -346,25 +364,65 @@ namespace The_Last_Trial
                     if (attaque)
                     {
                         Son.Play(2);
-                        tempsAttaque[0] = tempsActuel;
+                        tempsAttaque = tempsActuel;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.9)
+                else if (tempsActuel > tempsAttaque + 0.9)
                 {
                     if (imgState % 10 == -2)
                     {
                         imgState = oldImage / 10 * 10;
                     }
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.6)
+                else if (tempsActuel > tempsAttaque + 0.6)
                 {
                     ImageTest(-2);
                 }
-                else if (tempsActuel > tempsAttaque[0] + 0.3)
+                else if (tempsActuel > tempsAttaque + 0.3)
                 {
                     ImageTest(-1);
                 }
-                else if (tempsActuel > tempsAttaque[0])
+                else if (tempsActuel > tempsAttaque)
+                {
+                    ImageTest(0);
+                }
+            }
+            else if (id == 3)
+            {
+                if (tempsActuel > tempsAttaque + 1)
+                {
+                    oldImage = imgState;
+                    bool attaque = false;
+                    foreach (Personnage p in perso)
+                    {
+                        if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
+                        {
+                            attaque = true;
+                            p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
+                        }
+                    }
+                    if (attaque)
+                    {
+                        Son.Play(2);
+                        tempsAttaque = tempsActuel;
+                    }
+                }
+                else if (tempsActuel > tempsAttaque + 0.9)
+                {
+                    if (imgState % 10 == -2)
+                    {
+                        imgState = oldImage / 10 * 10;
+                    }
+                }
+                else if (tempsActuel > tempsAttaque + 0.6)
+                {
+                    ImageTest(-2);
+                }
+                else if (tempsActuel > tempsAttaque + 0.3)
+                {
+                    ImageTest(-1);
+                }
+                else if (tempsActuel > tempsAttaque)
                 {
                     ImageTest(0);
                 }
@@ -399,8 +457,15 @@ namespace The_Last_Trial
 
         private void DrawHealth(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(health, new Rectangle((int)position.X + 76, (int)position.Y + objet.Height + 15, life * 100 / lifeMax, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
-            spriteBatch.Draw(health, new Rectangle((int)position.X + 75, (int)position.Y + objet.Height + 15, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
+            int x, y;
+            switch (id)
+            {
+                case 1: x = 75; y = 15; break;
+                case 2: x = 0; y = 10; break;
+                default: x = 0; y = 0; break;
+            }
+            spriteBatch.Draw(health, new Rectangle((int)position.X + x + 1, (int)position.Y + objet.Height + y, life * 100 / lifeMax, 12), new Rectangle(0, 12, health.Width, 12), Color.Red);
+            spriteBatch.Draw(health, new Rectangle((int)position.X + x, (int)position.Y + objet.Height + y, health.Width, 12), new Rectangle(0, 0, health.Width, 12), Color.White);
         }
 
         public void F_DrawDegats(SpriteBatch sb, GameTime gameTime)

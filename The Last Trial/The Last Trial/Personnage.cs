@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.IO;
 
 namespace The_Last_Trial
 {
@@ -14,8 +15,9 @@ namespace The_Last_Trial
         private Keys[] key;
         private int classe, xp, xpMax, level;
         private double[] tempsAttaque = new double[2];
-        private double tempsRegenPower, tempsRegenLife, tempsLevelUp, power, powerMax, force, mana, esquive;
+        private double tempsRegenPower, tempsRegenLife, tempsLevelUp, power, powerMax, force, mana, esquive, esprit;
         private string name;
+        private List<Projectile> projectile = new List<Projectile>();
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -27,7 +29,7 @@ namespace The_Last_Trial
 
         #endregion
 
-        // CONSTRUCTEUR
+        #region Constructor
         public Personnage(Keys[] key, Vector2 position, int id, int classe) : base()
         {
             this.id = id;
@@ -44,32 +46,33 @@ namespace The_Last_Trial
             this.tempsRegenLife = 0;
             this.tempsLevelUp = 0;
 
-            if (classe == 1)
+            if (classe == 1) // ROGUE
             {
                 force = 0.7;
                 mana = 1.5;
-                esquive = 5;
+                esquive = 3;
+                esprit = 1;
             }
-
-            if (classe == 2)
+            else if (classe == 2) // WARRIOR
             {
                 force = 1;
                 mana = 0.5;
                 esquive = 1;
+                esprit = 1;
             }
-
-            if (classe == 3)
+            else if (classe == 3) // HEAL
             {
                 force = 0.5;
                 mana = 2;
                 esquive = 1;
+                esprit = 2;
             }
-
-            if (classe == 4)
+            else if (classe == 4) // MAGE
             {
                 force = 0.5;
                 mana = 2;
                 esquive = 1;
+                esprit = 2;
             }
 
             powerMax = 500;
@@ -82,6 +85,7 @@ namespace The_Last_Trial
 
             this.oldState = Keyboard.GetState();
         }
+        #endregion
 
         #region GET & SET
 
@@ -130,6 +134,7 @@ namespace The_Last_Trial
                 level++;
                 xpMax = 100 * level;
                 life = lifeMax;
+                power = powerMax;
                 tempsLevelUp = gameTime.TotalRealTime.TotalSeconds;
             }
         }
@@ -144,6 +149,7 @@ namespace The_Last_Trial
                 level++;
                 xpMax = 100 * level;
                 life = lifeMax;
+                power = powerMax;
             }
         }
 
@@ -156,32 +162,41 @@ namespace The_Last_Trial
 
         private void S_Stats()
         {
-            if(classe == 3)
-            {
-                mana += 0.2;
-                powerMax = 1000 * mana;
-                lifeMax += 30;
-                esquive += 0.2;
-            }
-            if (classe == 2)
-            {
-                force += 0.1;
-                lifeMax += 50;
-                mana += 0.1;
-            }
-            if (classe == 1)
+            if (classe == 1) // ROGUE
             {
                 force += 0.05;
-                esquive += 1;
+                esquive += 0.5;
                 mana += 0.1;
+                esprit += 0.3;
                 lifeMax += 25;
             }
-            if (classe == 4)
+            else if (classe == 2) // WARRIOR
             {
-                mana += 0.15;
-                powerMax = 1000 * mana;
-                lifeMax += 30;
+                force += 0.2;
+                esquive += 0.3;
+                mana += 0.1;
+                esprit += 0.07;
+                lifeMax += 50;
+            }
+            else if (classe == 3) // HEAL
+            {
+                force += 0.01;
                 esquive += 0.2;
+                mana += 0.2;
+                esprit += 0.2;
+                lifeMax += 30;
+
+                powerMax = 1000 * mana;
+            }
+            else if (classe == 4) // MAGE
+            {
+                force += 0.01;
+                esquive += 0.2;
+                mana += 0.15;
+                esprit += 0.2;
+                lifeMax += 30;
+
+                powerMax = 1000 * mana;
             }
         }
 
@@ -265,23 +280,8 @@ namespace The_Last_Trial
             {
                 F_Deplacer();
                 F_Cheat(gameTime);
-                F_Attaque(monster, gameTime);
-                if (classe == 1)
-                {
-                    
-                }
-                else if (classe == 2)
-                {
-
-                }
-                else if (classe == 3)
-                {
-                    F_Healing(perso, gameTime);
-                }
-                else
-                {
-                    F_OverKill(monster, perso, gameTime);
-                }
+                F_Attaque(monster, gameTime, Content);
+                F_SpecialAttaque(monster, perso, gameTime);
                 foreach (Rectangle collision in Map.G_Collision())
                 {
                     F_Collision_Objets(collision, gameTime);
@@ -291,18 +291,28 @@ namespace The_Last_Trial
                     if (m.G_IsAlive())
                         F_Collision_Objets(m.G_Rectangle(), gameTime);
                 }
+                for (int i = 0; i < projectile.Count; i++)
+                {
+                    if (projectile[i].Update(gameTime, Content))
+                    {
+                        projectile.RemoveAt(i);
+                    }
+                }
                 F_Collision_Ecran(graphics, gameTime);
                 F_UpdateRegen(gameTime);
             }
 
             F_UpdateImage(gameTime);
-            objet = Content.Load<Texture2D>("perso/" + classe + "/" + imgState);
+            try
+            {
+                objet = Content.Load<Texture2D>("perso/" + classe + "/" + imgState);
+            }
+            catch (ContentLoadException) { }
             S_Deplacement(gameTime);
         }
 
         public void F_Draw(SpriteBatch sb, GameTime gameTime)
         {
-            // CODE SALE
             if (imgState < 0 && classe == 1)
                 sb.Draw(objet, new Vector2((int)position.X - 40, (int)position.Y - 30), Color.White);
             else if (imgState < 100)
@@ -317,6 +327,10 @@ namespace The_Last_Trial
                 sb.DrawString(GameState.overKill, LoadingMenu.Local[18], new Vector2(position.X - 100, position.Y - 80), Color.DarkOrange);
             
             F_DrawHealth(sb);
+            foreach (Projectile proj in projectile)
+            {
+                proj.Draw(sb);
+            }
         }
 
         #endregion
@@ -374,15 +388,18 @@ namespace The_Last_Trial
             }
         }
 
-        private void F_Attaque(Monster[] monster, GameTime gameTime)
+        private void F_Attaque(Monster[] monster, GameTime gameTime, ContentManager Content)
         {
             newState = Keyboard.GetState();
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-            float time;
-            if (classe == 1)
-                time = 0.4f;
-            else
-                time = 0.5f;
+            float time = 0;
+            switch (classe)
+            {
+                case 1: time = 0.4f; break;
+                case 2: time = 0.6f; break;
+                case 3: time = 0.6f; break;
+                case 4: time = 1.0f; break;
+            }
             if (tempsActuel > tempsAttaque[0] + time)
             {
                 if (newState.IsKeyDown(key[4]) && power >= 100)
@@ -392,13 +409,20 @@ namespace The_Last_Trial
                     power -= 100;
                     foreach (Monster m in monster)
                     {
-                        if (G_Rectangle().Intersects(m.G_Interact()) && m.G_IsAlive() && !attaque)
+                        if (m.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            m.S_Degat((int)((42 + random.Next(10) + 10 * level) * force), gameTime);
-                            if (m.G_Killed())
+                            if (classe == 4)
+                            { 
+                                projectile.Add(new Projectile(Content, m, this, position, (int)((42 + random.Next(10) + 10 * level) * force)));
+                            }
+                            else if (G_Rectangle().Intersects(m.G_Interact()))
                             {
-                                S_Xp(m.G_MaxLife() / 4, gameTime);
+                                m.S_Degat((int)((42 + random.Next(10) + 10 * level) * force), gameTime);
+                                if (m.G_Killed())
+                                {
+                                    S_Xp(m.G_MaxLife() / 4, gameTime);
+                                }
                             }
                         }
                     }
@@ -420,69 +444,44 @@ namespace The_Last_Trial
                 }
                 else if (tempsActuel > tempsAttaque[0] + 0.25)
                 {
-                    if (imgState % 10 == -2)
-                        imgState--;
-                    else if (imgState > 0)
-                    {
-                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                            imgState = -23;
-                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                            imgState = -13;
-                        else if (oldImage / 10 == 7)
-                            imgState = -43;
-                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                            imgState = -33;
-                    }
+                    ImageTest(-3);
                 }
                 else if (tempsActuel > tempsAttaque[0] + 0.16)
                 {
-                    if (imgState % 10 == -1)
-                        imgState--;
-                    else if (imgState > 0)
-                    {
-                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                            imgState = -22;
-                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                            imgState = -12;
-                        else if (oldImage / 10 == 7)
-                            imgState = -42;
-                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                            imgState = -32;
-                    }
+                    ImageTest(-2);
                 }
                 else if (tempsActuel > tempsAttaque[0] + 0.07)
                 {
-                    if (imgState % 10 == 0)
-                        imgState--;
-                    else if (imgState > 0)
-                    {
-                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                            imgState = -21;
-                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                            imgState = -11;
-                        else if (oldImage / 10 == 7)
-                            imgState = -41;
-                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                            imgState = -31;
-                    }
+                    ImageTest(-1);
                 }
                 else if (tempsActuel > tempsAttaque[0])
                 {
-                    if (imgState > 0)
+                    ImageTest(0);
+                }
+            }
+            else if (classe == 2)
+            {
+                if (tempsActuel > tempsAttaque[0] + 0.3)
+                {
+                    if (imgState % 10 == -2)
                     {
-                        if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
-                            imgState = -20;
-                        else if (oldImage / 10 == 3 || oldImage / 10 == 6)
-                            imgState = -10;
-                        else if (oldImage / 10 == 7)
-                            imgState = -40;
-                        else if (oldImage / 10 == 4 || oldImage / 10 == 8)
-                            imgState = -30;
+                        Son.Play(1);
+                        imgState = oldImage / 10 * 10;
                     }
                 }
-
-                if (imgState < 0)
-                    speed = Vector2.Zero;
+                else if (tempsActuel > tempsAttaque[0] + 0.2)
+                {
+                    ImageTest(-2);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.1)
+                {
+                    ImageTest(-1);
+                }
+                else if (tempsActuel > tempsAttaque[0])
+                {
+                    ImageTest(0);
+                }
+ 
             }
             else if (classe == 3)
             {
@@ -501,8 +500,68 @@ namespace The_Last_Trial
                     else
                         imgState = -20;
                 }
-                if (imgState < 0)
-                    speed = Vector2.Zero;
+            }
+            else if (classe == 4)
+            {
+                if (tempsActuel > tempsAttaque[0] + 0.8)
+                {
+                    if (imgState % 10 == -3)
+                    {
+                        imgState = oldImage / 10 * 10;
+                    }
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.6)
+                {
+                    for (int i = 0; i < projectile.Count; i++)
+                    {
+                        projectile[i].StartFiring();
+                    }
+
+                    ImageTest(-3);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.4)
+                {
+                    ImageTest(-2);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.2)
+                {
+                    ImageTest(-1);
+                }
+                else if (tempsActuel > tempsAttaque[0])
+                {
+                    ImageTest(0);
+                }
+            }
+
+            if (imgState < 0)
+                speed = Vector2.Zero;
+        }
+
+        private void ImageTest(int image)
+        {
+            if (imgState % 10 == image + 1)
+                imgState--;
+            else if (imgState > 0)
+            {
+                if (oldImage / 10 == 1 || oldImage / 10 == 2 || oldImage / 10 == 5)
+                    imgState = -50 + image;
+                else if (oldImage / 10 == 6 || oldImage / 10 == 3)
+                    imgState = -60 + image;
+                else if (oldImage / 10 == 7)
+                    imgState = -70 + image;
+                else if (oldImage / 10 == 4 || oldImage / 10 == 8)
+                    imgState = -80 + image;
+            }
+        }
+
+        private void F_SpecialAttaque(Monster[] monster, Personnage[] perso, GameTime gameTime)
+        {
+            switch (classe)
+            {
+                case 1: break;
+                case 2: break;
+                case 3: F_Healing(perso, gameTime); break;
+                case 4: F_OverKill(monster, perso, gameTime); break;
             }
         }
 
@@ -760,7 +819,7 @@ namespace The_Last_Trial
             if (tempsRegenPower + 0.05 < gameTime.TotalGameTime.TotalSeconds)
             {
                 tempsRegenPower = gameTime.TotalGameTime.TotalSeconds;
-                power += 2 * mana;
+                power += 2 * esprit;
                 if (power > powerMax)
                 {
                     power = powerMax;

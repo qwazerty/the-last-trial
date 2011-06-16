@@ -1,14 +1,5 @@
-levelMap=2
-nombrePerso=4
+levelMap=5
+nombrePerso=1
 perso=Perso1
 classe=1
-xp=0
-perso=Perso2
-classe=1
-xp=0
-perso=Perso3
-classe=1
-xp=0
-perso=Perso4
-classe=1
-xp=0
+xp=85020

@@ -91,7 +91,19 @@ namespace The_Last_Trial
             sr = new StreamReader(fs);
             for (int i = 0; i <= Program.MAXLOCAL - 1; i++)
             {
-                local[i] = sr.ReadLine();
+                string str;
+                str = sr.ReadLine();
+                for (int j = 0; j < str.Length; j++)
+                {
+                    if (str[j] == '\\')
+                    {
+                        local[i] += '\n';
+                    }
+                    else
+                    {
+                        local[i] += str[j];
+                    }
+                }
             }
             sr.Close();
             fs.Close();
@@ -672,7 +684,6 @@ namespace The_Last_Trial
             sb.Begin(SpriteBlendMode.AlphaBlend);
 
             menuObject[0].Draw(sb);
-            #region LOL
             if (state == (int)MenuState.Principal || state >= 20 || state == 10)
             {
                 Color color = Color.DarkKhaki;
@@ -908,7 +919,6 @@ namespace The_Last_Trial
                 }
                 sb.DrawString(GameState.menuFont, Local[3], new Vector2(350, 425), color);
             }
-            #endregion
             else if (state == (int)MenuState.ChooseLevel)
             {
                 Color color;

@@ -90,6 +90,7 @@
     <Compile Include="GameState.cs" />
     <Compile Include="KeyboardConvert.cs" />
     <Compile Include="Launcher.cs" />
+    <Compile Include="Projectile.cs" />
     <Compile Include="SaveLoad.cs" />
     <Compile Include="LoadingMenu.cs" />
     <Compile Include="Map.cs" />
