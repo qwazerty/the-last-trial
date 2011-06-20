@@ -578,8 +578,10 @@ namespace The_Last_Trial
                     }
                     else
                     {
+                        currentCursor = 0;
+                        speedX = 0;
                         state = 1;
-                        menuObject[1] = new Objet(new Vector2(0, 350), Content.Load<Texture2D>("menu/epee"));
+                        menuObject[1] = new Objet(new Vector2(-42, 350), Content.Load<Texture2D>("menu/epee"));
                     }
                 }
             }

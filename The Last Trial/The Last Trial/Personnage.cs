@@ -71,7 +71,7 @@ namespace The_Last_Trial
             }
             else if (classe == 4) // MAGE
             {
-                force = 0.5;
+                force = 0.6;
                 mana = 2;
                 esquive = 1;
                 esprit = 2;
