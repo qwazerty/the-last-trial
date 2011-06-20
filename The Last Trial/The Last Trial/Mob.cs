@@ -75,7 +75,7 @@ namespace The_Last_Trial
             foreach (int i in array)
             {
                 if (i < GameState.Player)
-                    perso[i].F_Draw(sb, gameTime);
+                    perso[i].F_Draw(sb, gameTime, perso);
                 else
                     monster[i - GameState.Player].F_Draw(sb);
             }

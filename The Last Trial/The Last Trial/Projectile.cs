@@ -93,8 +93,11 @@ namespace The_Last_Trial
         {
             if (GOOOOOOOOOO)
             {
-                base.Draw(sb);
-                //sb.Draw(AJOUTER ROTATION);
+                SpriteEffects se = SpriteEffects.None;
+                if (speed.X < 0)
+                    se = SpriteEffects.FlipHorizontally;
+
+                sb.Draw(objet, new Rectangle((int)position.X, (int)position.Y, objet.Width, objet.Height), null, Color.White, 0f, Vector2.Zero, se, 0);
             }
         }
     }

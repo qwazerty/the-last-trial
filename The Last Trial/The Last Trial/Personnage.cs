@@ -13,11 +13,12 @@ namespace The_Last_Trial
 
         private static Objet[] portrait;
         private Keys[] key;
-        private int classe, xp, xpMax, level;
+        private int classe, xp, xpMax, level, healState;
         private double[] tempsAttaque = new double[2];
         private double tempsRegenPower, tempsRegenLife, tempsLevelUp, power, powerMax, force, mana, esquive, esprit;
         private string name;
         private List<Projectile> projectile = new List<Projectile>();
+        private Texture2D heal;
         /** KEYS STATES **\
          * 0 : BAS       *
          * 1 : DROITE    *
@@ -45,13 +46,14 @@ namespace The_Last_Trial
             this.tempsRegenPower = 0;
             this.tempsRegenLife = 0;
             this.tempsLevelUp = 0;
+            this.healState = 0;
 
             if (classe == 1) // ROGUE
             {
                 force = 0.7;
-                mana = 1.5;
+                mana = 1;
                 esquive = 3;
-                esprit = 1;
+                esprit = 0.2;
             }
             else if (classe == 2) // WARRIOR
             {
@@ -76,7 +78,10 @@ namespace The_Last_Trial
             }
 
             powerMax = 500;
-            power = powerMax;
+            if (classe == 1)
+                power = 0;
+            else
+                power = powerMax;
 
             for (int i = 0; i <= 1; i++)
             {
@@ -269,7 +274,8 @@ namespace The_Last_Trial
             for (int i = 0; i <= 1; i++)
             {
                 tempsAttaque[i] = -5;
-            }
+            } 
+            this.heal = Content.Load<Texture2D>("magic/heal");
             this.life = this.lifeMax;
             this.power = this.powerMax;
         }
@@ -311,7 +317,7 @@ namespace The_Last_Trial
             S_Deplacement(gameTime);
         }
 
-        public void F_Draw(SpriteBatch sb, GameTime gameTime)
+        public void F_Draw(SpriteBatch sb, GameTime gameTime, Personnage[] perso)
         {
             if (imgState < 0 && classe == 1)
                 sb.Draw(objet, new Vector2((int)position.X - 40, (int)position.Y - 30), Color.White);
@@ -330,6 +336,13 @@ namespace The_Last_Trial
             foreach (Projectile proj in projectile)
             {
                 proj.Draw(sb);
+            }
+            if (healState != 0)
+            {
+                foreach (Personnage p in perso)
+                {
+                    sb.Draw(heal, new Vector2(p.G_Rectangle().X, p.G_Rectangle().Y - (healState * 10)), Color.White);
+                }
             }
         }
 
@@ -402,11 +415,12 @@ namespace The_Last_Trial
             }
             if (tempsActuel > tempsAttaque[0] + time)
             {
-                if (newState.IsKeyDown(key[4]) && power >= 100)
+                if (newState.IsKeyDown(key[4]) && (classe == 1 || power >= 100))
                 {
                     oldImage = imgState;
                     bool attaque = false;
-                    power -= 100;
+                    if (classe != 1)
+                        power -= 100;
                     foreach (Monster m in monster)
                     {
                         if (m.G_IsAlive() && !attaque)
@@ -414,7 +428,8 @@ namespace The_Last_Trial
                             attaque = true;
                             if (classe == 4)
                             { 
-                                projectile.Add(new Projectile(Content, m, this, position, (int)((42 + random.Next(10) + 10 * level) * force)));
+                                if (G_Rectangle().Intersects(m.G_Aggro()))
+                                    projectile.Add(new Projectile(Content, m, this, position, (int)((42 + random.Next(10) + 10 * level) * force)));
                             }
                             else if (G_Rectangle().Intersects(m.G_Interact()))
                             {
@@ -666,6 +681,47 @@ namespace The_Last_Trial
                     tempsAttaque[1] = tempsActuel;
                 }
             }
+            else if (tempsActuel > tempsAttaque[1] + 0.45)
+            {
+                healState = 0;
+            }
+            else if (tempsActuel > tempsAttaque[1] + 0.35)
+            {
+                healState = 8;
+            }
+            else if (tempsActuel > tempsAttaque[1] + 0.3)
+            {
+                healState = 7;
+            }
+            else if (tempsActuel > tempsAttaque[1] + 0.25)
+            {
+                healState = 6;
+            }
+            else if (tempsActuel > tempsAttaque[1] + 0.2)
+            {
+                healState = 5;
+            }
+            else if (tempsActuel > tempsAttaque[1] + 0.15)
+            {
+                healState = 4;
+            }
+            else if (tempsActuel > tempsAttaque[1] + 0.1)
+            {
+                healState = 3;
+            }
+            else if (tempsActuel > tempsAttaque[1] + 0.05)
+            {
+                healState = 2;
+            }
+            else if (tempsActuel > tempsAttaque[1])
+            {
+                healState = 1;
+            }
+        }
+
+        private void F_Booster(GameTime gameTime)
+        { 
+            //TODO : Boost 
         }
 
         private Personnage F_DetectAllies(Personnage p)
@@ -689,7 +745,7 @@ namespace The_Last_Trial
         }
 
         #endregion
-
+        
         #region Deplacement
 
         private void F_Deplacer()
