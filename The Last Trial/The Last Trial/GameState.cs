@@ -78,7 +78,8 @@ namespace The_Last_Trial
                 }
                 else if (Launcher.Update(gameTime, Content, graphics, spriteBatch, ref perso, ref monster, ref pnj, ref nbPlayer, ref nbMonster))
                 {
-                    state = 1;
+                    Cinematic.Load(Content);
+                    state = 2;
                 }
             }
             else if (state == 1)
@@ -94,6 +95,13 @@ namespace The_Last_Trial
                     state = 0;
                     newLevel = true;
                     SaveLoad.Save(perso);
+                }
+            }
+            else if (state == 2)
+            {
+                if (Cinematic.Update(gameTime))
+                {
+                    state = 1;
                 }
             }
             base.Update(gameTime);
@@ -116,6 +124,10 @@ namespace The_Last_Trial
             else if (state == 1)
             {
                 Game1.Draw(gameTime, spriteBatch, graphics, Content, perso, monster, pnj);
+            }
+            else if (state == 2)
+            {
+                Cinematic.Draw(spriteBatch, graphics);
             }
             base.Draw(gameTime);
         }

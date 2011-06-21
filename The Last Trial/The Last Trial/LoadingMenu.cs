@@ -614,13 +614,13 @@ namespace The_Last_Trial
             if (setup[0] == 0)
             {
                 sw.WriteLine("resolution=1024x800");
-                Program.width = 1000;
+                Program.width = 1024;
                 Program.height = 800;
             }
             else if (setup[0] == 1)
             {
                 sw.WriteLine("resolution=1280x800");
-                Program.width = 1200;
+                Program.width = 1280;
                 Program.height = 800;
             }
             else if (setup[0] == 2)
