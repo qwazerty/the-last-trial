@@ -54,7 +54,7 @@ namespace The_Last_Trial
             {
                 force = 0.7;
                 mana = 1;
-                esquive = 3;
+                esquive = 2;
                 esprit = 0.2;
             }
             else if (classe == 2) // WARRIOR
@@ -107,6 +107,11 @@ namespace The_Last_Trial
         public void S_Nom(string name)
         {
             this.name = name;
+        }
+
+        public void S_ImgState(int state)
+        {
+            this.imgState = state;
         }
 
         public string G_Nom()
@@ -197,7 +202,7 @@ namespace The_Last_Trial
             if (classe == 1) // ROGUE
             {
                 force += 0.05;
-                esquive += 0.5;
+                esquive += 0.35;
                 lifeMax += 35;
             }
             else if (classe == 2) // WARRIOR
@@ -311,6 +316,10 @@ namespace The_Last_Trial
             {
                 F_Deplacer();
                 F_Cheat(gameTime, perso);
+                if (newState.IsKeyDown(Keys.LeftShift))
+                {
+                    S_ImgState(20);
+                }
                 F_Attaque(monster, gameTime, Content, perso);
                 F_SpecialAttaque(monster, perso, gameTime);
                 foreach (Rectangle collision in Map.G_Collision())
@@ -442,7 +451,7 @@ namespace The_Last_Trial
                         power -= 100;
                     foreach (Monster m in monster)
                     {
-                        if (m.G_IsAlive() && !attaque && G_Rectangle().Intersects(m.G_Aggro()))
+                        if (m.G_IsAlive() && !attaque && ((G_Rectangle().Intersects(m.G_Aggro()) && classe == 4) || (G_Rectangle().Intersects(m.G_Interact()) && classe != 4)))
                         {
                             attaque = true;
                             if (classe == 4)
