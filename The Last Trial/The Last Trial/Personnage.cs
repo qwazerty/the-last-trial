@@ -229,13 +229,13 @@ namespace The_Last_Trial
             Personnage.portrait = new Objet[GameState.Player];
             if (GameState.Player > 0)
             {
-                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.N }, new Vector2(300f, 350f), 1, LoadingMenu.PersoClasse[0]);
+                perso[0] = new Personnage(new Keys[] { Keys.Down, Keys.Right, Keys.Up, Keys.Left, Keys.Space, Keys.RightShift }, new Vector2(300f, 350f), 1, LoadingMenu.PersoClasse[0]);
                 portrait[0] = new Objet(new Vector2(15, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.PersoClasse[0]));
             }
 
             if (GameState.Player > 1)
             {
-                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.D1 }, new Vector2(330f, 450f), 2, LoadingMenu.PersoClasse[1]);
+                perso[1] = new Personnage(new Keys[] { Keys.S, Keys.D, Keys.Z, Keys.Q, Keys.F, Keys.E }, new Vector2(330f, 450f), 2, LoadingMenu.PersoClasse[1]);
                 portrait[1] = new Objet(new Vector2(Program.width - 95, 10), Content.Load<Texture2D>("ui/" + LoadingMenu.PersoClasse[1]));
             }
 
@@ -247,7 +247,7 @@ namespace The_Last_Trial
 
             if (GameState.Player > 3)
             {
-                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.D3 }, new Vector2(390f, 650f), 4, LoadingMenu.PersoClasse[3]);
+                perso[3] = new Personnage(new Keys[] { Keys.L, Keys.M, Keys.O, Keys.K, Keys.J, Keys.P }, new Vector2(390f, 650f), 4, LoadingMenu.PersoClasse[3]);
                 portrait[3] = new Objet(new Vector2(Program.width - 95, 115), Content.Load<Texture2D>("ui/" + LoadingMenu.PersoClasse[3]));
             }
 
