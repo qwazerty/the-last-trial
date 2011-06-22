@@ -70,10 +70,18 @@ namespace The_Last_Trial
             sw = new StreamWriter(fs);
             sw.WriteLine("levelMap=1");
             sw.WriteLine("nombrePerso=" + x);
-
+            string name;
             for (int i = 0; i < x; i++)
             {
-                sw.WriteLine("perso=Perso" + (i + 1));
+                switch (i)
+                {
+                    case 0: name = "Ilean"; break;
+                    case 1: name = "Fyniel"; break;
+                    case 2: name = "Kyfen"; break;
+                    case 3: name = "Tyris"; break;
+                    default: name = ""; break;
+                }
+                sw.WriteLine("perso=" + name);
                 sw.WriteLine("classe=" + LoadingMenu.PersoClasse[i]);
                 sw.WriteLine("xp=0");
             }

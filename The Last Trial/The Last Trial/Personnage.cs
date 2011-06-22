@@ -198,7 +198,7 @@ namespace The_Last_Trial
             {
                 force += 0.05;
                 esquive += 0.5;
-                lifeMax += 25;
+                lifeMax += 35;
             }
             else if (classe == 2) // WARRIOR
             {
@@ -206,14 +206,14 @@ namespace The_Last_Trial
                 esquive += 0.2;
                 mana += 0.1;
                 esprit += 0.07;
-                lifeMax += 50;
+                lifeMax += 75;
             }
             else if (classe == 3) // HEAL
             {
                 force += 0.01;
                 esquive += 0.2;
                 mana += 0.2;
-                esprit += 0.2;
+                esprit += 0.3;
                 lifeMax += 30;
 
                 powerMax = 1000 * mana;
@@ -442,15 +442,14 @@ namespace The_Last_Trial
                         power -= 100;
                     foreach (Monster m in monster)
                     {
-                        if (m.G_IsAlive() && !attaque)
+                        if (m.G_IsAlive() && !attaque && G_Rectangle().Intersects(m.G_Aggro()))
                         {
                             attaque = true;
                             if (classe == 4)
                             { 
-                                if (G_Rectangle().Intersects(m.G_Aggro()))
-                                    projectile.Add(new Projectile(Content, m, this, position, (int)((42 + random.Next(10) + 10 * level) * force)));
+                                projectile.Add(new Projectile(Content, m, this, position, (int)((42 + random.Next(10) + 10 * level) * force)));
                             }
-                            else if (G_Rectangle().Intersects(m.G_Interact()))
+                            else
                             {
                                 m.S_Degat((int)((42 + random.Next(10) + 10 * level) * force), gameTime);
                                 if (m.G_Killed())
@@ -746,7 +745,7 @@ namespace The_Last_Trial
                     power -= 500;
                     foreach (Personnage p in perso)
                     {
-                        p.S_Life(50);
+                        p.S_Life((int)(20 * mana));
                     }
                     tempsAttaque[1] = tempsActuel;
                 }
@@ -792,17 +791,18 @@ namespace The_Last_Trial
         private void F_Booster(GameTime gameTime)
         {
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-            if (newState.IsKeyDown(key[5]) && power == powerMax)
+            if (newState.IsKeyDown(key[5]) && power == powerMax && !AtkSpe)
             {
                 tempsAttaque[1] = tempsActuel;
                 time = 0.2f;
                 power = 0;
                 AtkSpe = true;
             }
-            if (tempsActuel > tempsAttaque[1] + 5)
+            if (tempsActuel > tempsAttaque[1] + 5 && AtkSpe)
             {
                 time = 0.4f;
                 AtkSpe = false;
+                imgState = oldImage / 10 * 10;
             }
         }
 

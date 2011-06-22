@@ -81,7 +81,7 @@ namespace The_Last_Trial
 
         public Rectangle G_Aggro()
         {
-            return new Rectangle((int)position.X - 100, (int)position.Y - 100, objet.Width + 200, objet.Height + 270);
+            return new Rectangle((int)position.X - 250, (int)position.Y - 250, objet.Width + 250, objet.Height + 250);
         }
 
         public Rectangle G_Random()
@@ -306,7 +306,7 @@ namespace The_Last_Trial
                         if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            p.S_Degat((5 + random.Next(5)) * GameState.Level * GameState.Player * boss, gameTime);
+                            p.S_Degat((3 + random.Next(6)) * GameState.Level * GameState.Player * boss, gameTime);
                         }
                     }
                     if (attaque)
@@ -358,7 +358,7 @@ namespace The_Last_Trial
                         if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
+                            p.S_Degat((3 + random.Next(6)) * GameState.Level * GameState.Player * boss, gameTime);
                         }
                     }
                     if (attaque)
@@ -398,7 +398,7 @@ namespace The_Last_Trial
                         if (G_Interact().Intersects(p.G_Rectangle()) && p.G_IsAlive() && !attaque)
                         {
                             attaque = true;
-                            p.S_Degat((5 + random.Next(5) + ((id - 1) * 10)) * GameState.Level, gameTime);
+                            p.S_Degat((3 + random.Next(6)) * GameState.Level * GameState.Player * boss, gameTime);
                         }
                     }
                     if (attaque)
