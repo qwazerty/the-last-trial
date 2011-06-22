@@ -13,10 +13,12 @@ namespace The_Last_Trial
 
         private static Objet[] portrait;
         private Keys[] key;
+        private bool AtkSpe = false;
         private int classe, xp, xpMax, level, healState;
         private double[] tempsAttaque = new double[2];
-        private double tempsRegenPower, tempsRegenLife, tempsLevelUp, power, powerMax, force, mana, esquive, esprit;
+        private double tempsRegenPower, tempsRegenLife, tempsLevelUp, power, powerMax, force, mana, esquive, esprit, forcetemp;
         private string name;
+        private float time = 0;
         private List<Projectile> projectile = new List<Projectile>();
         private Texture2D heal;
         /** KEYS STATES **\
@@ -59,7 +61,7 @@ namespace The_Last_Trial
             {
                 force = 1;
                 mana = 0.5;
-                esquive = 1;
+                esquive = 0.5;
                 esprit = 1;
             }
             else if (classe == 3) // HEAL
@@ -75,6 +77,14 @@ namespace The_Last_Trial
                 mana = 2;
                 esquive = 1;
                 esprit = 2;
+            }
+
+            switch (classe)
+            {
+                case 1: time = 0.4f; break;
+                case 2: time = 0.6f; break;
+                case 3: time = 0.6f; break;
+                case 4: time = 1.0f; break;
             }
 
             powerMax = 500;
@@ -157,6 +167,23 @@ namespace The_Last_Trial
                 power = powerMax;
             }
         }
+        public void S_Xp(int xp_, GameTime gameTime, Personnage[] perso)
+        {
+            this.xp = xp_;
+            foreach (Personnage p in perso)
+            {
+                p.S_Xp(xp_ / 4, gameTime);
+            }
+            while (this.xp >= xpMax)
+            {
+                S_Stats();
+                this.xp = this.xp - xpMax;
+                level++;
+                xpMax = 100 * level;
+                life = lifeMax;
+                power = powerMax;
+            }
+        }
 
         private void S_Life(int newLife)
         {
@@ -171,14 +198,12 @@ namespace The_Last_Trial
             {
                 force += 0.05;
                 esquive += 0.5;
-                mana += 0.1;
-                esprit += 0.3;
                 lifeMax += 25;
             }
             else if (classe == 2) // WARRIOR
             {
                 force += 0.2;
-                esquive += 0.3;
+                esquive += 0.2;
                 mana += 0.1;
                 esprit += 0.07;
                 lifeMax += 50;
@@ -285,8 +310,8 @@ namespace The_Last_Trial
             if (G_IsAlive())
             {
                 F_Deplacer();
-                F_Cheat(gameTime);
-                F_Attaque(monster, gameTime, Content);
+                F_Cheat(gameTime, perso);
+                F_Attaque(monster, gameTime, Content, perso);
                 F_SpecialAttaque(monster, perso, gameTime);
                 foreach (Rectangle collision in Map.G_Collision())
                 {
@@ -391,7 +416,7 @@ namespace The_Last_Trial
 
         #region Attaque & Magie
 
-        private void F_Cheat(GameTime gameTime)
+        private void F_Cheat(GameTime gameTime, Personnage[] perso)
         {
             newState = Keyboard.GetState();
 
@@ -401,25 +426,19 @@ namespace The_Last_Trial
             }
         }
 
-        private void F_Attaque(Monster[] monster, GameTime gameTime, ContentManager Content)
+        private void F_Attaque(Monster[] monster, GameTime gameTime, ContentManager Content, Personnage[] perso)
         {
             newState = Keyboard.GetState();
             tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
-            float time = 0;
-            switch (classe)
-            {
-                case 1: time = 0.4f; break;
-                case 2: time = 0.6f; break;
-                case 3: time = 0.6f; break;
-                case 4: time = 1.0f; break;
-            }
             if (tempsActuel > tempsAttaque[0] + time)
             {
-                if (newState.IsKeyDown(key[4]) && (classe == 1 || power >= 100))
+                if (newState.IsKeyDown(key[4]) && (classe == 1 || (classe == 2 && AtkSpe) || power >= 100))
                 {
                     oldImage = imgState;
                     bool attaque = false;
-                    if (classe != 1)
+                    if (classe == 1 || (classe == 2 && AtkSpe))
+                    { }
+                    else
                         power -= 100;
                     foreach (Monster m in monster)
                     {
@@ -436,7 +455,7 @@ namespace The_Last_Trial
                                 m.S_Degat((int)((42 + random.Next(10) + 10 * level) * force), gameTime);
                                 if (m.G_Killed())
                                 {
-                                    S_Xp(m.G_MaxLife() / 4, gameTime);
+                                    S_Xp(m.G_MaxLife() / 4, gameTime, perso);
                                 }
                             }
                         }
@@ -447,7 +466,7 @@ namespace The_Last_Trial
                     tempsAttaque[0] = tempsActuel;
                 }
             }
-            else if (classe == 1)
+            else if (classe == 1 && !AtkSpe)
             {
                 if (tempsActuel > tempsAttaque[0] + 0.35)
                 {
@@ -474,7 +493,34 @@ namespace The_Last_Trial
                     ImageTest(0);
                 }
             }
-            else if (classe == 2)
+            else if (classe == 1 && AtkSpe)
+            {
+                if (tempsActuel > tempsAttaque[0] + 0.175)
+                {
+                    if (imgState % 10 == -3)
+                    {
+                        Son.Play(1);
+                        imgState = oldImage / 10 * 10;
+                    }
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.125)
+                {
+                    ImageTest(-3);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.08)
+                {
+                    ImageTest(-2);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.035)
+                {
+                    ImageTest(-1);
+                }
+                else if (tempsActuel > tempsAttaque[0])
+                {
+                    ImageTest(0);
+                }
+            }
+            else if (classe == 2 && !AtkSpe)
             {
                 if (tempsActuel > tempsAttaque[0] + 0.3)
                 {
@@ -497,6 +543,30 @@ namespace The_Last_Trial
                     ImageTest(0);
                 }
  
+            }
+            else if (classe == 2 && AtkSpe)
+            {
+                if (tempsActuel > tempsAttaque[0] + 0.3 - (0.3 * 1/6))
+                {
+                    if (imgState % 10 == -2)
+                    {
+                        Son.Play(1);
+                        imgState = oldImage / 10 * 10;
+                    }
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.2 - (0.2 * 1/6))
+                {
+                    ImageTest(-2);
+                }
+                else if (tempsActuel > tempsAttaque[0] + 0.1 - (0.1 * 1/6))
+                {
+                    ImageTest(-1);
+                }
+                else if (tempsActuel > tempsAttaque[0])
+                {
+                    ImageTest(0);
+                }
+
             }
             else if (classe == 3)
             {
@@ -573,8 +643,8 @@ namespace The_Last_Trial
         {
             switch (classe)
             {
-                case 1: break;
-                case 2: break;
+                case 1: F_Booster(gameTime); break;
+                case 2: F_BERZERKER(gameTime); break;
                 case 3: F_Healing(perso, gameTime); break;
                 case 4: F_OverKill(monster, perso, gameTime); break;
             }
@@ -619,7 +689,7 @@ namespace The_Last_Trial
                             monster[i].S_Degat((int)((10 + level * 7) * mana), gameTime);
                             if (monster[i].G_Killed())
                             {
-                                S_Xp(monster[i].G_MaxLife(), gameTime);
+                                S_Xp(monster[i].G_MaxLife(), gameTime, perso);
                             }
                         }
                     }
@@ -720,8 +790,41 @@ namespace The_Last_Trial
         }
 
         private void F_Booster(GameTime gameTime)
-        { 
-            //TODO : Boost 
+        {
+            tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
+            if (newState.IsKeyDown(key[5]) && power == powerMax)
+            {
+                tempsAttaque[1] = tempsActuel;
+                time = 0.2f;
+                power = 0;
+                AtkSpe = true;
+            }
+            if (tempsActuel > tempsAttaque[1] + 5)
+            {
+                time = 0.4f;
+                AtkSpe = false;
+            }
+        }
+
+        private void F_BERZERKER(GameTime gameTime)
+        {
+            tempsActuel = (float)gameTime.TotalGameTime.TotalSeconds;
+            if (newState.IsKeyDown(key[5]) && power >= 500 && !AtkSpe)
+            {
+                forcetemp = level / 2;
+                tempsAttaque[1] = tempsActuel;
+                time = 0.5f;
+                force += forcetemp;
+                power -= 250;
+                life -= lifeMax / 4;
+                AtkSpe = true;
+            }
+            if (tempsActuel > tempsAttaque[1] + 5 && AtkSpe)
+            {
+                time = 0.6f;
+                force -= forcetemp;
+                AtkSpe = false;
+            }
         }
 
         private Personnage F_DetectAllies(Personnage p)
