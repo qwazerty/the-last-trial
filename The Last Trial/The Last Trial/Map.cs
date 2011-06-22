@@ -145,6 +145,24 @@ namespace The_Last_Trial
 
                 return 6;
             }
+            else if (GameState.Level == 5)
+            {
+                MaxX = 5 * 1024;
+                collision = new Rectangle[2];
+                collision[0] = new Rectangle(0, 128, MaxX, PIXEL);
+                collision[1] = new Rectangle(0, 768, MaxX, PIXEL);
+
+                originBack = new Vector2(0f, 0f);
+                originMiddle = new Vector2(0f, -160f);
+                originFirst = new Vector2(0f, -736f);
+                speedBack = 1;
+                speedMiddle = 1;
+                speedFirst = 1;
+                firstHide = true;
+                parallax = false;
+
+                return 6;
+            }
             return 0;
         }
 
@@ -156,6 +174,7 @@ namespace The_Last_Trial
                 case 2: return 1;
                 case 3: return 0;
                 case 4: return 0;
+                case 5: return 0;
             }
             return 0;
         }
@@ -190,6 +209,16 @@ namespace The_Last_Trial
                 monster[5] = new Monster(new Vector2(2500f, 350f), 3, 2);
             }
             if (GameState.Level == 4)
+            {
+                monster[0] = new Monster(new Vector2(1220f, 400f), 1, 1);
+                monster[1] = new Monster(new Vector2(1300f, 500f), 1, 1);
+                monster[2] = new Monster(new Vector2(1500f, 350f), 1, 1);
+                monster[3] = new Monster(new Vector2(1800f, 300f), 1, 1);
+                monster[4] = new Monster(new Vector2(2000f, 400f), 1, 1);
+                monster[5] = new Monster(new Vector2(2500f, 350f), 1, 2);
+            }
+
+            if (GameState.Level == 5)
             {
                 monster[0] = new Monster(new Vector2(1220f, 400f), 1, 1);
                 monster[1] = new Monster(new Vector2(1300f, 500f), 1, 1);
